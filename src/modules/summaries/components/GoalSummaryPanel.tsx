@@ -1,0 +1,178 @@
+import {
+  AlertTriangle,
+  BriefcaseBusiness,
+  Landmark,
+  TrendingUp,
+} from "lucide-react";
+import type {
+  IGoalSummaryPanelProps,
+  IMoneyTotals,
+} from "@/modules/summaries/interfaces/summaries.interface";
+import { formatMoney } from "@/utils/format.utils";
+
+function MoneyPair({ totals }: { totals: IMoneyTotals }) {
+  return (
+    <>
+      <p className="font-display text-3xl text-forest">
+        {formatMoney(totals.usd, "USD")}
+      </p>
+      <p className="mt-1 text-xs font-semibold text-moss">
+        {formatMoney(totals.ars, "ARS")}
+      </p>
+    </>
+  );
+}
+
+export function GoalSummaryPanel({ summary }: IGoalSummaryPanelProps) {
+  const progress = Math.max(0, summary.progressPercentage);
+
+  return (
+    <div className="space-y-6">
+      {summary.hasUnconvertedAmounts ? (
+        <div className="flex gap-3 rounded-2xl border border-amber-600/20 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+          <AlertTriangle className="mt-0.5 shrink-0" size={18} />
+          <p>
+            Hay registros sin cotización MEP/CCL. Los totales de la moneda
+            convertida no incluyen esos importes.
+          </p>
+        </div>
+      ) : null}
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          {
+            label: "Valor contable",
+            totals: summary.portfolioBookValue,
+            icon: BriefcaseBusiness,
+            accent: true,
+          },
+          {
+            label: "Efectivo disponible",
+            totals: summary.cashBalance,
+            icon: Landmark,
+            accent: false,
+          },
+          {
+            label: "Posiciones abiertas",
+            totals: summary.openPositionValueAtCost,
+            icon: TrendingUp,
+            accent: false,
+          },
+          {
+            label: "Ganancia realizada",
+            totals: summary.realizedProfit,
+            icon: TrendingUp,
+            accent: false,
+          },
+        ].map(({ label, totals, icon: Icon, accent }) => (
+          <article
+            key={label}
+            className={
+              "rounded-[1.5rem] border p-5 " +
+              (accent ? "border-lime bg-lime/55" : "border-forest/8 bg-white")
+            }
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-xs font-bold tracking-[0.1em] text-moss uppercase">
+                {label}
+              </p>
+              <Icon size={17} className="text-moss" />
+            </div>
+            <MoneyPair totals={totals} />
+          </article>
+        ))}
+      </div>
+
+      <div className="rounded-[1.5rem] border border-forest/8 bg-white p-5 sm:p-6">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold tracking-[0.1em] text-moss uppercase">
+              Avance total
+            </p>
+            <p className="mt-2 text-sm text-ink/50">
+              Efectivo más posiciones valuadas a costo
+            </p>
+          </div>
+          <strong className="font-display text-4xl text-forest">
+            {progress.toFixed(1)}%
+          </strong>
+        </div>
+        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-linen">
+          <div
+            className="h-full rounded-full bg-forest transition-all duration-700"
+            style={{ width: Math.min(progress, 100) + "%" }}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-[1.5rem] border border-forest/8 bg-cream p-5 sm:p-6">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold tracking-[0.1em] text-moss uppercase">
+              Posiciones abiertas
+            </p>
+            <h3 className="mt-2 font-display text-3xl text-forest">
+              Cartera actual
+            </h3>
+          </div>
+          <span className="rounded-full bg-forest px-3 py-1.5 text-xs font-bold text-lime">
+            {summary.openPositionsCount}
+          </span>
+        </div>
+
+        {summary.openPositions.length ? (
+          <div className="mt-6 grid gap-3 lg:grid-cols-2">
+            {summary.openPositions.map((position) => (
+              <article
+                key={position.platform + ":" + position.ticker}
+                className="rounded-2xl border border-forest/8 bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-display text-2xl text-forest">
+                      {position.ticker}
+                    </p>
+                    <p className="mt-1 text-xs font-bold tracking-[0.08em] text-moss uppercase">
+                      {position.platform}
+                    </p>
+                  </div>
+                  <p className="text-sm font-bold text-forest">
+                    {position.quantity} unidades
+                  </p>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-4 border-t border-forest/8 pt-4">
+                  <div>
+                    <p className="text-[10px] font-bold text-ink/40 uppercase">
+                      Costo promedio
+                    </p>
+                    <p className="mt-1 text-sm font-bold text-forest">
+                      {formatMoney(position.averageCost.usd, "USD")}
+                    </p>
+                    <p className="mt-0.5 text-xs text-moss">
+                      {formatMoney(position.averageCost.ars, "ARS")}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-ink/40 uppercase">
+                      Total invertido
+                    </p>
+                    <p className="mt-1 text-sm font-bold text-forest">
+                      {formatMoney(position.invested.usd, "USD")}
+                    </p>
+                    <p className="mt-0.5 text-xs text-moss">
+                      {formatMoney(position.invested.ars, "ARS")}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 rounded-2xl border border-dashed border-forest/15 py-12 text-center text-sm text-ink/45">
+            No hay posiciones abiertas.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

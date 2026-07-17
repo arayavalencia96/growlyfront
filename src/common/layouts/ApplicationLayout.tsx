@@ -1,7 +1,10 @@
 import { LogOut, Menu, Sprout, Target, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { sessionService } from '@/common/services/session.service'
+import {
+  SESSION_EXPIRED_EVENT,
+  sessionService,
+} from '@/common/services/session.service'
 
 const navigation = [
   { label: 'Objetivos', path: '/objetivos', icon: Target },
@@ -10,6 +13,22 @@ const navigation = [
 export function ApplicationLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      navigate('/iniciar-sesion', {
+        replace: true,
+        state: {
+          message: 'Tu sesión venció. Ingresa nuevamente para continuar.',
+          alertVariant: 'info',
+        },
+      })
+    }
+
+    window.addEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired)
+    return () =>
+      window.removeEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired)
+  }, [navigate])
 
   const logout = () => {
     sessionService.clear()

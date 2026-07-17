@@ -76,7 +76,10 @@ export function LoginPage() {
       step="Acceso"
     >
       {navigationState?.message ? (
-        <AuthAlert message={navigationState.message} variant="success" />
+        <AuthAlert
+          message={navigationState.message}
+          variant={navigationState.alertVariant || 'success'}
+        />
       ) : null}
       {requestError ? <AuthAlert message={requestError} /> : null}
 

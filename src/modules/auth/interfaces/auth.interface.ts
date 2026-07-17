@@ -122,6 +122,7 @@ export interface ISubmitButtonProps {
 
 export interface IAuthNavigationState {
   message?: string
+  alertVariant?: IAuthAlertProps['variant']
   passwordChangeToken?: string
 }
 

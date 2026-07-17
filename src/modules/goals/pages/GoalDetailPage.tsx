@@ -1,66 +1,116 @@
-import { ArrowLeft, CalendarDays, Flag, Plus, WalletCards } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { Modal } from '@/common/components/Modal'
-import { GoalMovementForm } from '@/modules/goal-movements/components/GoalMovementForm'
-import { GoalMovementsList } from '@/modules/goal-movements/components/GoalMovementsList'
+import {
+  ArrowLeft,
+  CalendarDays,
+  Flag,
+  Plus,
+  TrendingUp,
+  WalletCards,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Modal } from "@/common/components/Modal";
+import { GoalMovementForm } from "@/modules/goal-movements/components/GoalMovementForm";
+import { GoalMovementsList } from "@/modules/goal-movements/components/GoalMovementsList";
 import type {
   IGoalMovement,
   IGoalMovementPayload,
-} from '@/modules/goal-movements/interfaces/goal-movements.interface'
-import { goalMovementsService } from '@/modules/goal-movements/services/goal-movements.service'
-import type { IGoal } from '@/modules/goals/interfaces/goals.interface'
-import { goalsService } from '@/modules/goals/services/goals.service'
-import { getErrorMessage } from '@/utils/error.utils'
-import { formatDate, formatMoney } from '@/utils/format.utils'
+} from "@/modules/goal-movements/interfaces/goal-movements.interface";
+import { goalMovementsService } from "@/modules/goal-movements/services/goal-movements.service";
+import type { IGoal } from "@/modules/goals/interfaces/goals.interface";
+import { goalsService } from "@/modules/goals/services/goals.service";
+import { InvestmentOperationForm } from "@/modules/investment-operations/components/InvestmentOperationForm";
+import { InvestmentOperationsList } from "@/modules/investment-operations/components/InvestmentOperationsList";
+import type {
+  IInvestmentOperation,
+  IInvestmentOperationPayload,
+  InvestmentOperationUpdatePayload,
+} from "@/modules/investment-operations/interfaces/investment-operations.interface";
+import { investmentOperationsService } from "@/modules/investment-operations/services/investment-operations.service";
+import { GoalSummaryPanel } from "@/modules/summaries/components/GoalSummaryPanel";
+import type { IGoalSummary } from "@/modules/summaries/interfaces/summaries.interface";
+import { summariesService } from "@/modules/summaries/services/summaries.service";
+import { getErrorMessage } from "@/utils/error.utils";
+import { formatDate, formatMoney } from "@/utils/format.utils";
+
+type DetailTab = "movements" | "operations";
+type FormMode = DetailTab | null;
 
 export function GoalDetailPage() {
-  const { goalId = '' } = useParams()
-  const [goal, setGoal] = useState<IGoal | null>(null)
-  const [movements, setMovements] = useState<IGoalMovement[]>([])
-  const [editingMovement, setEditingMovement] = useState<IGoalMovement | null>(null)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState('')
+  const { goalId = "" } = useParams();
+  const [goal, setGoal] = useState<IGoal | null>(null);
+  const [summary, setSummary] = useState<IGoalSummary | null>(null);
+  const [movements, setMovements] = useState<IGoalMovement[]>([]);
+  const [operations, setOperations] = useState<IInvestmentOperation[]>([]);
+  const [editingMovement, setEditingMovement] = useState<IGoalMovement | null>(
+    null,
+  );
+  const [editingOperation, setEditingOperation] =
+    useState<IInvestmentOperation | null>(null);
+  const [activeTab, setActiveTab] = useState<DetailTab>("operations");
+  const [formMode, setFormMode] = useState<FormMode>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    let isActive = true
+    let isActive = true;
 
     Promise.all([
       goalsService.getById(goalId),
       goalMovementsService.getByGoal(goalId),
+      investmentOperationsService.getByGoal(goalId),
+      summariesService.getByGoal(goalId),
     ])
-      .then(([goalResponse, movementsResponse]) => {
-        if (!isActive) return
-        setGoal(goalResponse.result)
-        setMovements(movementsResponse.result)
-      })
+      .then(
+        ([
+          goalResponse,
+          movementsResponse,
+          operationsResponse,
+          summaryResponse,
+        ]) => {
+          if (!isActive) return;
+          setGoal(goalResponse.result);
+          setMovements(movementsResponse.result);
+          setOperations(operationsResponse.result);
+          setSummary(summaryResponse.result);
+        },
+      )
       .catch((requestError: unknown) => {
-        if (isActive) setError(getErrorMessage(requestError))
+        if (isActive) setError(getErrorMessage(requestError));
       })
       .finally(() => {
-        if (isActive) setIsLoading(false)
-      })
+        if (isActive) setIsLoading(false);
+      });
 
     return () => {
-      isActive = false
-    }
-  }, [goalId])
+      isActive = false;
+    };
+  }, [goalId]);
 
-  const openCreate = () => {
-    setEditingMovement(null)
-    setIsFormOpen(true)
-  }
+  const refreshSummary = async () => {
+    const { result } = await summariesService.getByGoal(goalId);
+    setSummary(result);
+  };
 
-  const openEdit = (movement: IGoalMovement) => {
-    setEditingMovement(movement)
-    setIsFormOpen(true)
-  }
+  const openMovementForm = (movement: IGoalMovement | null = null) => {
+    setEditingMovement(movement);
+    setFormMode("movements");
+  };
+
+  const openOperationForm = (operation: IInvestmentOperation | null = null) => {
+    setEditingOperation(operation);
+    setFormMode("operations");
+  };
+
+  const closeForm = () => {
+    setFormMode(null);
+    setEditingMovement(null);
+    setEditingOperation(null);
+  };
 
   const saveMovement = async (payload: IGoalMovementPayload) => {
-    setIsSubmitting(true)
-    setError('')
+    setIsSubmitting(true);
+    setError("");
     try {
       if (editingMovement) {
         const updatePayload = {
@@ -71,77 +121,124 @@ export function GoalDetailPage() {
           exchangeRateArsPerUsd: payload.exchangeRateArsPerUsd,
           platform: payload.platform,
           notes: payload.notes,
-        }
+        };
         const { result } = await goalMovementsService.update(
           editingMovement.id,
           updatePayload,
-        )
+        );
         setMovements((current) =>
           current.map((movement) =>
             movement.id === result.id ? result : movement,
           ),
-        )
+        );
       } else {
-        const { result } = await goalMovementsService.create(payload)
-        setMovements((current) => [result, ...current])
+        const { result } = await goalMovementsService.create(payload);
+        setMovements((current) => [result, ...current]);
       }
-      setIsFormOpen(false)
-      setEditingMovement(null)
+      await refreshSummary();
+      closeForm();
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError))
+      setError(getErrorMessage(requestError));
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
+
+  const saveOperation = async (payload: IInvestmentOperationPayload) => {
+    setIsSubmitting(true);
+    setError("");
+    try {
+      if (editingOperation) {
+        const updatePayload: InvestmentOperationUpdatePayload = {
+          platform: payload.platform,
+          ticker: payload.ticker,
+          type: payload.type,
+          operationDate: payload.operationDate,
+          quantity: payload.quantity,
+          unitPrice: payload.unitPrice,
+          fees: payload.fees,
+          currency: payload.currency,
+          exchangeRateArsPerUsd: payload.exchangeRateArsPerUsd,
+          notes: payload.notes,
+        };
+        const { result } = await investmentOperationsService.update(
+          editingOperation.id,
+          updatePayload,
+        );
+        setOperations((current) =>
+          current.map((operation) =>
+            operation.id === result.id ? result : operation,
+          ),
+        );
+      } else {
+        const { result } = await investmentOperationsService.create(payload);
+        setOperations((current) => [result, ...current]);
+      }
+      await refreshSummary();
+      closeForm();
+    } catch (requestError: unknown) {
+      setError(getErrorMessage(requestError));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const deleteMovement = async (movement: IGoalMovement) => {
-    if (!window.confirm('¿Eliminar este movimiento?')) return
+    if (!window.confirm("¿Eliminar este movimiento?")) return;
     try {
-      await goalMovementsService.remove(movement.id)
-      setMovements((current) =>
-        current.filter(({ id }) => id !== movement.id),
-      )
+      await goalMovementsService.remove(movement.id);
+      setMovements((current) => current.filter(({ id }) => id !== movement.id));
+      await refreshSummary();
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError))
+      setError(getErrorMessage(requestError));
     }
-  }
+  };
+
+  const deleteOperation = async (operation: IInvestmentOperation) => {
+    if (!window.confirm("¿Eliminar esta operación?")) return;
+    try {
+      await investmentOperationsService.remove(operation.id);
+      setOperations((current) =>
+        current.filter(({ id }) => id !== operation.id),
+      );
+      await refreshSummary();
+    } catch (requestError: unknown) {
+      setError(getErrorMessage(requestError));
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="mx-auto max-w-7xl animate-pulse space-y-6">
         <div className="h-52 rounded-[2rem] bg-white/60" />
-        <div className="h-80 rounded-[2rem] bg-white/60" />
+        <div className="h-96 rounded-[2rem] bg-white/60" />
       </div>
-    )
+    );
   }
 
-  if (!goal) {
+  if (!goal || !summary) {
     return (
       <div className="mx-auto max-w-3xl rounded-[2rem] bg-white p-10 text-center">
-        <h1 className="font-display text-4xl text-forest">No encontramos el objetivo</h1>
+        <h1 className="font-display text-4xl text-forest">
+          No encontramos el objetivo
+        </h1>
         <p className="mt-3 text-sm text-ink/50">{error}</p>
-        <Link to="/objetivos" className="mt-6 inline-block font-bold text-forest">Volver a objetivos</Link>
+        <Link
+          to="/objetivos"
+          className="mt-6 inline-block font-bold text-forest"
+        >
+          Volver a objetivos
+        </Link>
       </div>
-    )
+    );
   }
-
-  const comparableMovements = movements.filter(
-    ({ currency }) => currency === goal.currency,
-  )
-  const contributed = comparableMovements
-    .filter(({ type }) => type === 'contribution')
-    .reduce((total, { amount }) => total + amount, 0)
-  const withdrawn = comparableMovements
-    .filter(({ type }) => type === 'withdrawal')
-    .reduce((total, { amount }) => total + amount, 0)
-  const accumulated = contributed - withdrawn
-  const progress = goal.targetAmount
-    ? Math.max(0, (accumulated / goal.targetAmount) * 100)
-    : 0
 
   return (
     <section className="mx-auto max-w-7xl">
-      <Link to="/objetivos" className="inline-flex items-center gap-2 text-sm font-bold text-moss hover:text-forest">
+      <Link
+        to="/objetivos"
+        className="inline-flex items-center gap-2 text-sm font-bold text-moss hover:text-forest"
+      >
         <ArrowLeft size={17} />
         Volver a objetivos
       </Link>
@@ -152,62 +249,121 @@ export function GoalDetailPage() {
           <div className="relative flex flex-col justify-between gap-8 md:flex-row md:items-end">
             <div>
               <p className="text-xs font-bold tracking-[0.2em] text-lime uppercase">
-                {goal.type === 'long_term' ? 'Objetivo de largo plazo' : 'Objetivo de corto plazo'}
+                {goal.type === "long_term"
+                  ? "Objetivo de largo plazo"
+                  : "Objetivo de corto plazo"}
               </p>
-              <h1 className="mt-3 font-display text-5xl leading-none sm:text-6xl">{goal.name}</h1>
+              <h1 className="mt-3 font-display text-5xl leading-none sm:text-6xl">
+                {goal.name}
+              </h1>
               <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/55">
-                <span className="inline-flex items-center gap-2"><Flag size={15} />Meta {formatMoney(goal.targetAmount, goal.currency)}</span>
-                <span className="inline-flex items-center gap-2"><CalendarDays size={15} />{goal.endDate ? formatDate(goal.endDate) : 'Sin fecha límite'}</span>
+                <span className="inline-flex items-center gap-2">
+                  <Flag size={15} />
+                  Meta {formatMoney(goal.targetAmount, goal.currency)}
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <CalendarDays size={15} />
+                  {goal.endDate ? formatDate(goal.endDate) : "Sin fecha límite"}
+                </span>
               </div>
             </div>
-            <button type="button" onClick={openCreate} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-lime px-5 py-3.5 text-sm font-bold text-forest">
-              <Plus size={18} />
-              Nuevo movimiento
-            </button>
-          </div>
-        </div>
-        <div className="border-t border-white/10 bg-white/5 p-7 sm:px-10">
-          <div className="flex items-center justify-between gap-4 text-sm">
-            <span className="text-white/55">Avance por movimientos en {goal.currency}</span>
-            <strong className="text-lime">{progress.toFixed(1)}%</strong>
-          </div>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full rounded-full bg-lime transition-all duration-700" style={{ width: Math.min(progress, 100) + '%' }} />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => openMovementForm()}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-5 py-3.5 text-sm font-bold text-white"
+              >
+                <Plus size={18} />
+                Aporte / extracción
+              </button>
+              <button
+                type="button"
+                onClick={() => openOperationForm()}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-lime px-5 py-3.5 text-sm font-bold text-forest"
+              >
+                <TrendingUp size={18} />
+                Compra / venta
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {error ? <div className="mt-6 rounded-2xl border border-ember/20 bg-ember/8 px-5 py-4 text-sm font-semibold text-ember">{error}</div> : null}
+      {error ? (
+        <div className="mt-6 rounded-2xl border border-ember/20 bg-ember/8 px-5 py-4 text-sm font-semibold text-ember">
+          {error}
+        </div>
+      ) : null}
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        {[
-          { label: 'Acumulado neto', value: accumulated, accent: true },
-          { label: 'Total aportado', value: contributed, accent: false },
-          { label: 'Total extraído', value: withdrawn, accent: false },
-        ].map(({ label, value, accent }) => (
-          <article key={label} className={'rounded-[1.5rem] border p-5 ' + (accent ? 'border-lime bg-lime/55' : 'border-forest/8 bg-white')}>
-            <p className="text-xs font-bold tracking-[0.1em] text-moss uppercase">{label}</p>
-            <p className="mt-3 font-display text-3xl text-forest">{formatMoney(value, goal.currency)}</p>
-          </article>
-        ))}
+      <div className="mt-6">
+        <GoalSummaryPanel summary={summary} />
       </div>
 
       <div className="mt-8 rounded-[2rem] border border-forest/8 bg-cream p-5 sm:p-7">
-        <div className="mb-6 flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-xl bg-lime text-forest"><WalletCards size={19} /></span>
-          <div>
-            <h2 className="font-display text-3xl text-forest">Movimientos</h2>
-            <p className="text-xs text-ink/45">{movements.length} registros en todas las monedas</p>
+        <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-xl bg-lime text-forest">
+              {activeTab === "operations" ? (
+                <TrendingUp size={19} />
+              ) : (
+                <WalletCards size={19} />
+              )}
+            </span>
+            <div>
+              <h2 className="font-display text-3xl text-forest">Actividad</h2>
+              <p className="text-xs text-ink/45">
+                {movements.length} movimientos · {operations.length} operaciones
+              </p>
+            </div>
+          </div>
+          <div className="flex rounded-2xl bg-linen p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("operations")}
+              className={
+                "rounded-xl px-4 py-2 text-xs font-bold transition " +
+                (activeTab === "operations"
+                  ? "bg-white text-forest shadow-sm"
+                  : "text-moss")
+              }
+            >
+              Inversiones
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("movements")}
+              className={
+                "rounded-xl px-4 py-2 text-xs font-bold transition " +
+                (activeTab === "movements"
+                  ? "bg-white text-forest shadow-sm"
+                  : "text-moss")
+              }
+            >
+              Caja
+            </button>
           </div>
         </div>
-        <GoalMovementsList movements={movements} onEdit={openEdit} onDelete={deleteMovement} />
+
+        {activeTab === "operations" ? (
+          <InvestmentOperationsList
+            operations={operations}
+            onEdit={openOperationForm}
+            onDelete={deleteOperation}
+          />
+        ) : (
+          <GoalMovementsList
+            movements={movements}
+            onEdit={openMovementForm}
+            onDelete={deleteMovement}
+          />
+        )}
       </div>
 
-      {isFormOpen ? (
+      {formMode === "movements" ? (
         <Modal
-          eyebrow={editingMovement ? 'Editar registro' : 'Caja del objetivo'}
-          title={editingMovement ? 'Modificar movimiento' : 'Nuevo movimiento'}
-          onClose={() => setIsFormOpen(false)}
+          eyebrow={editingMovement ? "Editar registro" : "Caja del objetivo"}
+          title={editingMovement ? "Modificar movimiento" : "Nuevo movimiento"}
+          onClose={closeForm}
         >
           <GoalMovementForm
             goalId={goal.id}
@@ -215,10 +371,27 @@ export function GoalDetailPage() {
             movement={editingMovement || undefined}
             isSubmitting={isSubmitting}
             onSubmit={saveMovement}
-            onCancel={() => setIsFormOpen(false)}
+            onCancel={closeForm}
+          />
+        </Modal>
+      ) : null}
+
+      {formMode === "operations" ? (
+        <Modal
+          eyebrow={editingOperation ? "Editar inversión" : "Libro de inversión"}
+          title={editingOperation ? "Modificar operación" : "Nueva operación"}
+          onClose={closeForm}
+        >
+          <InvestmentOperationForm
+            goalId={goal.id}
+            defaultCurrency={goal.currency}
+            operation={editingOperation || undefined}
+            isSubmitting={isSubmitting}
+            onSubmit={saveOperation}
+            onCancel={closeForm}
           />
         </Modal>
       ) : null}
     </section>
-  )
+  );
 }

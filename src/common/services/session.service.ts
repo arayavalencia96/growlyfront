@@ -5,6 +5,7 @@ import type {
 
 const ACCESS_TOKEN_KEY = 'growly.accessToken'
 const REFRESH_TOKEN_KEY = 'growly.refreshToken'
+export const SESSION_EXPIRED_EVENT = 'growly:session-expired'
 
 class BrowserSessionService implements ISessionService {
   save(tokens: ISessionTokens): void {
@@ -15,6 +16,11 @@ class BrowserSessionService implements ISessionService {
   clear(): void {
     sessionStorage.removeItem(ACCESS_TOKEN_KEY)
     sessionStorage.removeItem(REFRESH_TOKEN_KEY)
+  }
+
+  expire(): void {
+    this.clear()
+    window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT))
   }
 
   hasSession(): boolean {
