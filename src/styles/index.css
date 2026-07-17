@@ -45,6 +45,15 @@
     @apply w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition;
     @apply placeholder:text-ink/35 focus:border-moss focus:ring-4 focus:ring-moss/10;
   }
+
+  .app-field {
+    @apply w-full rounded-2xl border border-forest/12 bg-white px-4 py-3 text-sm text-ink outline-none transition;
+    @apply placeholder:text-ink/30 focus:border-moss focus:ring-4 focus:ring-moss/10;
+  }
+
+  .app-label {
+    @apply mb-2 block text-xs font-bold tracking-[0.08em] text-forest uppercase;
+  }
 }
 
 @keyframes auth-rise {
