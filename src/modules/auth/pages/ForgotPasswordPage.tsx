@@ -39,9 +39,9 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      eyebrow="Recupera tu acceso"
-      title="Volvamos a empezar."
-      description="Ingresa el correo de tu cuenta. Si está habilitada, recibirás un enlace seguro para elegir una contraseña nueva."
+      eyebrow="Recuperá tu acceso"
+      title="Recuperar cuenta"
+      description="Ingresá tu correo. Si el correo existe, recibirás un enlace para crear una contraseña nueva."
       step="Recuperación 1 de 2"
     >
       {emailWasSent ? (

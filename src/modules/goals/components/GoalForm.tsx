@@ -59,6 +59,7 @@ export function GoalForm({
           <label className="app-label" htmlFor="goal-type">Tipo</label>
           <select id="goal-type" className="app-field" {...register('type')}>
             <option value="long_term">Largo plazo</option>
+            <option value="medium_term">Mediano plazo</option>
             <option value="short_term">Corto plazo / trading</option>
           </select>
         </div>

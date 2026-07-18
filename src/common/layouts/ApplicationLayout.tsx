@@ -1,46 +1,47 @@
-import { LogOut, Menu, Sprout, Target, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { LogOut, Menu, Sprout, Target, UserRound, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   SESSION_EXPIRED_EVENT,
   sessionService,
-} from '@/common/services/session.service'
+} from "@/common/services/session.service";
 
 const navigation = [
-  { label: 'Objetivos', path: '/objetivos', icon: Target },
-] as const
+  { label: "Objetivos", path: "/objetivos", icon: Target },
+  { label: "Mi perfil", path: "/mi-perfil", icon: UserRound },
+] as const;
 
 export function ApplicationLayout() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleSessionExpired = () => {
-      navigate('/iniciar-sesion', {
+      navigate("/iniciar-sesion", {
         replace: true,
         state: {
-          message: 'Tu sesión venció. Ingresa nuevamente para continuar.',
-          alertVariant: 'info',
+          message: "Tu sesión venció. Ingresa nuevamente para continuar.",
+          alertVariant: "info",
         },
-      })
-    }
+      });
+    };
 
-    window.addEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired)
+    window.addEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired);
     return () =>
-      window.removeEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired)
-  }, [navigate])
+      window.removeEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired);
+  }, [navigate]);
 
   const logout = () => {
-    sessionService.clear()
-    navigate('/iniciar-sesion', { replace: true })
-  }
+    sessionService.clear();
+    navigate("/iniciar-sesion", { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-linen text-ink">
       <aside
         className={
-          'fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-forest px-5 py-6 text-white transition-transform duration-300 lg:translate-x-0 ' +
-          (isMenuOpen ? 'translate-x-0' : '-translate-x-full')
+          "fixed inset-y-0 left-0 z-40 flex h-dvh w-72 flex-col overflow-hidden bg-forest px-5 py-6 text-white transition-transform duration-300 lg:translate-x-0 " +
+          (isMenuOpen ? "translate-x-0" : "-translate-x-full")
         }
       >
         <div className="flex items-center justify-between px-2">
@@ -60,17 +61,17 @@ export function ApplicationLayout() {
           </button>
         </div>
 
-        <nav className="mt-12 space-y-2">
+        <nav className="mt-12 min-h-0 flex-1 space-y-2 overflow-y-auto">
           {navigation.map(({ label, path, icon: Icon }) => (
             <NavLink
               key={path}
               to={path}
               onClick={() => setIsMenuOpen(false)}
               className={({ isActive }) =>
-                'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition ' +
+                "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition " +
                 (isActive
-                  ? 'bg-lime text-forest'
-                  : 'text-white/65 hover:bg-white/8 hover:text-white')
+                  ? "bg-lime text-forest"
+                  : "text-white/65 hover:bg-white/8 hover:text-white")
               }
             >
               <Icon size={19} strokeWidth={1.9} />
@@ -79,22 +80,24 @@ export function ApplicationLayout() {
           ))}
         </nav>
 
-        <div className="mt-auto rounded-3xl border border-white/10 bg-white/6 p-4">
-          <p className="text-xs font-bold tracking-[0.18em] text-lime uppercase">
-            Tu patrimonio
-          </p>
-          <p className="mt-2 text-sm leading-6 text-white/60">
-            Cada movimiento cuenta una parte de tu progreso.
-          </p>
+        <div className="shrink-0 pt-6">
+          <div className="rounded-3xl border border-white/10 bg-white/6 p-4">
+            <p className="text-xs font-bold tracking-[0.18em] text-lime uppercase">
+              Tu patrimonio
+            </p>
+            <p className="mt-2 text-sm leading-6 text-white/60">
+              Cada movimiento cuenta una parte de tu progreso.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={logout}
+            className="mt-4 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/60 transition hover:bg-white/8 hover:text-white"
+          >
+            <LogOut size={18} />
+            Cerrar sesión
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={logout}
-          className="mt-4 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/60 transition hover:bg-white/8 hover:text-white"
-        >
-          <LogOut size={18} />
-          Cerrar sesión
-        </button>
       </aside>
 
       {isMenuOpen ? (
@@ -125,5 +128,5 @@ export function ApplicationLayout() {
         </main>
       </div>
     </div>
-  )
+  );
 }

@@ -1,11 +1,10 @@
-import { Check } from 'lucide-react'
 import { BrandMark } from '@/modules/auth/components/BrandMark'
 import type { IAuthLayoutProps } from '@/modules/auth/interfaces/auth.interface'
 
 const AUTH_STEPS = [
-  'Define un objetivo',
-  'Registra tus movimientos',
-  'Mide el progreso real',
+  'Definí un objetivo',
+  'Registrá tus transacciones',
+  'Medí el progreso real',
 ] as const
 
 export function AuthLayout({
@@ -32,7 +31,7 @@ export function AuthLayout({
             Cada inversión empieza con una razón.
           </h2>
           <p className="mt-6 max-w-md text-base leading-7 text-white/62">
-            Ordena tus objetivos, movimientos y posiciones en un solo lugar.
+            Ordená tus objetivos, movimientos y posiciones en un solo lugar.
             Sin planillas dispersas ni cálculos repetidos.
           </p>
         </div>
@@ -44,11 +43,7 @@ export function AuthLayout({
               className="flex items-center gap-3 text-sm text-white/68"
             >
               <span className="grid size-6 place-items-center rounded-full border border-lime/35 text-lime">
-                {index === 0 ? (
-                  <Check aria-hidden="true" size={13} />
-                ) : (
-                  index + 1
-                )}
+                {index + 1}
               </span>
               {item}
             </li>

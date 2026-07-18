@@ -70,9 +70,9 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      eyebrow="Bienvenido de nuevo"
+      eyebrow="Bienvenido"
       title="Volvé a tus objetivos."
-      description="Ingresa para revisar tus posiciones, movimientos y el progreso de cada meta."
+      description="Ingresá para revisar tus posiciones, movimientos y el progreso de cada meta."
       step="Acceso"
     >
       {navigationState?.message ? (
@@ -106,7 +106,7 @@ export function LoginPage() {
               to="/recuperar-contrasena"
               className="text-sm font-extrabold text-forest underline decoration-lime decoration-4 underline-offset-4"
             >
-              Recupera tu contraseña
+              Recuperá tu contraseña
             </Link>
           </div>
         </div>
@@ -117,7 +117,7 @@ export function LoginPage() {
       </form>
 
       <p className="mt-7 text-center text-sm text-ink/55">
-        ¿Todavía no tienes una cuenta?{' '}
+        ¿Todavía no tenés una cuenta?{' '}
         <Link
           to="/registro"
           className="font-extrabold text-forest underline decoration-lime decoration-4 underline-offset-4"

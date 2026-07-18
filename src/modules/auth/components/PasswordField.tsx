@@ -18,6 +18,9 @@ export function PasswordField({
     : hint
       ? fieldId + '-hint'
       : undefined
+  const visibilityLabel = isVisible
+    ? 'Ocultar contraseña'
+    : 'Mostrar contraseña'
 
   return (
     <div>
@@ -41,7 +44,7 @@ export function PasswordField({
           aria-invalid={Boolean(error)}
           aria-describedby={descriptionId}
           className={
-            'auth-field pr-12 pl-11 ' +
+            'auth-field pr-14 pl-11 ' +
             (error
               ? 'border-ember/60 focus:border-ember focus:ring-ember/10 '
               : '') +
@@ -51,8 +54,10 @@ export function PasswordField({
         <button
           type="button"
           onClick={() => setIsVisible((current) => !current)}
-          className="absolute top-1/2 right-4 -translate-y-1/2 rounded-md p-1 text-ink/45 transition hover:text-forest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-moss"
-          aria-label={isVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+          className="absolute top-1/2 right-3 grid size-9 -translate-y-1/2 place-items-center rounded-lg text-ink/45 transition hover:bg-forest/5 hover:text-forest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-moss"
+          aria-label={visibilityLabel}
+          aria-pressed={isVisible}
+          title={visibilityLabel}
         >
           {isVisible ? (
             <EyeOff aria-hidden="true" size={18} />

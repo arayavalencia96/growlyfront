@@ -12,9 +12,22 @@ describe('auth validations', () => {
       email: 'ana@growly.com',
       password: 'Growly#2026',
       confirmPassword: 'Growly#2026',
+      termsAccepted: true,
     })
 
     expect(result.success).toBe(true)
+  })
+
+  it('requires accepting the terms and conditions', () => {
+    const result = registerSchema.safeParse({
+      name: 'Ana',
+      email: 'ana@growly.com',
+      password: 'Growly#2026',
+      confirmPassword: 'Growly#2026',
+      termsAccepted: false,
+    })
+
+    expect(result.success).toBe(false)
   })
 
   it('rejects weak passwords', () => {

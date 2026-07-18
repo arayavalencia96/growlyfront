@@ -31,6 +31,19 @@
   textarea {
     font: inherit;
   }
+
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
+
+  input[type="password"]::-webkit-credentials-auto-fill-button,
+  input[type="password"]::-webkit-contacts-auto-fill-button {
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    visibility: hidden;
+  }
 }
 
 @layer components {

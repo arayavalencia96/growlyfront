@@ -28,6 +28,7 @@ export interface IRegisterRequest {
   name: string
   email: string
   password: string
+  termsAccepted: boolean
 }
 
 export interface IRegisterForm extends IRegisterRequest {
@@ -131,4 +132,9 @@ export interface INewPasswordFormProps {
   onSave(newPassword: string): Promise<void>
   submitText: string
   loadingText: string
+}
+
+export interface ITermsAndConditionsModalProps {
+  isOpen: boolean
+  onClose(): void
 }

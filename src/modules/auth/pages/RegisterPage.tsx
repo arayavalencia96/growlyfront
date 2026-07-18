@@ -9,6 +9,7 @@ import { FormField } from '@/modules/auth/components/FormField'
 import { PasswordField } from '@/modules/auth/components/PasswordField'
 import { PasswordRequirements } from '@/modules/auth/components/PasswordRequirements'
 import { SubmitButton } from '@/modules/auth/components/SubmitButton'
+import { TermsAndConditionsModal } from '@/modules/auth/components/TermsAndConditionsModal'
 import type { IRegisterForm } from '@/modules/auth/interfaces/auth.interface'
 import { authService } from '@/modules/auth/services/auth.service'
 import { getAuthErrorMessage } from '@/modules/auth/utils/auth-error.utils'
@@ -17,6 +18,7 @@ import { registerSchema } from '@/modules/auth/validations/auth.validation'
 export function RegisterPage() {
   const navigate = useNavigate()
   const [requestError, setRequestError] = useState('')
+  const [isTermsOpen, setIsTermsOpen] = useState(false)
   const {
     register,
     handleSubmit,
@@ -28,6 +30,7 @@ export function RegisterPage() {
       email: '',
       password: '',
       confirmPassword: '',
+      termsAccepted: false,
     },
   })
 
@@ -40,6 +43,7 @@ export function RegisterPage() {
         name: data.name.trim(),
         email,
         password: data.password,
+        termsAccepted: data.termsAccepted,
       })
       const params = new URLSearchParams({
         email,
@@ -61,7 +65,7 @@ export function RegisterPage() {
     <AuthLayout
       eyebrow="Crea tu espacio"
       title="Dale un destino a tu dinero."
-      description="Empieza con una cuenta y después convierte cada ahorro o inversión en progreso visible."
+      description="Empezá creando tu cuenta y después convertí cada ahorro o inversión en un progreso visible."
       step="Paso 1 de 2"
     >
       {requestError ? <AuthAlert message={requestError} /> : null}
@@ -88,17 +92,43 @@ export function RegisterPage() {
           {...register('password')}
           label="Contraseña"
           autoComplete="new-password"
-          placeholder="Crea una contraseña segura"
+          placeholder="Contraseña"
           error={errors.password?.message}
         />
         <PasswordField
           {...register('confirmPassword')}
           label="Confirmar contraseña"
           autoComplete="new-password"
-          placeholder="Repite tu contraseña"
+          placeholder="Repetí tu contraseña"
           error={errors.confirmPassword?.message}
         />
         <PasswordRequirements />
+        <div>
+          <div className="flex items-start gap-3 rounded-2xl border border-forest/10 bg-white/65 p-4">
+            <input
+              id="terms-accepted"
+              type="checkbox"
+              className="mt-0.5 size-4 shrink-0 cursor-pointer accent-forest"
+              {...register('termsAccepted')}
+            />
+            <div className="text-sm leading-5 text-ink/60">
+              <label htmlFor="terms-accepted">Leí y acepto los </label>
+              <button
+                type="button"
+                onClick={() => setIsTermsOpen(true)}
+                className="font-bold text-forest underline decoration-lime decoration-4 underline-offset-4"
+              >
+                Términos y Condiciones y la Política de Privacidad
+              </button>
+              .
+            </div>
+          </div>
+          {errors.termsAccepted ? (
+            <p className="mt-1.5 text-xs font-medium text-ember">
+              {errors.termsAccepted.message}
+            </p>
+          ) : null}
+        </div>
         <SubmitButton
           isLoading={isSubmitting}
           loadingText="Creando cuenta..."
@@ -117,6 +147,10 @@ export function RegisterPage() {
           Ingresar
         </Link>
       </p>
+      <TermsAndConditionsModal
+        isOpen={isTermsOpen}
+        onClose={() => setIsTermsOpen(false)}
+      />
     </AuthLayout>
   )
 }
