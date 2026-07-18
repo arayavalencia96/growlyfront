@@ -1,4 +1,4 @@
-import { ArrowUpRight, CalendarDays, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import { ArrowUpRight, CalendarDays, Pencil, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { IGoalCardProps } from '@/modules/goals/interfaces/goals.interface'
 import { formatDate, formatMoney } from '@/utils/format.utils'
@@ -9,15 +9,20 @@ const statusLabels = {
   completed: 'Completado',
 } as const
 
+function getGoalTypeLabel(type: string): string {
+  if (type === 'long_term') return 'Largo plazo'
+  if (type === 'medium_term') return 'Mediano plazo'
+  return 'Corto plazo'
+}
+
 export function GoalCard({ goal, onEdit, onDelete }: IGoalCardProps) {
   return (
     <article className="group flex h-full flex-col rounded-[1.75rem] border border-forest/9 bg-cream p-6 shadow-[0_18px_55px_rgba(20,54,44,0.06)] transition hover:-translate-y-1 hover:shadow-[0_25px_65px_rgba(20,54,44,0.11)]">
       <div className="flex items-start justify-between gap-4">
         <span className="rounded-full bg-lime/65 px-3 py-1 text-[11px] font-extrabold tracking-[0.1em] text-forest uppercase">
-          {goal.type === 'long_term' ? 'Largo plazo' : 'Corto plazo'}
+          {getGoalTypeLabel(goal.type)}
         </span>
         <div className="flex items-center gap-1">
-          <MoreHorizontal size={18} className="mr-1 text-moss/50" />
           <button type="button" onClick={() => onEdit(goal)} aria-label="Editar objetivo" className="rounded-xl p-2 text-moss hover:bg-linen hover:text-forest">
             <Pencil size={16} />
           </button>

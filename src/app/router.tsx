@@ -1,47 +1,48 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
-import { HomePage } from '@/app/pages/HomePage'
-import { ApplicationLayout } from '@/common/layouts/ApplicationLayout'
-import { RequireSession } from '@/common/components/RequireSession'
-import { ChangeBlockedPasswordPage } from '@/modules/auth/pages/ChangeBlockedPasswordPage'
-import { ForgotPasswordPage } from '@/modules/auth/pages/ForgotPasswordPage'
-import { LoginPage } from '@/modules/auth/pages/LoginPage'
-import { RegisterPage } from '@/modules/auth/pages/RegisterPage'
-import { ResetPasswordPage } from '@/modules/auth/pages/ResetPasswordPage'
-import { VerificationCodePage } from '@/modules/auth/pages/VerificationCodePage'
-import { GoalDetailPage } from '@/modules/goals/pages/GoalDetailPage'
-import { GoalsPage } from '@/modules/goals/pages/GoalsPage'
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { HomePage } from "@/app/pages/HomePage";
+import { ApplicationLayout } from "@/common/layouts/ApplicationLayout";
+import { RequireSession } from "@/common/components/RequireSession";
+import { ChangeBlockedPasswordPage } from "@/modules/auth/pages/ChangeBlockedPasswordPage";
+import { ForgotPasswordPage } from "@/modules/auth/pages/ForgotPasswordPage";
+import { LoginPage } from "@/modules/auth/pages/LoginPage";
+import { RegisterPage } from "@/modules/auth/pages/RegisterPage";
+import { ResetPasswordPage } from "@/modules/auth/pages/ResetPasswordPage";
+import { VerificationCodePage } from "@/modules/auth/pages/VerificationCodePage";
+import { GoalDetailPage } from "@/modules/goals/pages/GoalDetailPage";
+import { GoalsPage } from "@/modules/goals/pages/GoalsPage";
+import { ProfilePage } from "@/modules/profile/pages/ProfilePage";
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Navigate to="/iniciar-sesion" replace />,
   },
   {
-    path: '/iniciar-sesion',
+    path: "/iniciar-sesion",
     element: <LoginPage />,
   },
   {
-    path: '/registro',
+    path: "/registro",
     element: <RegisterPage />,
   },
   {
-    path: '/verificar-codigo',
+    path: "/verificar-codigo",
     element: <VerificationCodePage />,
   },
   {
-    path: '/recuperar-contrasena',
+    path: "/recuperar-contrasena",
     element: <ForgotPasswordPage />,
   },
   {
-    path: '/restablecer-contrasena',
+    path: "/restablecer-contrasena",
     element: <ResetPasswordPage />,
   },
   {
-    path: '/cambiar-contrasena',
+    path: "/cambiar-contrasena",
     element: <ChangeBlockedPasswordPage />,
   },
   {
-    path: '/change-password',
+    path: "/change-password",
     element: <ChangeBlockedPasswordPage />,
   },
   {
@@ -51,23 +52,27 @@ export const router = createBrowserRouter([
         element: <ApplicationLayout />,
         children: [
           {
-            path: '/inicio',
+            path: "/inicio",
             element: <HomePage />,
           },
           {
-            path: '/objetivos',
+            path: "/objetivos",
             element: <GoalsPage />,
           },
           {
-            path: '/objetivos/:goalId',
+            path: "/objetivos/:goalId",
             element: <GoalDetailPage />,
+          },
+          {
+            path: "/mi-perfil",
+            element: <ProfilePage />,
           },
         ],
       },
     ],
   },
   {
-    path: '*',
+    path: "*",
     element: <Navigate to="/iniciar-sesion" replace />,
   },
-])
+]);

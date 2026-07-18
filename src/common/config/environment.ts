@@ -6,4 +6,5 @@ function normalizeUrl(url: string): string {
 
 export const environment = Object.freeze({
   apiUrl: normalizeUrl(import.meta.env.VITE_API_URL?.trim() || DEFAULT_API_URL),
+  appVersion: import.meta.env.VITE_APP_VERSION?.trim() || "0.1.0",
 });

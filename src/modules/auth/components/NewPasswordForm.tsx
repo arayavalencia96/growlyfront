@@ -37,14 +37,14 @@ export function NewPasswordForm({
         {...register('newPassword')}
         label="Nueva contraseña"
         autoComplete="new-password"
-        placeholder="Crea una contraseña segura"
+        placeholder="Nueva contraseña"
         error={errors.newPassword?.message}
       />
       <PasswordField
         {...register('confirmPassword')}
         label="Confirmar nueva contraseña"
         autoComplete="new-password"
-        placeholder="Repite la nueva contraseña"
+        placeholder="Repetí la nueva contraseña"
         error={errors.confirmPassword?.message}
       />
       <PasswordRequirements />

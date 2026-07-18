@@ -131,8 +131,8 @@ export function GoalsPage() {
         </button>
       </div>
 
-      <form onSubmit={applyFilters} className="mt-10 grid gap-3 rounded-[1.5rem] border border-forest/8 bg-white/65 p-3 shadow-sm md:grid-cols-[minmax(220px,1fr)_180px_160px_120px_auto]">
-        <label className="relative">
+      <form onSubmit={applyFilters} className="mt-10 grid gap-3 rounded-[1.5rem] border border-forest/8 bg-white/65 p-3 shadow-sm sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_180px_160px_120px_auto]">
+        <label className="relative sm:col-span-2 xl:col-span-1">
           <Search className="absolute top-1/2 left-4 -translate-y-1/2 text-moss" size={17} />
           <input
             value={search}
@@ -144,6 +144,7 @@ export function GoalsPage() {
         <select value={type} onChange={(event) => setType(event.target.value as GoalType | '')} className="app-field">
           <option value="">Todos los tipos</option>
           <option value="long_term">Largo plazo</option>
+          <option value="medium_term">Mediano plazo</option>
           <option value="short_term">Corto plazo</option>
         </select>
         <select value={status} onChange={(event) => setStatus(event.target.value as GoalStatus | '')} className="app-field">

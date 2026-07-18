@@ -32,6 +32,11 @@ export const registerSchema = z
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
+    termsAccepted: z
+      .boolean()
+      .refine((accepted) => accepted, {
+        message: 'Debes aceptar los Términos y Condiciones para continuar',
+      }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Las contraseñas no coinciden',

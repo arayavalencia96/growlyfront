@@ -1,6 +1,6 @@
 import type { IApiResponse } from '@/common/interfaces/api.interface'
 
-export const GOAL_TYPES = ['long_term', 'short_term'] as const
+export const GOAL_TYPES = ['long_term', 'short_term', 'medium_term'] as const
 export const GOAL_STATUSES = ['active', 'paused', 'completed'] as const
 export const GOAL_CURRENCIES = ['ARS', 'USD'] as const
 
