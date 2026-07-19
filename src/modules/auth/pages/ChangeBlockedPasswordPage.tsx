@@ -55,10 +55,10 @@ export function ChangeBlockedPasswordPage() {
       description="Por seguridad, debe ser distinta y cumplir las mismas reglas de protección de tu cuenta."
       step="Desbloqueo 2 de 2"
     >
-      <div className="mb-5 flex items-start gap-3 rounded-2xl border border-moss/15 bg-white/65 p-4 text-sm leading-6 text-ink/62">
+      <div className="mb-5 flex items-start gap-3 rounded-2xl border border-secondary/15 bg-surface/65 p-4 text-sm leading-6 text-body/62">
         <ShieldCheck
           aria-hidden="true"
-          className="mt-0.5 shrink-0 text-moss"
+          className="mt-0.5 shrink-0 text-secondary"
           size={19}
         />
         Al guardar la contraseña, se cerrarán las sesiones anteriores y tendrás
@@ -81,7 +81,7 @@ export function ChangeBlockedPasswordPage() {
         <p className="mt-6 text-center text-sm">
           <Link
             to="/iniciar-sesion"
-            className="font-extrabold text-forest underline decoration-lime decoration-4 underline-offset-4"
+            className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
           >
             Volver al inicio de sesión
           </Link>

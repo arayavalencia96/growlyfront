@@ -164,7 +164,7 @@ export function VerificationCodePage() {
       <div className="mt-6 flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
         <Link
           to="/iniciar-sesion"
-          className="inline-flex items-center gap-2 font-bold text-ink/55 hover:text-forest"
+          className="inline-flex items-center gap-2 font-bold text-body/55 hover:text-primary"
         >
           <ArrowLeft aria-hidden="true" size={16} />
           Volver al ingreso
@@ -173,7 +173,7 @@ export function VerificationCodePage() {
           type="button"
           onClick={handleResend}
           disabled={isResending}
-          className="font-extrabold text-forest underline decoration-lime decoration-4 underline-offset-4 disabled:opacity-50"
+          className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4 disabled:opacity-50"
         >
           {isResending ? "Reenviando..." : "Reenviar código"}
         </button>

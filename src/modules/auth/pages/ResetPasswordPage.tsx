@@ -42,10 +42,10 @@ export function ResetPasswordPage() {
       description="El enlace solo puede utilizarse una vez y vence 30 minutos después de haber sido solicitado."
       step="Recuperación 2 de 2"
     >
-      <div className="mb-5 flex items-start gap-3 rounded-2xl border border-moss/15 bg-white/65 p-4 text-sm leading-6 text-ink/62">
+      <div className="mb-5 flex items-start gap-3 rounded-2xl border border-secondary/15 bg-surface/65 p-4 text-sm leading-6 text-body/62">
         <ShieldCheck
           aria-hidden="true"
-          className="mt-0.5 shrink-0 text-moss"
+          className="mt-0.5 shrink-0 text-secondary"
           size={19}
         />
         Al guardar, cerraremos tus sesiones anteriores y tendrás que iniciar
@@ -68,7 +68,7 @@ export function ResetPasswordPage() {
         <p className="mt-6 text-center text-sm">
           <Link
             to="/recuperar-contrasena"
-            className="font-extrabold text-forest underline decoration-lime decoration-4 underline-offset-4"
+            className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
           >
             Solicitar otro enlace
           </Link>

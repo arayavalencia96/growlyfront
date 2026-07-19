@@ -131,13 +131,13 @@ export function GoalsPage() {
     <section className="mx-auto max-w-7xl">
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <div>
-          <p className="text-xs font-extrabold tracking-[0.2em] text-moss uppercase">
+          <p className="text-xs font-extrabold tracking-[0.2em] text-secondary uppercase">
             Tu hoja de ruta
           </p>
-          <h1 className="mt-3 font-display text-5xl leading-none text-forest sm:text-6xl">
+          <h1 className="mt-3 font-display text-5xl leading-none text-primary sm:text-6xl">
             Objetivos
           </h1>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-ink/58">
+          <p className="mt-4 max-w-xl text-sm leading-7 text-body/58">
             Define para qué invertís y lleva cada aporte, extracción e inversión
             dentro de un mismo propósito.
           </p>
@@ -145,7 +145,7 @@ export function GoalsPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-forest px-5 py-3.5 text-sm font-bold text-white shadow-[0_14px_35px_rgba(20,54,44,0.22)] transition hover:-translate-y-0.5 hover:bg-moss"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-3.5 text-sm font-bold text-white shadow-[0_14px_35px_rgba(20,54,44,0.22)] transition hover:-translate-y-0.5 hover:bg-brand-hover"
         >
           <Plus size={18} />
           Nuevo objetivo
@@ -160,11 +160,11 @@ export function GoalsPage() {
 
       <form
         onSubmit={applyFilters}
-        className="mt-10 grid gap-3 rounded-[1.5rem] border border-forest/8 bg-white/65 p-3 shadow-sm sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_180px_160px_120px_auto]"
+        className="mt-10 grid gap-3 rounded-[1.5rem] border border-outline/8 bg-surface/65 p-3 shadow-sm sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_180px_160px_120px_auto]"
       >
         <label className="relative sm:col-span-2 xl:col-span-1">
           <Search
-            className="absolute top-1/2 left-4 -translate-y-1/2 text-moss"
+            className="absolute top-1/2 left-4 -translate-y-1/2 text-secondary"
             size={17}
           />
           <input
@@ -207,7 +207,7 @@ export function GoalsPage() {
         </select>
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-lime px-5 py-3 text-sm font-bold text-forest"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3 text-sm font-bold text-primary"
         >
           <Filter size={16} />
           Filtrar
@@ -234,15 +234,15 @@ export function GoalsPage() {
           ))}
         </div>
       ) : (
-        <div className="mt-8 grid min-h-80 place-items-center rounded-[2rem] border border-dashed border-forest/18 bg-white/45 p-8 text-center">
+        <div className="mt-8 grid min-h-80 place-items-center rounded-[2rem] border border-dashed border-outline/18 bg-surface/45 p-8 text-center">
           <div>
-            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-lime text-forest">
+            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-accent text-primary">
               <Sprout size={26} />
             </span>
-            <h2 className="mt-5 font-display text-3xl text-forest">
+            <h2 className="mt-5 font-display text-3xl text-primary">
               Todavía no hay objetivos
             </h2>
-            <p className="mt-2 text-sm text-ink/50">
+            <p className="mt-2 text-sm text-body/50">
               Crea el primero y empieza a registrar tu progreso.
             </p>
           </div>

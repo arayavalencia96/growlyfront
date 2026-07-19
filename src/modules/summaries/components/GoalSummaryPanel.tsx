@@ -8,16 +8,16 @@ import type {
   IGoalSummaryPanelProps,
   IMoneyTotals,
 } from "@/modules/summaries/interfaces/summaries.interface";
-import { formatMoney } from "@/utils/format.utils";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 
 function MoneyPair({ totals }: { totals: IMoneyTotals }) {
   return (
     <>
-      <p className="font-display text-3xl text-forest">
-        {formatMoney(totals.usd, "USD")}
+      <p className="font-display text-3xl text-primary">
+        <SensitiveMoney amount={totals.usd} currency="USD" />
       </p>
-      <p className="mt-1 text-xs font-semibold text-moss">
-        {formatMoney(totals.ars, "ARS")}
+      <p className="mt-1 text-xs font-semibold text-secondary">
+        <SensitiveMoney amount={totals.ars} currency="ARS" />
       </p>
     </>
   );
@@ -83,55 +83,57 @@ export function GoalSummaryPanel({
             className={
               "rounded-[1.5rem] border p-5 transition " +
               (onClick
-                ? "cursor-pointer hover:-translate-y-0.5 hover:border-forest/20 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-moss/35 "
+                ? "cursor-pointer hover:-translate-y-0.5 hover:border-outline/20 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-secondary/35 "
                 : "") +
-              (accent ? "border-lime bg-lime/55" : "border-forest/8 bg-white")
+              (accent
+                ? "border-accent bg-accent/55"
+                : "border-outline/8 bg-surface")
             }
           >
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-xs font-bold tracking-[0.1em] text-moss uppercase">
+              <p className="text-xs font-bold tracking-[0.1em] text-secondary uppercase">
                 {label}
               </p>
-              <Icon size={17} className="text-moss" />
+              <Icon size={17} className="text-secondary" />
             </div>
             <MoneyPair totals={totals} />
           </article>
         ))}
       </div>
 
-      <div className="rounded-[1.5rem] border border-forest/8 bg-white p-5 sm:p-6">
+      <div className="rounded-[1.5rem] border border-outline/8 bg-surface p-5 sm:p-6">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold tracking-[0.1em] text-moss uppercase">
+            <p className="text-xs font-bold tracking-[0.1em] text-secondary uppercase">
               Avance total
             </p>
-            <p className="mt-2 text-sm text-ink/50">
+            <p className="mt-2 text-sm text-body/50">
               Efectivo más posiciones valuadas a costo
             </p>
           </div>
-          <strong className="font-display text-4xl text-forest">
+          <strong className="font-display text-4xl text-primary">
             {progress.toFixed(1)}%
           </strong>
         </div>
-        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-linen">
+        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-page">
           <div
-            className="h-full rounded-full bg-forest transition-all duration-700"
+            className="h-full rounded-full bg-brand transition-all duration-700"
             style={{ width: Math.min(progress, 100) + "%" }}
           />
         </div>
       </div>
 
-      <div className="rounded-[1.5rem] border border-forest/8 bg-cream p-5 sm:p-6">
+      <div className="rounded-[1.5rem] border border-outline/8 bg-surface-soft p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-bold tracking-[0.1em] text-moss uppercase">
+            <p className="text-xs font-bold tracking-[0.1em] text-secondary uppercase">
               Posiciones abiertas
             </p>
-            <h3 className="mt-2 font-display text-3xl text-forest">
+            <h3 className="mt-2 font-display text-3xl text-primary">
               Cartera actual
             </h3>
           </div>
-          <span className="rounded-full bg-forest px-3 py-1.5 text-xs font-bold text-lime">
+          <span className="rounded-full bg-brand px-3 py-1.5 text-xs font-bold text-accent-text">
             {summary.openPositionsCount}
           </span>
         </div>
@@ -141,42 +143,54 @@ export function GoalSummaryPanel({
             {summary.openPositions.map((position) => (
               <article
                 key={position.platform + ":" + position.ticker}
-                className="rounded-2xl border border-forest/8 bg-white p-4"
+                className="rounded-2xl border border-outline/8 bg-surface p-4"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-display text-2xl text-forest">
+                    <p className="font-display text-2xl text-primary">
                       {position.ticker}
                     </p>
-                    <p className="mt-1 text-xs font-bold tracking-[0.08em] text-moss uppercase">
+                    <p className="mt-1 text-xs font-bold tracking-[0.08em] text-secondary uppercase">
                       {position.platform}
                     </p>
                   </div>
-                  <p className="text-sm font-bold text-forest">
+                  <p className="text-sm font-bold text-primary">
                     {position.quantity} unidades
                   </p>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-4 border-t border-forest/8 pt-4">
+                <div className="mt-4 grid grid-cols-2 gap-4 border-t border-outline/8 pt-4">
                   <div>
-                    <p className="text-[10px] font-bold text-ink/40 uppercase">
+                    <p className="text-[10px] font-bold text-body/40 uppercase">
                       Costo promedio
                     </p>
-                    <p className="mt-1 text-sm font-bold text-forest">
-                      {formatMoney(position.averageCost.usd, "USD")}
+                    <p className="mt-1 text-sm font-bold text-primary">
+                      <SensitiveMoney
+                        amount={position.averageCost.usd}
+                        currency="USD"
+                      />
                     </p>
-                    <p className="mt-0.5 text-xs text-moss">
-                      {formatMoney(position.averageCost.ars, "ARS")}
+                    <p className="mt-0.5 text-xs text-secondary">
+                      <SensitiveMoney
+                        amount={position.averageCost.ars}
+                        currency="ARS"
+                      />
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-ink/40 uppercase">
+                    <p className="text-[10px] font-bold text-body/40 uppercase">
                       Total invertido
                     </p>
-                    <p className="mt-1 text-sm font-bold text-forest">
-                      {formatMoney(position.invested.usd, "USD")}
+                    <p className="mt-1 text-sm font-bold text-primary">
+                      <SensitiveMoney
+                        amount={position.invested.usd}
+                        currency="USD"
+                      />
                     </p>
-                    <p className="mt-0.5 text-xs text-moss">
-                      {formatMoney(position.invested.ars, "ARS")}
+                    <p className="mt-0.5 text-xs text-secondary">
+                      <SensitiveMoney
+                        amount={position.invested.ars}
+                        currency="ARS"
+                      />
                     </p>
                   </div>
                 </div>
@@ -184,7 +198,7 @@ export function GoalSummaryPanel({
             ))}
           </div>
         ) : (
-          <div className="mt-6 rounded-2xl border border-dashed border-forest/15 py-12 text-center text-sm text-ink/45">
+          <div className="mt-6 rounded-2xl border border-dashed border-outline/15 py-12 text-center text-sm text-body/45">
             No hay posiciones abiertas.
           </div>
         )}

@@ -7,6 +7,7 @@ import { ApplicationInfo } from "@/modules/profile/components/ApplicationInfo";
 import { ChangePasswordForm } from "@/modules/profile/components/ChangePasswordForm";
 import { DeactivateAccountModal } from "@/modules/profile/components/DeactivateAccountModal";
 import { PersonalDataForm } from "@/modules/profile/components/PersonalDataForm";
+import { ProfileSkeleton } from "@/modules/profile/components/ProfileSkeleton";
 import { profileService } from "@/modules/profile/services/profile.service";
 import { getErrorMessage } from "@/utils/error.utils";
 import { formatDate } from "@/utils/format.utils";
@@ -88,21 +89,13 @@ export function ProfilePage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="mx-auto max-w-6xl animate-pulse space-y-6">
-        <div className="h-52 rounded-[2rem] bg-white/60" />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="h-96 rounded-[2rem] bg-white/60" />
-          <div className="h-96 rounded-[2rem] bg-white/60" />
-        </div>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-2xl rounded-[2rem] bg-white p-10 text-center">
-        <h1 className="font-display text-4xl text-forest">
+      <div className="mx-auto max-w-2xl rounded-[2rem] bg-surface p-10 text-center">
+        <h1 className="font-display text-4xl text-primary">
           No pudimos cargar tu perfil
         </h1>
         <p className="mt-3 text-sm text-ember">{error}</p>
@@ -112,10 +105,10 @@ export function ProfilePage() {
 
   return (
     <section className="mx-auto max-w-6xl">
-      <div className="overflow-hidden rounded-[2rem] bg-forest text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
+      <div className="overflow-hidden rounded-[2rem] bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
         <div className="relative flex flex-col gap-6 p-7 sm:flex-row sm:items-center sm:p-9">
-          <div className="absolute -top-20 -right-12 size-64 rounded-full border-[45px] border-lime/8" />
-          <span className="relative grid size-20 shrink-0 place-items-center rounded-[1.75rem] bg-lime font-display text-3xl text-forest">
+          <div className="absolute -top-20 -right-12 size-64 rounded-full border-[45px] border-accent/8" />
+          <span className="relative grid size-20 shrink-0 place-items-center rounded-[1.75rem] bg-accent font-display text-3xl text-primary">
             {getInitials(user.name)}
           </span>
           <div className="relative min-w-0">
@@ -123,7 +116,7 @@ export function ProfilePage() {
               <h1 className="font-display text-5xl leading-none">
                 {user.name}
               </h1>
-              <span className="inline-flex items-center gap-1 rounded-full bg-lime/12 px-3 py-1 text-xs font-bold text-lime">
+              <span className="inline-flex items-center gap-1 rounded-full bg-accent/12 px-3 py-1 text-xs font-bold text-accent-text">
                 <BadgeCheck size={14} />
                 Verificado
               </span>
@@ -131,7 +124,7 @@ export function ProfilePage() {
             <p className="mt-3 text-sm text-white/55">{user.email}</p>
           </div>
           <div className="relative border-t border-white/10 pt-5 sm:ml-auto sm:min-w-48 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-8 text-center md:text-left">
-            <p className="text-[10px] font-bold tracking-[0.14em] text-lime uppercase">
+            <p className="text-[10px] font-bold tracking-[0.14em] text-accent-text uppercase">
               Miembro desde
             </p>
             <p className="mt-2 text-sm font-bold text-white">
@@ -150,16 +143,16 @@ export function ProfilePage() {
           />
           <ChangePasswordForm onPasswordChanged={handlePasswordChanged} />
 
-          <section className="rounded-[1.75rem] border border-ember/18 bg-white p-6 sm:p-7">
+          <section className="rounded-[1.75rem] border border-ember/18 bg-surface p-6 sm:p-7">
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
               <div>
                 <p className="text-xs font-bold tracking-[0.12em] text-ember uppercase">
                   Zona sensible
                 </p>
-                <h2 className="mt-2 font-display text-3xl text-forest">
+                <h2 className="mt-2 font-display text-3xl text-primary">
                   Desactivar cuenta
                 </h2>
-                <p className="mt-2 max-w-lg text-sm leading-6 text-ink/50">
+                <p className="mt-2 max-w-lg text-sm leading-6 text-body/50">
                   Se cerrarán todas tus sesiones y no podrás volver a ingresar.
                   Conservaremos los datos financieros sin eliminarlos.
                 </p>
@@ -175,7 +168,6 @@ export function ProfilePage() {
             </div>
           </section>
         </div>
-
       </div>
 
       <DeactivateAccountModal

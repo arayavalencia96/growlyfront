@@ -1,33 +1,33 @@
-import type { IFormFieldProps } from '@/modules/auth/interfaces/auth.interface'
+import type { IFormFieldProps } from "@/modules/auth/interfaces/auth.interface";
 
 export function FormField({
   label,
   error,
   hint,
   icon,
-  className = '',
+  className = "",
   id,
   ref,
   ...inputProps
 }: IFormFieldProps) {
-  const fieldId = id || inputProps.name
+  const fieldId = id || inputProps.name;
   const descriptionId = error
-    ? fieldId + '-error'
+    ? fieldId + "-error"
     : hint
-      ? fieldId + '-hint'
-      : undefined
+      ? fieldId + "-hint"
+      : undefined;
 
   return (
     <div>
       <label
         htmlFor={fieldId}
-        className="mb-2 block text-sm font-bold text-forest"
+        className="mb-2 block text-sm font-bold text-primary"
       >
         {label}
       </label>
       <div className="relative">
         {icon ? (
-          <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-moss">
+          <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-secondary">
             {icon}
           </span>
         ) : null}
@@ -38,11 +38,11 @@ export function FormField({
           aria-invalid={Boolean(error)}
           aria-describedby={descriptionId}
           className={
-            'auth-field ' +
-            (icon ? 'pl-11 ' : '') +
+            "auth-field " +
+            (icon ? "pl-11 " : "") +
             (error
-              ? 'border-ember/60 focus:border-ember focus:ring-ember/10 '
-              : '') +
+              ? "border-ember/60 focus:border-ember focus:ring-ember/10 "
+              : "") +
             className
           }
         />
@@ -52,10 +52,10 @@ export function FormField({
           {error}
         </p>
       ) : hint ? (
-        <p id={descriptionId} className="mt-1.5 text-xs text-ink/48">
+        <p id={descriptionId} className="mt-1.5 text-xs text-body/48">
           {hint}
         </p>
       ) : null}
     </div>
-  )
+  );
 }

@@ -134,7 +134,7 @@ export function DeactivateAccountModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-2xl border border-forest/12 bg-white px-5 py-3 text-sm font-bold text-forest"
+            className="rounded-2xl border border-outline/12 bg-surface px-5 py-3 text-sm font-bold text-primary"
           >
             Conservar mi cuenta
           </button>

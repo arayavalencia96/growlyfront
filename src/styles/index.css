@@ -10,13 +10,42 @@
   --color-cream: #fbfaf5;
   --color-ember: #d96b4b;
   --color-ink: #18211d;
+  --color-brand: #14362c;
+  --color-brand-hover: #4f745e;
+  --color-page: #f3f0e7;
+  --color-surface: #ffffff;
+  --color-surface-soft: #fbfaf5;
+  --color-primary: #14362c;
+  --color-body: #18211d;
+  --color-secondary: #4f745e;
+  --color-accent: #d9f49f;
+  --color-accent-text: #d9f49f;
+  --color-outline: #14362c;
 }
 
 @layer base {
+  :root[data-theme="dark"] {
+    --color-brand: #102e25;
+    --color-brand-hover: #24503f;
+    --color-page: #0b1511;
+    --color-surface: #17251f;
+    --color-surface-soft: #111e19;
+    --color-primary: #edf7f0;
+    --color-body: #d8e5dc;
+    --color-secondary: #9ab8a4;
+    --color-accent: #d9f49f;
+    --color-accent-text: #d9f49f;
+    --color-outline: #a9c3b1;
+    --color-ember: #f08a6d;
+  }
+
   html {
     font-family: var(--font-sans);
-    background-color: var(--color-linen);
-    color: var(--color-ink);
+    background-color: var(--color-page);
+    color: var(--color-body);
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
   }
 
   body {
@@ -55,17 +84,29 @@
   }
 
   .auth-field {
-    @apply w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition;
-    @apply placeholder:text-ink/35 focus:border-moss focus:ring-4 focus:ring-moss/10;
+    @apply w-full rounded-2xl border border-outline/15 bg-surface px-4 py-3.5 text-sm text-body outline-none transition;
+    @apply placeholder:text-body/35 focus:border-secondary focus:ring-4 focus:ring-secondary/10;
   }
 
   .app-field {
-    @apply w-full rounded-2xl border border-forest/12 bg-white px-4 py-3 text-sm text-ink outline-none transition;
-    @apply placeholder:text-ink/30 focus:border-moss focus:ring-4 focus:ring-moss/10;
+    @apply w-full rounded-2xl border border-outline/12 bg-surface px-4 py-3 text-sm text-body outline-none transition;
+    @apply placeholder:text-body/30 focus:border-secondary focus:ring-4 focus:ring-secondary/10;
   }
 
   .app-label {
-    @apply mb-2 block text-xs font-bold tracking-[0.08em] text-forest uppercase;
+    @apply mb-2 block text-xs font-bold tracking-[0.08em] text-primary uppercase;
+  }
+}
+
+@layer utilities {
+  :root[data-theme="dark"] .bg-accent.text-primary,
+  :root[data-theme="dark"] .bg-accent .text-primary,
+  :root[data-theme="dark"] [class~="bg-accent/55"].text-primary,
+  :root[data-theme="dark"] [class~="bg-accent/55"] .text-primary,
+  :root[data-theme="dark"] [class~="bg-accent/65"].text-primary,
+  :root[data-theme="dark"] [class~="bg-accent/65"] .text-primary,
+  :root[data-theme="dark"] [class~="hover:bg-accent"]:hover {
+    color: #14362c;
   }
 }
 
