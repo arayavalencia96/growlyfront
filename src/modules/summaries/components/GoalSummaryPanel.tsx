@@ -8,16 +8,16 @@ import type {
   IGoalSummaryPanelProps,
   IMoneyTotals,
 } from "@/modules/summaries/interfaces/summaries.interface";
-import { formatMoney } from "@/utils/format.utils";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 
 function MoneyPair({ totals }: { totals: IMoneyTotals }) {
   return (
     <>
       <p className="font-display text-3xl text-forest">
-        {formatMoney(totals.usd, "USD")}
+        <SensitiveMoney amount={totals.usd} currency="USD" />
       </p>
       <p className="mt-1 text-xs font-semibold text-moss">
-        {formatMoney(totals.ars, "ARS")}
+        <SensitiveMoney amount={totals.ars} currency="ARS" />
       </p>
     </>
   );
@@ -162,10 +162,16 @@ export function GoalSummaryPanel({
                       Costo promedio
                     </p>
                     <p className="mt-1 text-sm font-bold text-forest">
-                      {formatMoney(position.averageCost.usd, "USD")}
+                      <SensitiveMoney
+                        amount={position.averageCost.usd}
+                        currency="USD"
+                      />
                     </p>
                     <p className="mt-0.5 text-xs text-moss">
-                      {formatMoney(position.averageCost.ars, "ARS")}
+                      <SensitiveMoney
+                        amount={position.averageCost.ars}
+                        currency="ARS"
+                      />
                     </p>
                   </div>
                   <div>
@@ -173,10 +179,16 @@ export function GoalSummaryPanel({
                       Total invertido
                     </p>
                     <p className="mt-1 text-sm font-bold text-forest">
-                      {formatMoney(position.invested.usd, "USD")}
+                      <SensitiveMoney
+                        amount={position.invested.usd}
+                        currency="USD"
+                      />
                     </p>
                     <p className="mt-0.5 text-xs text-moss">
-                      {formatMoney(position.invested.ars, "ARS")}
+                      <SensitiveMoney
+                        amount={position.invested.ars}
+                        currency="ARS"
+                      />
                     </p>
                   </div>
                 </div>

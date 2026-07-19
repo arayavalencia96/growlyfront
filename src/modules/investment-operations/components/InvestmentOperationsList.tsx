@@ -1,6 +1,7 @@
 import { Pencil, ShoppingCart, Trash2, TrendingUp } from "lucide-react";
 import type { IInvestmentOperationsListProps } from "@/modules/investment-operations/interfaces/investment-operations.interface";
-import { formatDate, formatMoney } from "@/utils/format.utils";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
+import { formatDate } from "@/utils/format.utils";
 
 export function InvestmentOperationsList({
   operations,
@@ -59,11 +60,17 @@ export function InvestmentOperationsList({
             </div>
             <div className="sm:text-right">
               <p className="font-display text-2xl text-forest">
-                {formatMoney(operation.totalAmount, operation.currency)}
+                <SensitiveMoney
+                  amount={operation.totalAmount}
+                  currency={operation.currency}
+                />
               </p>
               <p className="mt-1 text-xs text-ink/40">
                 {operation.type === "buy" ? "PPC " : "PPV "}
-                {formatMoney(operation.unitPrice, operation.currency)}
+                <SensitiveMoney
+                  amount={operation.unitPrice}
+                  currency={operation.currency}
+                />
               </p>
             </div>
             <div className="flex justify-end gap-1">

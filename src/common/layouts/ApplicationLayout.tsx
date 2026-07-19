@@ -1,19 +1,31 @@
-import { LogOut, Menu, Sprout, Target, UserRound, X } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  LogOut,
+  Menu,
+  Sprout,
+  Target,
+  UserRound,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   SESSION_EXPIRED_EVENT,
   sessionService,
 } from "@/common/services/session.service";
+import { BalancePrivacyProvider } from "@/common/components/BalancePrivacy";
+import { useBalancePrivacy } from "@/common/components/balance-privacy.context";
 
 const navigation = [
   { label: "Objetivos", path: "/objetivos", icon: Target },
   { label: "Mi perfil", path: "/mi-perfil", icon: UserRound },
 ] as const;
 
-export function ApplicationLayout() {
+function ApplicationShell() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { areBalancesVisible, toggleBalancesVisibility } = useBalancePrivacy();
 
   useEffect(() => {
     const handleSessionExpired = () => {
@@ -119,14 +131,35 @@ export function ApplicationLayout() {
           >
             <Menu size={20} />
           </button>
-          <p className="ml-auto text-xs font-bold tracking-[0.16em] text-moss uppercase">
-            Finanzas con propósito
-          </p>
+          <div className="ml-auto flex items-center gap-3">
+            <p className="hidden text-xs font-bold tracking-[0.16em] text-moss uppercase sm:block">
+              Finanzas con propósito
+            </p>
+            <button
+              type="button"
+              onClick={toggleBalancesVisibility}
+              aria-label={
+                areBalancesVisible ? "Ocultar saldos" : "Mostrar saldos"
+              }
+              title={areBalancesVisible ? "Ocultar saldos" : "Mostrar saldos"}
+              className="grid size-10 place-items-center rounded-xl border border-forest/10 bg-white text-forest shadow-sm transition hover:bg-lime"
+            >
+              {areBalancesVisible ? <Eye size={19} /> : <EyeOff size={19} />}
+            </button>
+          </div>
         </header>
         <main className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
           <Outlet />
         </main>
       </div>
     </div>
+  );
+}
+
+export function ApplicationLayout() {
+  return (
+    <BalancePrivacyProvider>
+      <ApplicationShell />
+    </BalancePrivacyProvider>
   );
 }

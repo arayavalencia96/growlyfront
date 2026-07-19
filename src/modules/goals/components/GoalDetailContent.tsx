@@ -1,14 +1,16 @@
+import type { ReactNode } from "react";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 import type { IGoalMovement } from "@/modules/goal-movements/interfaces/goal-movements.interface";
 import type { IInvestmentOperation } from "@/modules/investment-operations/interfaces/investment-operations.interface";
 import type { IGoalSummary } from "@/modules/summaries/interfaces/summaries.interface";
-import { formatDate, formatMoney } from "@/utils/format.utils";
+import { formatDate } from "@/utils/format.utils";
 
 export type GoalDetailSelection =
   | { type: "cash"; summary: IGoalSummary }
   | { type: "movement"; movement: IGoalMovement }
   | { type: "operation"; operation: IInvestmentOperation };
 
-function DetailItem({ label, value }: { label: string; value: string }) {
+function DetailItem({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="rounded-2xl border border-forest/8 bg-white p-4">
       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-moss">
@@ -28,10 +30,16 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
             Total contable disponible
           </p>
           <p className="mt-2 font-display text-3xl">
-            {formatMoney(detail.summary.cashBalance.usd, "USD")}
+            <SensitiveMoney
+              amount={detail.summary.cashBalance.usd}
+              currency="USD"
+            />
           </p>
           <p className="mt-1 text-sm text-white/65">
-            {formatMoney(detail.summary.cashBalance.ars, "ARS")}
+            <SensitiveMoney
+              amount={detail.summary.cashBalance.ars}
+              currency="ARS"
+            />
           </p>
         </div>
 
@@ -59,7 +67,10 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
                     </p>
                   </div>
                   <p className="font-display text-xl text-forest">
-                    {formatMoney(balance.amount, balance.currency)}
+                    <SensitiveMoney
+                      amount={balance.amount}
+                      currency={balance.currency}
+                    />
                   </p>
                 </div>
               ))}
@@ -84,7 +95,12 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
         />
         <DetailItem
           label="Monto"
-          value={formatMoney(movement.amount, movement.currency)}
+          value={
+            <SensitiveMoney
+              amount={movement.amount}
+              currency={movement.currency}
+            />
+          }
         />
         <DetailItem label="Plataforma" value={movement.platform || "GENERAL"} />
         <DetailItem label="Fecha" value={formatDate(movement.movementDate)} />
@@ -92,9 +108,14 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
         <DetailItem
           label="Dólar MEP / CCL"
           value={
-            movement.exchangeRateArsPerUsd
-              ? formatMoney(movement.exchangeRateArsPerUsd, "ARS")
-              : "Sin cotización"
+            movement.exchangeRateArsPerUsd ? (
+              <SensitiveMoney
+                amount={movement.exchangeRateArsPerUsd}
+                currency="ARS"
+              />
+            ) : (
+              "Sin cotización"
+            )
           }
         />
         <div className="sm:col-span-2">
@@ -117,19 +138,34 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
       <DetailItem label="Cantidad" value={`${operation.quantity} unidades`} />
       <DetailItem
         label={operation.type === "buy" ? "PPC" : "PPV"}
-        value={formatMoney(operation.unitPrice, operation.currency)}
+        value={
+          <SensitiveMoney
+            amount={operation.unitPrice}
+            currency={operation.currency}
+          />
+        }
       />
       <DetailItem
         label={operation.type === "buy" ? "Total invertido" : "Total obtenido"}
-        value={formatMoney(operation.totalAmount, operation.currency)}
+        value={
+          <SensitiveMoney
+            amount={operation.totalAmount}
+            currency={operation.currency}
+          />
+        }
       />
       <DetailItem label="Moneda" value={operation.currency} />
       <DetailItem
         label="Dólar MEP / CCL"
         value={
-          operation.exchangeRateArsPerUsd
-            ? formatMoney(operation.exchangeRateArsPerUsd, "ARS")
-            : "Sin cotización"
+          operation.exchangeRateArsPerUsd ? (
+            <SensitiveMoney
+              amount={operation.exchangeRateArsPerUsd}
+              currency="ARS"
+            />
+          ) : (
+            "Sin cotización"
+          )
         }
       />
       <div className="sm:col-span-2">

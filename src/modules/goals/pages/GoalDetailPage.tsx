@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Modal } from "@/common/components/Modal";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 import { GoalMovementForm } from "@/modules/goal-movements/components/GoalMovementForm";
 import { GoalMovementsList } from "@/modules/goal-movements/components/GoalMovementsList";
 import type {
@@ -35,7 +36,7 @@ import { GoalSummaryPanel } from "@/modules/summaries/components/GoalSummaryPane
 import type { IGoalSummary } from "@/modules/summaries/interfaces/summaries.interface";
 import { summariesService } from "@/modules/summaries/services/summaries.service";
 import { getErrorMessage } from "@/utils/error.utils";
-import { formatDate, formatMoney } from "@/utils/format.utils";
+import { formatDate } from "@/utils/format.utils";
 
 type DetailTab = "movements" | "operations";
 type FormMode = DetailTab | null;
@@ -260,7 +261,11 @@ export function GoalDetailPage() {
               <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/55">
                 <span className="inline-flex items-center gap-2">
                   <Flag size={15} />
-                  Meta {formatMoney(goal.targetAmount, goal.currency)}
+                  Meta{" "}
+                  <SensitiveMoney
+                    amount={goal.targetAmount}
+                    currency={goal.currency}
+                  />
                 </span>
                 <span className="inline-flex items-center gap-2">
                   <CalendarDays size={15} />

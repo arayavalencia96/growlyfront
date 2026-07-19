@@ -1,6 +1,7 @@
 import { ArrowDownLeft, ArrowUpRight, Pencil, Trash2 } from "lucide-react";
 import type { IGoalMovement } from "@/modules/goal-movements/interfaces/goal-movements.interface";
-import { formatDate, formatMoney } from "@/utils/format.utils";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
+import { formatDate } from "@/utils/format.utils";
 
 interface IGoalMovementsListProps {
   movements: IGoalMovement[];
@@ -72,8 +73,11 @@ export function GoalMovementsList({
                 (isContribution ? "text-forest" : "text-ember")
               }
             >
-              {isContribution ? "+" : "-"}
-              {formatMoney(movement.amount, movement.currency)}
+              <SensitiveMoney
+                amount={movement.amount}
+                currency={movement.currency}
+                prefix={isContribution ? "+" : "-"}
+              />
             </p>
             <div className="flex justify-end gap-1">
               <button

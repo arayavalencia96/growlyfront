@@ -7,6 +7,7 @@ import { ApplicationInfo } from "@/modules/profile/components/ApplicationInfo";
 import { ChangePasswordForm } from "@/modules/profile/components/ChangePasswordForm";
 import { DeactivateAccountModal } from "@/modules/profile/components/DeactivateAccountModal";
 import { PersonalDataForm } from "@/modules/profile/components/PersonalDataForm";
+import { ProfileSkeleton } from "@/modules/profile/components/ProfileSkeleton";
 import { profileService } from "@/modules/profile/services/profile.service";
 import { getErrorMessage } from "@/utils/error.utils";
 import { formatDate } from "@/utils/format.utils";
@@ -88,15 +89,7 @@ export function ProfilePage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="mx-auto max-w-6xl animate-pulse space-y-6">
-        <div className="h-52 rounded-[2rem] bg-white/60" />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="h-96 rounded-[2rem] bg-white/60" />
-          <div className="h-96 rounded-[2rem] bg-white/60" />
-        </div>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!user) {
@@ -175,7 +168,6 @@ export function ProfilePage() {
             </div>
           </section>
         </div>
-
       </div>
 
       <DeactivateAccountModal

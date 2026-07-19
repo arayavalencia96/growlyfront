@@ -1,6 +1,6 @@
 import { AlertTriangle, Building2, Layers3 } from "lucide-react";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 import type { IPortfolioSummary } from "@/modules/summaries/interfaces/summaries.interface";
-import { formatMoney } from "@/utils/format.utils";
 
 export function PortfolioSummaryPanel({
   summary,
@@ -20,10 +20,16 @@ export function PortfolioSummaryPanel({
               Valor contable total
             </p>
             <p className="mt-2 font-display text-4xl sm:text-5xl">
-              {formatMoney(summary.totalBookValue.usd, "USD")}
+              <SensitiveMoney
+                amount={summary.totalBookValue.usd}
+                currency="USD"
+              />
             </p>
             <p className="mt-2 text-sm font-semibold text-white/60">
-              {formatMoney(summary.totalBookValue.ars, "ARS")}
+              <SensitiveMoney
+                amount={summary.totalBookValue.ars}
+                currency="ARS"
+              />
             </p>
             <p className="mt-6 text-xs text-white/45">
               Distribuido en {summary.goalsCount}{" "}
@@ -51,10 +57,10 @@ export function PortfolioSummaryPanel({
                     {item.platform}
                   </p>
                   <p className="mt-2 font-display text-2xl">
-                    {formatMoney(item.value.usd, "USD")}
+                    <SensitiveMoney amount={item.value.usd} currency="USD" />
                   </p>
                   <p className="mt-1 text-xs font-semibold text-white/50">
-                    {formatMoney(item.value.ars, "ARS")}
+                    <SensitiveMoney amount={item.value.ars} currency="ARS" />
                   </p>
                 </article>
               ))}

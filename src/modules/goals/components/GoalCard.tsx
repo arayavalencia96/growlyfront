@@ -1,7 +1,8 @@
 import { ArrowUpRight, CalendarDays, Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { IGoalCardProps } from "@/modules/goals/interfaces/goals.interface";
-import { formatDate, formatMoney } from "@/utils/format.utils";
+import { SensitiveMoney } from "@/common/components/BalancePrivacy";
+import { formatDate } from "@/utils/format.utils";
 
 const statusLabels = {
   active: "Activo",
@@ -45,7 +46,8 @@ export function GoalCard({ goal, onEdit, onDelete }: IGoalCardProps) {
         {goal.name}
       </h2>
       <p className="mt-2 text-xs font-bold tracking-[0.1em] text-moss uppercase">
-        Meta {formatMoney(goal.targetAmount, goal.currency)}
+        Meta{" "}
+        <SensitiveMoney amount={goal.targetAmount} currency={goal.currency} />
       </p>
       <div className="mt-8 flex items-center gap-2 text-sm text-ink/50">
         <CalendarDays size={16} />
