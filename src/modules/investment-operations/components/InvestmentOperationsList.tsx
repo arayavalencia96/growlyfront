@@ -4,6 +4,7 @@ import { formatDate, formatMoney } from "@/utils/format.utils";
 
 export function InvestmentOperationsList({
   operations,
+  onView,
   onEdit,
   onDelete,
 }: IInvestmentOperationsListProps) {
@@ -22,7 +23,17 @@ export function InvestmentOperationsList({
         return (
           <article
             key={operation.id}
-            className="grid gap-4 rounded-2xl border border-forest/8 bg-white p-4 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
+            role="button"
+            tabIndex={0}
+            onClick={() => onView(operation)}
+            onKeyDown={(event) => {
+              if (event.target !== event.currentTarget) return;
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onView(operation);
+              }
+            }}
+            className="grid cursor-pointer gap-4 rounded-2xl border border-forest/8 bg-white p-4 transition hover:border-forest/20 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-moss/30 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
           >
             <span
               className={
@@ -58,7 +69,10 @@ export function InvestmentOperationsList({
             <div className="flex justify-end gap-1">
               <button
                 type="button"
-                onClick={() => onEdit(operation)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onEdit(operation);
+                }}
                 aria-label="Editar operación"
                 className="rounded-xl p-2 text-moss hover:bg-linen"
               >
@@ -66,7 +80,10 @@ export function InvestmentOperationsList({
               </button>
               <button
                 type="button"
-                onClick={() => onDelete(operation)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDelete(operation);
+                }}
                 aria-label="Eliminar operación"
                 className="rounded-xl p-2 text-moss hover:bg-ember/10 hover:text-ember"
               >

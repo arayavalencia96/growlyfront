@@ -23,7 +23,10 @@ function MoneyPair({ totals }: { totals: IMoneyTotals }) {
   );
 }
 
-export function GoalSummaryPanel({ summary }: IGoalSummaryPanelProps) {
+export function GoalSummaryPanel({
+  summary,
+  onCashBalanceClick,
+}: IGoalSummaryPanelProps) {
   const progress = Math.max(0, summary.progressPercentage);
 
   return (
@@ -51,6 +54,7 @@ export function GoalSummaryPanel({ summary }: IGoalSummaryPanelProps) {
             totals: summary.cashBalance,
             icon: Landmark,
             accent: false,
+            onClick: onCashBalanceClick,
           },
           {
             label: "Posiciones abiertas",
@@ -64,11 +68,23 @@ export function GoalSummaryPanel({ summary }: IGoalSummaryPanelProps) {
             icon: TrendingUp,
             accent: false,
           },
-        ].map(({ label, totals, icon: Icon, accent }) => (
+        ].map(({ label, totals, icon: Icon, accent, onClick }) => (
           <article
             key={label}
+            role={onClick ? "button" : undefined}
+            tabIndex={onClick ? 0 : undefined}
+            onClick={onClick}
+            onKeyDown={(event) => {
+              if (onClick && (event.key === "Enter" || event.key === " ")) {
+                event.preventDefault();
+                onClick();
+              }
+            }}
             className={
-              "rounded-[1.5rem] border p-5 " +
+              "rounded-[1.5rem] border p-5 transition " +
+              (onClick
+                ? "cursor-pointer hover:-translate-y-0.5 hover:border-forest/20 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-moss/35 "
+                : "") +
               (accent ? "border-lime bg-lime/55" : "border-forest/8 bg-white")
             }
           >
