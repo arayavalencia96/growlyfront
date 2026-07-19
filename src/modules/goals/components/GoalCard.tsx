@@ -1,18 +1,18 @@
-import { ArrowUpRight, CalendarDays, Pencil, Trash2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import type { IGoalCardProps } from '@/modules/goals/interfaces/goals.interface'
-import { formatDate, formatMoney } from '@/utils/format.utils'
+import { ArrowUpRight, CalendarDays, Pencil, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import type { IGoalCardProps } from "@/modules/goals/interfaces/goals.interface";
+import { formatDate, formatMoney } from "@/utils/format.utils";
 
 const statusLabels = {
-  active: 'Activo',
-  paused: 'Pausado',
-  completed: 'Completado',
-} as const
+  active: "Activo",
+  paused: "Pausado",
+  completed: "Completado",
+} as const;
 
 function getGoalTypeLabel(type: string): string {
-  if (type === 'long_term') return 'Largo plazo'
-  if (type === 'medium_term') return 'Mediano plazo'
-  return 'Corto plazo'
+  if (type === "long_term") return "Largo plazo";
+  if (type === "medium_term") return "Mediano plazo";
+  return "Corto plazo";
 }
 
 export function GoalCard({ goal, onEdit, onDelete }: IGoalCardProps) {
@@ -23,29 +23,48 @@ export function GoalCard({ goal, onEdit, onDelete }: IGoalCardProps) {
           {getGoalTypeLabel(goal.type)}
         </span>
         <div className="flex items-center gap-1">
-          <button type="button" onClick={() => onEdit(goal)} aria-label="Editar objetivo" className="rounded-xl p-2 text-moss hover:bg-linen hover:text-forest">
+          <button
+            type="button"
+            onClick={() => onEdit(goal)}
+            aria-label="Editar objetivo"
+            className="rounded-xl p-2 text-moss hover:bg-linen hover:text-forest"
+          >
             <Pencil size={16} />
           </button>
-          <button type="button" onClick={() => onDelete(goal)} aria-label="Eliminar objetivo" className="rounded-xl p-2 text-moss hover:bg-ember/10 hover:text-ember">
+          <button
+            type="button"
+            onClick={() => onDelete(goal)}
+            aria-label="Eliminar objetivo"
+            className="rounded-xl p-2 text-moss hover:bg-ember/10 hover:text-ember"
+          >
             <Trash2 size={16} />
           </button>
         </div>
       </div>
-      <h2 className="mt-7 font-display text-3xl leading-tight text-forest">{goal.name}</h2>
+      <h2 className="mt-7 font-display text-3xl leading-tight text-forest">
+        {goal.name}
+      </h2>
       <p className="mt-2 text-xs font-bold tracking-[0.1em] text-moss uppercase">
         Meta {formatMoney(goal.targetAmount, goal.currency)}
       </p>
       <div className="mt-8 flex items-center gap-2 text-sm text-ink/50">
         <CalendarDays size={16} />
-        {goal.endDate ? 'Hasta ' + formatDate(goal.endDate) : 'Sin fecha límite'}
+        {goal.endDate
+          ? "Hasta " + formatDate(goal.endDate)
+          : "Sin fecha límite"}
       </div>
       <div className="mt-auto flex items-center justify-between border-t border-forest/8 pt-5">
-        <span className="text-xs font-bold text-moss">{statusLabels[goal.status]}</span>
-        <Link to={'/objetivos/' + goal.id} className="inline-flex items-center gap-2 text-sm font-bold text-forest">
+        <span className="text-xs font-bold text-moss">
+          {statusLabels[goal.status]}
+        </span>
+        <Link
+          to={"/objetivos/" + goal.id}
+          className="inline-flex items-center gap-2 text-sm font-bold text-forest"
+        >
           Ver detalle
           <ArrowUpRight size={17} />
         </Link>
       </div>
     </article>
-  )
+  );
 }

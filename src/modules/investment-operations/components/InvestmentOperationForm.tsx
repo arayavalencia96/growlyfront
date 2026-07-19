@@ -279,8 +279,7 @@ export function InvestmentOperationForm({
                   ? "No pudimos obtenerla. Puedes ingresarla manualmente."
                   : quote
                     ? "Actualizada el " +
-                      formatDateTime(quote.fechaActualizacion) +
-                      ". Puedes modificarla."
+                      formatDateTime(quote.fechaActualizacion)
                     : null}
             </p>
           ) : null}

@@ -114,6 +114,7 @@ export interface IInvestmentOperationFormProps {
 
 export interface IInvestmentOperationsListProps {
   operations: IInvestmentOperation[];
+  onView(operation: IInvestmentOperation): void;
   onEdit(operation: IInvestmentOperation): void;
   onDelete(operation: IInvestmentOperation): void;
 }

@@ -17,6 +17,11 @@ import type {
 } from "@/modules/goal-movements/interfaces/goal-movements.interface";
 import { goalMovementsService } from "@/modules/goal-movements/services/goal-movements.service";
 import type { IGoal } from "@/modules/goals/interfaces/goals.interface";
+import { GoalDetailSkeleton } from "@/modules/goals/components/GoalsSkeletons";
+import {
+  GoalDetailContent,
+  type GoalDetailSelection,
+} from "@/modules/goals/components/GoalDetailContent";
 import { goalsService } from "@/modules/goals/services/goals.service";
 import { InvestmentOperationForm } from "@/modules/investment-operations/components/InvestmentOperationForm";
 import { InvestmentOperationsList } from "@/modules/investment-operations/components/InvestmentOperationsList";
@@ -48,6 +53,7 @@ export function GoalDetailPage() {
     useState<IInvestmentOperation | null>(null);
   const [activeTab, setActiveTab] = useState<DetailTab>("operations");
   const [formMode, setFormMode] = useState<FormMode>(null);
+  const [detail, setDetail] = useState<GoalDetailSelection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -208,12 +214,7 @@ export function GoalDetailPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="mx-auto max-w-7xl animate-pulse space-y-6">
-        <div className="h-52 rounded-[2rem] bg-white/60" />
-        <div className="h-96 rounded-[2rem] bg-white/60" />
-      </div>
-    );
+    return <GoalDetailSkeleton />;
   }
 
   if (!goal || !summary) {
@@ -296,7 +297,10 @@ export function GoalDetailPage() {
       ) : null}
 
       <div className="mt-6">
-        <GoalSummaryPanel summary={summary} />
+        <GoalSummaryPanel
+          summary={summary}
+          onCashBalanceClick={() => setDetail({ type: "cash", summary })}
+        />
       </div>
 
       <div className="mt-8 rounded-[2rem] border border-forest/8 bg-cream p-5 sm:p-7">
@@ -347,17 +351,43 @@ export function GoalDetailPage() {
         {activeTab === "operations" ? (
           <InvestmentOperationsList
             operations={operations}
+            onView={(operation) => setDetail({ type: "operation", operation })}
             onEdit={openOperationForm}
             onDelete={deleteOperation}
           />
         ) : (
           <GoalMovementsList
             movements={movements}
+            onView={(movement) => setDetail({ type: "movement", movement })}
             onEdit={openMovementForm}
             onDelete={deleteMovement}
           />
         )}
       </div>
+
+      {detail ? (
+        <Modal
+          eyebrow={
+            detail.type === "cash"
+              ? "Caja del objetivo"
+              : detail.type === "movement"
+                ? "Detalle de caja"
+                : "Detalle de inversión"
+          }
+          title={
+            detail.type === "cash"
+              ? "Efectivo disponible"
+              : detail.type === "movement"
+                ? detail.movement.type === "contribution"
+                  ? "Aporte"
+                  : "Extracción"
+                : `${detail.operation.type === "buy" ? "Compra" : "Venta"} de ${detail.operation.ticker}`
+          }
+          onClose={() => setDetail(null)}
+        >
+          <GoalDetailContent detail={detail} />
+        </Modal>
+      ) : null}
 
       {formMode === "movements" ? (
         <Modal
