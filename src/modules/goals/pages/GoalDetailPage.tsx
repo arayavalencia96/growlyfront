@@ -156,7 +156,7 @@ export function GoalDetailPage() {
           operationDate: payload.operationDate,
           quantity: payload.quantity,
           unitPrice: payload.unitPrice,
-          fees: payload.fees,
+          totalAmount: payload.totalAmount,
           currency: payload.currency,
           exchangeRateArsPerUsd: payload.exchangeRateArsPerUsd,
           notes: payload.notes,

@@ -20,3 +20,10 @@ export function formatDate(value: string): string {
 export function toDateInput(value: string): string {
   return value.slice(0, 10)
 }
+
+export function formatDateTime(value: string): string {
+  return new Intl.DateTimeFormat('es-AR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(new Date(value))
+}

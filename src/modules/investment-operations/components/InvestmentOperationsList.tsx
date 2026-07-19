@@ -48,11 +48,11 @@ export function InvestmentOperationsList({
             </div>
             <div className="sm:text-right">
               <p className="font-display text-2xl text-forest">
-                {formatMoney(operation.netAmount, operation.currency)}
+                {formatMoney(operation.totalAmount, operation.currency)}
               </p>
               <p className="mt-1 text-xs text-ink/40">
-                {formatMoney(operation.unitPrice, operation.currency)} por
-                unidad
+                {operation.type === "buy" ? "PPC " : "PPV "}
+                {formatMoney(operation.unitPrice, operation.currency)}
               </p>
             </div>
             <div className="flex justify-end gap-1">
