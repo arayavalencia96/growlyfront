@@ -5,6 +5,41 @@ export const INVESTMENT_OPERATION_TYPES = ["buy", "sell"] as const;
 export type InvestmentOperationType =
   (typeof INVESTMENT_OPERATION_TYPES)[number];
 
+export const INVESTMENT_PLATFORMS = [
+  "IOL",
+  "BULL MARKET",
+  "NEXO",
+  "BINGX",
+  "COCOS",
+  "BALANZ",
+  "BINANCE",
+  "ETORO",
+  "FIWIND",
+] as const;
+export type InvestmentPlatform = (typeof INVESTMENT_PLATFORMS)[number];
+export const CUSTOM_INVESTMENT_PLATFORM = "OTHER" as const;
+export const INVESTMENT_PLATFORM_SELECTIONS = [
+  ...INVESTMENT_PLATFORMS,
+  CUSTOM_INVESTMENT_PLATFORM,
+] as const;
+export type InvestmentPlatformSelection =
+  (typeof INVESTMENT_PLATFORM_SELECTIONS)[number];
+
+export const INVESTMENT_PLATFORM_LABELS: Readonly<
+  Record<InvestmentPlatformSelection, string>
+> = {
+  IOL: "IOL",
+  "BULL MARKET": "Bull Market",
+  NEXO: "NEXO",
+  BINGX: "BingX",
+  COCOS: "Cocos",
+  BALANZ: "Balanz",
+  BINANCE: "Binance",
+  ETORO: "eToro",
+  FIWIND: "Fiwind",
+  OTHER: "Otro",
+};
+
 export interface IInvestmentOperation {
   id: string;
   goalId: string;
@@ -15,9 +50,7 @@ export interface IInvestmentOperation {
   operationDate: string;
   quantity: number;
   unitPrice: number;
-  fees: number;
-  grossAmount: number;
-  netAmount: number;
+  totalAmount: number;
   currency: GoalCurrency;
   exchangeRateArsPerUsd: number | null;
   notes: string | null;
@@ -33,7 +66,7 @@ export interface IInvestmentOperationPayload {
   operationDate: string;
   quantity: number;
   unitPrice: number;
-  fees: number;
+  totalAmount: number;
   currency: GoalCurrency;
   exchangeRateArsPerUsd?: number | null;
   notes?: string | null;
@@ -45,13 +78,14 @@ export type InvestmentOperationUpdatePayload = Omit<
 >;
 
 export interface IInvestmentOperationFormValues {
-  platform: string;
+  platformOption: InvestmentPlatformSelection;
+  customPlatform: string;
   ticker: string;
   type: InvestmentOperationType;
   operationDate: string;
   quantity: number;
   unitPrice: number;
-  fees: number;
+  totalAmount: number;
   currency: GoalCurrency;
   exchangeRateArsPerUsd: number;
   notes: string;

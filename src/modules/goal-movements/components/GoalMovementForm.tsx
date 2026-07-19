@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useMepExchangeRate } from '@/common/hooks/useMepExchangeRate'
 import type {
   IGoalMovementFormProps,
   IGoalMovementFormValues,
 } from '@/modules/goal-movements/interfaces/goal-movements.interface'
 import { goalMovementSchema } from '@/modules/goal-movements/validations/goal-movements.validation'
-import { toDateInput } from '@/utils/format.utils'
+import { formatDateTime, toDateInput } from '@/utils/format.utils'
 
 const today = new Date().toISOString().slice(0, 10)
 
@@ -20,6 +22,8 @@ export function GoalMovementForm({
   const {
     register,
     handleSubmit,
+    getFieldState,
+    setValue,
     formState: { errors },
   } = useForm<IGoalMovementFormValues>({
     resolver: zodResolver(goalMovementSchema),
@@ -33,6 +37,14 @@ export function GoalMovementForm({
       notes: movement?.notes || '',
     },
   })
+  const { quote, isLoading: isRateLoading, hasError: hasRateError } =
+    useMepExchangeRate(!movement)
+
+  useEffect(() => {
+    if (!quote || getFieldState('exchangeRateArsPerUsd').isDirty) return
+
+    setValue('exchangeRateArsPerUsd', quote.venta, { shouldValidate: true })
+  }, [getFieldState, quote, setValue])
 
   const submit = handleSubmit(async (values) => {
     await onSubmit({
@@ -94,6 +106,19 @@ export function GoalMovementForm({
             placeholder="Opcional"
             {...register('exchangeRateArsPerUsd', { valueAsNumber: true })}
           />
+          {!movement ? (
+            <p aria-live="polite" className="mt-1.5 text-xs text-ink/45">
+              {isRateLoading
+                ? 'Obteniendo cotización de venta...'
+                : hasRateError
+                  ? 'No pudimos obtenerla. Puedes ingresarla manualmente.'
+                  : quote
+                    ? 'Actualizada el ' +
+                      formatDateTime(quote.fechaActualizacion) +
+                      '. Puedes modificarla.'
+                    : null}
+            </p>
+          ) : null}
           {errors.exchangeRateArsPerUsd ? <p className="mt-1.5 text-xs text-ember">{errors.exchangeRateArsPerUsd.message}</p> : null}
         </div>
         <div>

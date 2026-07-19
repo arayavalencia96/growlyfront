@@ -1,13 +1,25 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useMepExchangeRate } from "@/common/hooks/useMepExchangeRate";
 import type {
   IInvestmentOperationFormProps,
   IInvestmentOperationFormValues,
+  InvestmentPlatform,
+} from "@/modules/investment-operations/interfaces/investment-operations.interface";
+import {
+  CUSTOM_INVESTMENT_PLATFORM,
+  INVESTMENT_PLATFORM_LABELS,
+  INVESTMENT_PLATFORMS,
 } from "@/modules/investment-operations/interfaces/investment-operations.interface";
 import { investmentOperationSchema } from "@/modules/investment-operations/validations/investment-operations.validation";
-import { toDateInput } from "@/utils/format.utils";
+import { formatDateTime, toDateInput } from "@/utils/format.utils";
 
 const today = new Date().toISOString().slice(0, 10);
+
+function isKnownPlatform(value: string): value is InvestmentPlatform {
+  return INVESTMENT_PLATFORMS.some((platform) => platform === value);
+}
 
 export function InvestmentOperationForm({
   goalId,
@@ -17,36 +29,65 @@ export function InvestmentOperationForm({
   onSubmit,
   onCancel,
 }: IInvestmentOperationFormProps) {
+  const savedPlatform = operation?.platform.toUpperCase() || "";
+  const isSavedPlatformKnown = isKnownPlatform(savedPlatform);
   const {
     register,
     handleSubmit,
+    control,
+    getFieldState,
+    setValue,
     formState: { errors },
   } = useForm<IInvestmentOperationFormValues>({
     resolver: zodResolver(investmentOperationSchema),
     defaultValues: {
-      platform: operation?.platform || "",
+      platformOption: isSavedPlatformKnown
+        ? savedPlatform
+        : operation
+          ? CUSTOM_INVESTMENT_PLATFORM
+          : "IOL",
+      customPlatform:
+        operation && !isSavedPlatformKnown ? operation.platform : "",
       ticker: operation?.ticker || "",
       type: operation?.type || "buy",
       operationDate: operation ? toDateInput(operation.operationDate) : today,
       quantity: operation?.quantity || 0,
       unitPrice: operation?.unitPrice || 0,
-      fees: operation?.fees || 0,
+      totalAmount: operation?.totalAmount || 0,
       currency: operation?.currency || defaultCurrency,
       exchangeRateArsPerUsd: operation?.exchangeRateArsPerUsd || 0,
       notes: operation?.notes || "",
     },
   });
+  const {
+    quote,
+    isLoading: isRateLoading,
+    hasError: hasRateError,
+  } = useMepExchangeRate(!operation);
+  const operationType = useWatch({ control, name: "type" });
+  const platformOption = useWatch({ control, name: "platformOption" });
 
-  const submit = handleSubmit(async (values) => {
-    await onSubmit({
-      goalId,
-      ...values,
-      platform: values.platform.trim(),
-      ticker: values.ticker.trim(),
-      exchangeRateArsPerUsd: values.exchangeRateArsPerUsd || null,
-      notes: values.notes || null,
-    });
-  });
+  useEffect(() => {
+    if (!quote || getFieldState("exchangeRateArsPerUsd").isDirty) return;
+
+    setValue("exchangeRateArsPerUsd", quote.venta, { shouldValidate: true });
+  }, [getFieldState, quote, setValue]);
+
+  const submit = handleSubmit(
+    async ({ platformOption: selectedPlatform, customPlatform, ...values }) => {
+      await onSubmit({
+        goalId,
+        ...values,
+        platform:
+          selectedPlatform === CUSTOM_INVESTMENT_PLATFORM
+            ? customPlatform.trim()
+            : selectedPlatform,
+        ticker: values.ticker.trim().toUpperCase(),
+        exchangeRateArsPerUsd: values.exchangeRateArsPerUsd || null,
+        notes: values.notes || null,
+      });
+    },
+  );
 
   return (
     <form onSubmit={submit} className="space-y-5">
@@ -82,16 +123,42 @@ export function InvestmentOperationForm({
           <label className="app-label" htmlFor="operation-platform">
             Plataforma
           </label>
-          <input
+          <select
             id="operation-platform"
-            className="app-field uppercase"
-            placeholder="IOL, NEXO, BULL MARKET"
-            {...register("platform")}
-          />
-          {errors.platform ? (
+            className="app-field"
+            {...register("platformOption")}
+          >
+            {INVESTMENT_PLATFORMS.map((platform) => (
+              <option key={platform} value={platform}>
+                {INVESTMENT_PLATFORM_LABELS[platform]}
+              </option>
+            ))}
+            <option value={CUSTOM_INVESTMENT_PLATFORM}>
+              {INVESTMENT_PLATFORM_LABELS[CUSTOM_INVESTMENT_PLATFORM]}
+            </option>
+          </select>
+          {errors.platformOption ? (
             <p className="mt-1.5 text-xs text-ember">
-              {errors.platform.message}
+              {errors.platformOption.message}
             </p>
+          ) : null}
+          {platformOption === CUSTOM_INVESTMENT_PLATFORM ? (
+            <div className="mt-3">
+              <label className="app-label" htmlFor="operation-custom-platform">
+                Nombre de la plataforma
+              </label>
+              <input
+                id="operation-custom-platform"
+                className="app-field"
+                placeholder="Ingresa la plataforma"
+                {...register("customPlatform")}
+              />
+              {errors.customPlatform ? (
+                <p className="mt-1.5 text-xs text-ember">
+                  {errors.customPlatform.message}
+                </p>
+              ) : null}
+            </div>
           ) : null}
         </div>
         <div>
@@ -102,7 +169,13 @@ export function InvestmentOperationForm({
             id="operation-ticker"
             className="app-field uppercase"
             placeholder="AAPL, SPY, MELI"
-            {...register("ticker")}
+            {...register("ticker", {
+              setValueAs: (value: string) => value.toUpperCase(),
+            })}
+            onInput={(event) => {
+              event.currentTarget.value =
+                event.currentTarget.value.toUpperCase();
+            }}
           />
           {errors.ticker ? (
             <p className="mt-1.5 text-xs text-ember">{errors.ticker.message}</p>
@@ -131,7 +204,9 @@ export function InvestmentOperationForm({
         </div>
         <div>
           <label className="app-label" htmlFor="operation-price">
-            Precio unitario
+            {operationType === "buy"
+              ? "PPC · Precio promedio de compra"
+              : "PPV · Precio promedio de venta"}
           </label>
           <input
             id="operation-price"
@@ -151,17 +226,24 @@ export function InvestmentOperationForm({
 
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
-          <label className="app-label" htmlFor="operation-fees">
-            Comisiones
+          <label className="app-label" htmlFor="operation-total-amount">
+            {operationType === "buy"
+              ? "Monto total invertido"
+              : "Monto total obtenido"}
           </label>
           <input
-            id="operation-fees"
+            id="operation-total-amount"
             type="number"
             min="0"
             step="0.01"
             className="app-field"
-            {...register("fees", { valueAsNumber: true })}
+            {...register("totalAmount", { valueAsNumber: true })}
           />
+          {errors.totalAmount ? (
+            <p className="mt-1.5 text-xs text-ember">
+              {errors.totalAmount.message}
+            </p>
+          ) : null}
         </div>
         <div>
           <label className="app-label" htmlFor="operation-currency">
@@ -189,6 +271,19 @@ export function InvestmentOperationForm({
             placeholder="Opcional"
             {...register("exchangeRateArsPerUsd", { valueAsNumber: true })}
           />
+          {!operation ? (
+            <p aria-live="polite" className="mt-1.5 text-xs text-ink/45">
+              {isRateLoading
+                ? "Obteniendo cotización de venta..."
+                : hasRateError
+                  ? "No pudimos obtenerla. Puedes ingresarla manualmente."
+                  : quote
+                    ? "Actualizada el " +
+                      formatDateTime(quote.fechaActualizacion) +
+                      ". Puedes modificarla."
+                    : null}
+            </p>
+          ) : null}
         </div>
       </div>
 
