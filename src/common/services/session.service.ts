@@ -6,6 +6,7 @@ import type {
 const ACCESS_TOKEN_KEY = "growly.accessToken";
 const REFRESH_TOKEN_KEY = "growly.refreshToken";
 export const BALANCE_VISIBILITY_KEY = "growly.balanceVisibility";
+export const THEME_STORAGE_KEY = "growly.theme";
 export const SESSION_EXPIRED_EVENT = "growly:session-expired";
 
 class BrowserSessionService implements ISessionService {

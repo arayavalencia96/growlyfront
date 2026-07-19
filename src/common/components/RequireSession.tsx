@@ -1,8 +1,8 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { sessionService } from '@/common/services/session.service'
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { sessionService } from "@/common/services/session.service";
 
 export function RequireSession() {
-  const location = useLocation()
+  const location = useLocation();
 
   if (!sessionService.hasSession()) {
     return (
@@ -11,8 +11,8 @@ export function RequireSession() {
         replace
         state={{ from: location.pathname }}
       />
-    )
+    );
   }
 
-  return <Outlet />
+  return <Outlet />;
 }

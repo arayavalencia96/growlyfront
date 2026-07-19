@@ -99,16 +99,16 @@ export function PersonalDataForm({
   });
 
   return (
-    <section className="rounded-[1.75rem] border border-forest/8 bg-cream p-6 sm:p-7">
+    <section className="rounded-[1.75rem] border border-outline/8 bg-surface-soft p-6 sm:p-7">
       <div className="mb-6 flex items-center gap-3">
-        <span className="grid size-10 place-items-center rounded-xl bg-lime text-forest">
+        <span className="grid size-10 place-items-center rounded-xl bg-accent text-primary">
           <UserRound size={19} />
         </span>
         <div>
-          <h2 className="font-display text-3xl text-forest">
+          <h2 className="font-display text-3xl text-primary">
             Datos personales
           </h2>
-          <p className="text-xs text-ink/45">Tu identidad dentro de Growly</p>
+          <p className="text-xs text-body/45">Tu identidad dentro de Growly</p>
         </div>
       </div>
 
@@ -122,12 +122,12 @@ export function PersonalDataForm({
           </label>
           <div className="relative">
             <UserRound
-              className="absolute top-1/2 left-4 -translate-y-1/2 text-moss"
+              className="absolute top-1/2 left-4 -translate-y-1/2 text-secondary"
               size={17}
             />
             <input
               id="profile-name"
-              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/[0.04] disabled:text-ink/45"
+              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/[0.04] disabled:text-body/45"
               autoComplete="name"
               disabled={!isEditing}
               {...register("name")}
@@ -144,13 +144,13 @@ export function PersonalDataForm({
           </label>
           <div className="relative">
             <Mail
-              className="absolute top-1/2 left-4 -translate-y-1/2 text-moss"
+              className="absolute top-1/2 left-4 -translate-y-1/2 text-secondary"
               size={17}
             />
             <input
               id="profile-email"
               type="email"
-              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/[0.04] disabled:text-ink/45"
+              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/[0.04] disabled:text-body/45"
               autoComplete="email"
               disabled={!isEditing}
               {...register("email")}
@@ -160,7 +160,7 @@ export function PersonalDataForm({
             <p className="mt-1.5 text-xs text-ember">{errors.email.message}</p>
           ) : null}
           {isEditing && emailChanged ? (
-            <p className="mt-2 text-xs text-moss">
+            <p className="mt-2 text-xs text-secondary">
               Te enviaremos un código para verificar el nuevo correo.
             </p>
           ) : null}
@@ -180,7 +180,7 @@ export function PersonalDataForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-forest px-5 py-3 text-sm font-bold text-white transition hover:bg-moss disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-hover disabled:opacity-50"
             >
               <Save size={17} />
               {isSubmitting ? "Actualizando..." : "Actualizar"}
@@ -189,7 +189,7 @@ export function PersonalDataForm({
               type="button"
               onClick={cancelEditing}
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-forest/12 bg-white px-5 py-3 text-sm font-bold text-forest transition hover:bg-linen disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-outline/12 bg-surface px-5 py-3 text-sm font-bold text-primary transition hover:bg-page disabled:opacity-50"
             >
               <X size={17} />
               Cancelar
@@ -199,7 +199,7 @@ export function PersonalDataForm({
           <button
             type="button"
             onClick={startEditing}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-forest px-5 py-3 text-sm font-bold text-white transition hover:bg-moss"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-hover"
           >
             <Pencil size={17} />
             Actualizar datos

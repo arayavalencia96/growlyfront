@@ -8,15 +8,15 @@ export function PortfolioSummaryPanel({
   summary: IPortfolioSummary;
 }) {
   return (
-    <section className="mt-8 overflow-hidden rounded-[2rem] bg-forest text-white shadow-[0_20px_55px_rgba(20,54,44,0.16)]">
+    <section className="mt-8 overflow-hidden rounded-[2rem] bg-brand text-white shadow-[0_20px_55px_rgba(20,54,44,0.16)]">
       <div className="grid lg:grid-cols-[minmax(260px,0.8fr)_1.5fr]">
         <div className="relative overflow-hidden border-white/10 p-6 sm:p-8 lg:border-r">
-          <div className="absolute -top-16 -right-14 size-52 rounded-full border-[38px] border-lime/8" />
+          <div className="absolute -top-16 -right-14 size-52 rounded-full border-[38px] border-accent/8" />
           <div className="relative">
-            <span className="grid size-11 place-items-center rounded-2xl bg-lime text-forest">
+            <span className="grid size-11 place-items-center rounded-2xl bg-accent text-primary">
               <Layers3 size={21} />
             </span>
-            <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-lime">
+            <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-accent-text">
               Valor contable total
             </p>
             <p className="mt-2 font-display text-4xl sm:text-5xl">
@@ -40,7 +40,7 @@ export function PortfolioSummaryPanel({
 
         <div className="p-6 sm:p-8">
           <div className="flex items-center gap-2">
-            <Building2 size={17} className="text-lime" />
+            <Building2 size={17} className="text-accent-text" />
             <h2 className="text-sm font-bold uppercase tracking-[0.12em]">
               Total por plataforma
             </h2>
@@ -53,7 +53,7 @@ export function PortfolioSummaryPanel({
                   key={item.platform}
                   className="rounded-2xl border border-white/10 bg-white/7 p-4"
                 >
-                  <p className="text-xs font-bold uppercase tracking-[0.1em] text-lime">
+                  <p className="text-xs font-bold uppercase tracking-[0.1em] text-accent-text">
                     {item.platform}
                   </p>
                   <p className="mt-2 font-display text-2xl">

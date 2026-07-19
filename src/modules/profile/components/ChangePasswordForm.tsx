@@ -42,14 +42,14 @@ export function ChangePasswordForm({
   });
 
   return (
-    <section className="rounded-[1.75rem] border border-forest/8 bg-cream p-6 sm:p-7">
+    <section className="rounded-[1.75rem] border border-outline/8 bg-surface-soft p-6 sm:p-7">
       <div className="mb-6 flex items-center gap-3">
-        <span className="grid size-10 place-items-center rounded-xl bg-forest text-lime">
+        <span className="grid size-10 place-items-center rounded-xl bg-brand text-accent-text">
           <KeyRound size={19} />
         </span>
         <div>
-          <h2 className="font-display text-3xl text-forest">Contraseña</h2>
-          <p className="text-xs text-ink/45">
+          <h2 className="font-display text-3xl text-primary">Contraseña</h2>
+          <p className="text-xs text-body/45">
             Actualiza tus credenciales de acceso
           </p>
         </div>
@@ -80,7 +80,7 @@ export function ChangePasswordForm({
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-forest px-5 py-3 text-sm font-bold text-white transition hover:bg-moss disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-forest"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-brand"
         >
           <KeyRound size={17} />
           {isSubmitting ? "Actualizando..." : "Cambiar contraseña"}

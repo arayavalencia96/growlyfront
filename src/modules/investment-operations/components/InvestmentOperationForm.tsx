@@ -272,7 +272,7 @@ export function InvestmentOperationForm({
             {...register("exchangeRateArsPerUsd", { valueAsNumber: true })}
           />
           {!operation ? (
-            <p aria-live="polite" className="mt-1.5 text-xs text-ink/45">
+            <p aria-live="polite" className="mt-1.5 text-xs text-body/45">
               {isRateLoading
                 ? "Obteniendo cotización de venta..."
                 : hasRateError
@@ -303,14 +303,14 @@ export function InvestmentOperationForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-2xl border border-forest/12 bg-white px-5 py-3 text-sm font-bold text-forest"
+          className="rounded-2xl border border-outline/12 bg-surface px-5 py-3 text-sm font-bold text-primary"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-2xl bg-forest px-6 py-3 text-sm font-bold text-white transition hover:bg-moss disabled:opacity-50"
+          className="rounded-2xl bg-brand px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-hover disabled:opacity-50"
         >
           {isSubmitting
             ? "Guardando..."

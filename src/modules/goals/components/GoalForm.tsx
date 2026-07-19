@@ -33,7 +33,7 @@ function OpeningFieldLabel({ htmlFor, label, help }: IOpeningFieldLabelProps) {
     <div className="mb-1.5 flex items-center gap-1.5">
       <label
         htmlFor={htmlFor}
-        className="text-[10px] font-bold uppercase tracking-[0.12em] text-forest/65"
+        className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary/65"
       >
         {label}
       </label>
@@ -42,13 +42,13 @@ function OpeningFieldLabel({ htmlFor, label, help }: IOpeningFieldLabelProps) {
           <button
             type="button"
             aria-label={`Ayuda sobre ${label}`}
-            className="text-forest/40 transition hover:text-forest focus:text-forest focus:outline-none"
+            className="text-primary/40 transition hover:text-primary focus:text-primary focus:outline-none"
           >
             <CircleHelp size={13} />
           </button>
           <span
             role="tooltip"
-            className="pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-xl bg-forest px-3 py-2 text-left text-[11px] font-medium normal-case leading-4 tracking-normal text-white opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+            className="pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-xl bg-brand px-3 py-2 text-left text-[11px] font-medium normal-case leading-4 tracking-normal text-white opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
           >
             {help}
           </span>
@@ -260,7 +260,7 @@ export function GoalForm({
       </div>
 
       {!goal ? (
-        <section className="rounded-2xl border border-forest/10 bg-white/65 p-4 sm:p-5">
+        <section className="rounded-2xl border border-outline/10 bg-surface/65 p-4 sm:p-5">
           <label className="app-label" htmlFor="goal-tracking-mode">
             ¿Cómo empiezas el seguimiento?
           </label>
@@ -281,7 +281,7 @@ export function GoalForm({
               Registrar una cartera existente
             </option>
           </select>
-          <p className="mt-2 text-xs leading-5 text-ink/45">
+          <p className="mt-2 text-xs leading-5 text-body/45">
             {trackingMode === "from_scratch"
               ? "Primero registrarás aportes y luego las compras."
               : "Carga el efectivo y las posiciones que ya tienes al iniciar."}
@@ -297,10 +297,10 @@ export function GoalForm({
               <div>
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-bold text-forest">
+                    <h3 className="text-sm font-bold text-primary">
                       Efectivo inicial
                     </h3>
-                    <p className="text-xs text-ink/45">
+                    <p className="text-xs text-body/45">
                       Saldo disponible por plataforma y moneda.
                     </p>
                   </div>
@@ -314,7 +314,7 @@ export function GoalForm({
                         exchangeRateArsPerUsd: 0,
                       })
                     }
-                    className="inline-flex items-center gap-1 rounded-xl bg-lime px-3 py-2 text-xs font-bold text-forest"
+                    className="inline-flex items-center gap-1 rounded-xl bg-accent px-3 py-2 text-xs font-bold text-primary"
                   >
                     <Plus size={14} /> Agregar
                   </button>
@@ -323,7 +323,7 @@ export function GoalForm({
                   {cashFields.map((field, index) => (
                     <div
                       key={field.id}
-                      className="grid gap-3 rounded-2xl border border-forest/8 bg-cream p-3 sm:grid-cols-[1fr_100px_1fr_1fr_auto]"
+                      className="grid gap-3 rounded-2xl border border-outline/8 bg-surface-soft p-3 sm:grid-cols-[1fr_100px_1fr_1fr_auto]"
                     >
                       <div>
                         <OpeningFieldLabel
@@ -410,10 +410,10 @@ export function GoalForm({
               <div>
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-bold text-forest">
+                    <h3 className="text-sm font-bold text-primary">
                       Posiciones iniciales
                     </h3>
-                    <p className="text-xs text-ink/45">
+                    <p className="text-xs text-body/45">
                       Activos que ya posees y su costo de adquisición.
                     </p>
                   </div>
@@ -430,7 +430,7 @@ export function GoalForm({
                         exchangeRateArsPerUsd: 0,
                       })
                     }
-                    className="inline-flex items-center gap-1 rounded-xl bg-lime px-3 py-2 text-xs font-bold text-forest"
+                    className="inline-flex items-center gap-1 rounded-xl bg-accent px-3 py-2 text-xs font-bold text-primary"
                   >
                     <Plus size={14} /> Agregar
                   </button>
@@ -439,7 +439,7 @@ export function GoalForm({
                   {positionFields.map((field, index) => (
                     <div
                       key={field.id}
-                      className="rounded-2xl border border-forest/8 bg-cream p-3"
+                      className="rounded-2xl border border-outline/8 bg-surface-soft p-3"
                     >
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         <div>
@@ -598,14 +598,14 @@ export function GoalForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-2xl border border-forest/12 bg-white px-5 py-3 text-sm font-bold text-forest"
+          className="rounded-2xl border border-outline/12 bg-surface px-5 py-3 text-sm font-bold text-primary"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-2xl bg-forest px-6 py-3 text-sm font-bold text-white transition hover:bg-moss disabled:opacity-50"
+          className="rounded-2xl bg-brand px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-hover disabled:opacity-50"
         >
           {isSubmitting
             ? "Guardando..."

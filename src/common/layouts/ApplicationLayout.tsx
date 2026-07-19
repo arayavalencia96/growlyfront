@@ -3,7 +3,9 @@ import {
   EyeOff,
   LogOut,
   Menu,
+  Moon,
   Sprout,
+  Sun,
   Target,
   UserRound,
   X,
@@ -16,6 +18,8 @@ import {
 } from "@/common/services/session.service";
 import { BalancePrivacyProvider } from "@/common/components/BalancePrivacy";
 import { useBalancePrivacy } from "@/common/components/balance-privacy.context";
+import { ThemeProvider } from "@/common/components/ThemeProvider";
+import { useTheme } from "@/common/components/theme.context";
 
 const navigation = [
   { label: "Objetivos", path: "/objetivos", icon: Target },
@@ -26,6 +30,7 @@ function ApplicationShell() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { areBalancesVisible, toggleBalancesVisibility } = useBalancePrivacy();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleSessionExpired = () => {
@@ -49,16 +54,16 @@ function ApplicationShell() {
   };
 
   return (
-    <div className="min-h-screen bg-linen text-ink">
+    <div className="min-h-screen bg-page text-body">
       <aside
         className={
-          "fixed inset-y-0 left-0 z-40 flex h-dvh w-72 flex-col overflow-hidden bg-forest px-5 py-6 text-white transition-transform duration-300 lg:translate-x-0 " +
+          "fixed inset-y-0 left-0 z-40 flex h-dvh w-72 flex-col overflow-hidden bg-brand px-5 py-6 text-white transition-transform duration-300 lg:translate-x-0 " +
           (isMenuOpen ? "translate-x-0" : "-translate-x-full")
         }
       >
         <div className="flex items-center justify-between px-2">
           <NavLink to="/objetivos" className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-2xl bg-lime text-forest">
+            <span className="grid size-10 place-items-center rounded-2xl bg-accent text-primary">
               <Sprout size={22} strokeWidth={2} />
             </span>
             <span className="font-display text-3xl">Growly</span>
@@ -82,7 +87,7 @@ function ApplicationShell() {
               className={({ isActive }) =>
                 "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition " +
                 (isActive
-                  ? "bg-lime text-forest"
+                  ? "bg-accent text-primary"
                   : "text-white/65 hover:bg-white/8 hover:text-white")
               }
             >
@@ -94,7 +99,7 @@ function ApplicationShell() {
 
         <div className="shrink-0 pt-6">
           <div className="rounded-3xl border border-white/10 bg-white/6 p-4">
-            <p className="text-xs font-bold tracking-[0.18em] text-lime uppercase">
+            <p className="text-xs font-bold tracking-[0.18em] text-accent-text uppercase">
               Tu patrimonio
             </p>
             <p className="mt-2 text-sm leading-6 text-white/60">
@@ -122,17 +127,17 @@ function ApplicationShell() {
       ) : null}
 
       <div className="lg:pl-72">
-        <header className="sticky top-0 z-20 flex h-20 items-center border-b border-forest/8 bg-linen/90 px-5 backdrop-blur-xl sm:px-8 lg:px-10">
+        <header className="sticky top-0 z-20 flex h-20 items-center border-b border-outline/8 bg-page/90 px-5 backdrop-blur-xl sm:px-8 lg:px-10">
           <button
             type="button"
             aria-label="Abrir menú"
             onClick={() => setIsMenuOpen(true)}
-            className="rounded-xl border border-forest/10 bg-white p-2.5 text-forest shadow-sm lg:hidden"
+            className="rounded-xl border border-outline/10 bg-surface p-2.5 text-primary shadow-sm lg:hidden"
           >
             <Menu size={20} />
           </button>
           <div className="ml-auto flex items-center gap-3">
-            <p className="hidden text-xs font-bold tracking-[0.16em] text-moss uppercase sm:block">
+            <p className="hidden text-xs font-bold tracking-[0.16em] text-secondary uppercase sm:block">
               Finanzas con propósito
             </p>
             <button
@@ -142,9 +147,22 @@ function ApplicationShell() {
                 areBalancesVisible ? "Ocultar saldos" : "Mostrar saldos"
               }
               title={areBalancesVisible ? "Ocultar saldos" : "Mostrar saldos"}
-              className="grid size-10 place-items-center rounded-xl border border-forest/10 bg-white text-forest shadow-sm transition hover:bg-lime"
+              className="grid size-10 place-items-center rounded-xl border border-outline/10 bg-surface text-primary shadow-sm transition hover:bg-accent"
             >
               {areBalancesVisible ? <Eye size={19} /> : <EyeOff size={19} />}
+            </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={
+                theme === "light" ? "Activar tema oscuro" : "Activar tema claro"
+              }
+              title={
+                theme === "light" ? "Activar tema oscuro" : "Activar tema claro"
+              }
+              className="grid size-10 place-items-center rounded-xl border border-outline/10 bg-surface text-primary shadow-sm transition hover:bg-accent"
+            >
+              {theme === "light" ? <Moon size={19} /> : <Sun size={19} />}
             </button>
           </div>
         </header>
@@ -158,8 +176,10 @@ function ApplicationShell() {
 
 export function ApplicationLayout() {
   return (
-    <BalancePrivacyProvider>
-      <ApplicationShell />
-    </BalancePrivacyProvider>
+    <ThemeProvider>
+      <BalancePrivacyProvider>
+        <ApplicationShell />
+      </BalancePrivacyProvider>
+    </ThemeProvider>
   );
 }

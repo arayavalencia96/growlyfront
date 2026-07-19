@@ -12,11 +12,11 @@ export type GoalDetailSelection =
 
 function DetailItem({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-forest/8 bg-white p-4">
-      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-moss">
+    <div className="rounded-2xl border border-outline/8 bg-surface p-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-secondary">
         {label}
       </p>
-      <p className="mt-1.5 text-sm font-bold text-forest">{value}</p>
+      <p className="mt-1.5 text-sm font-bold text-primary">{value}</p>
     </div>
   );
 }
@@ -25,8 +25,8 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
   if (detail.type === "cash") {
     return (
       <div className="space-y-5">
-        <div className="rounded-2xl bg-forest p-5 text-white">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-lime">
+        <div className="rounded-2xl bg-brand p-5 text-white">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-accent-text">
             Total contable disponible
           </p>
           <p className="mt-2 font-display text-3xl">
@@ -44,10 +44,10 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-bold text-forest">
+          <h3 className="text-sm font-bold text-primary">
             Composición por plataforma
           </h3>
-          <p className="mt-1 text-xs leading-5 text-ink/45">
+          <p className="mt-1 text-xs leading-5 text-body/45">
             Saldos sin invertir luego de aportes, extracciones, compras y
             ventas.
           </p>
@@ -56,17 +56,17 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
               {detail.summary.cashBalances.map((balance) => (
                 <div
                   key={`${balance.platform}:${balance.currency}`}
-                  className="flex items-center justify-between gap-4 rounded-2xl border border-forest/8 bg-white px-4 py-3"
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-outline/8 bg-surface px-4 py-3"
                 >
                   <div>
-                    <p className="text-sm font-bold text-forest">
+                    <p className="text-sm font-bold text-primary">
                       {balance.platform}
                     </p>
-                    <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-moss">
+                    <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-secondary">
                       Saldo en {balance.currency}
                     </p>
                   </div>
-                  <p className="font-display text-xl text-forest">
+                  <p className="font-display text-xl text-primary">
                     <SensitiveMoney
                       amount={balance.amount}
                       currency={balance.currency}
@@ -76,7 +76,7 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
               ))}
             </div>
           ) : (
-            <div className="mt-3 rounded-2xl border border-dashed border-forest/15 py-8 text-center text-sm text-ink/45">
+            <div className="mt-3 rounded-2xl border border-dashed border-outline/15 py-8 text-center text-sm text-body/45">
               No hay efectivo disponible.
             </div>
           )}

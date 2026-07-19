@@ -220,14 +220,14 @@ export function GoalDetailPage() {
 
   if (!goal || !summary) {
     return (
-      <div className="mx-auto max-w-3xl rounded-[2rem] bg-white p-10 text-center">
-        <h1 className="font-display text-4xl text-forest">
+      <div className="mx-auto max-w-3xl rounded-[2rem] bg-surface p-10 text-center">
+        <h1 className="font-display text-4xl text-primary">
           No encontramos el objetivo
         </h1>
-        <p className="mt-3 text-sm text-ink/50">{error}</p>
+        <p className="mt-3 text-sm text-body/50">{error}</p>
         <Link
           to="/objetivos"
-          className="mt-6 inline-block font-bold text-forest"
+          className="mt-6 inline-block font-bold text-primary"
         >
           Volver a objetivos
         </Link>
@@ -239,18 +239,18 @@ export function GoalDetailPage() {
     <section className="mx-auto max-w-7xl">
       <Link
         to="/objetivos"
-        className="inline-flex items-center gap-2 text-sm font-bold text-moss hover:text-forest"
+        className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary"
       >
         <ArrowLeft size={17} />
         Volver a objetivos
       </Link>
 
-      <div className="mt-6 overflow-hidden rounded-[2rem] bg-forest text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
+      <div className="mt-6 overflow-hidden rounded-[2rem] bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
         <div className="relative p-7 sm:p-10">
-          <div className="absolute -top-20 -right-14 size-64 rounded-full border-[45px] border-lime/8" />
+          <div className="absolute -top-20 -right-14 size-64 rounded-full border-[45px] border-accent/8" />
           <div className="relative flex flex-col justify-between gap-8 md:flex-row md:items-end">
             <div>
-              <p className="text-xs font-bold tracking-[0.2em] text-lime uppercase">
+              <p className="text-xs font-bold tracking-[0.2em] text-accent-text uppercase">
                 {goal.type === "long_term"
                   ? "Objetivo de largo plazo"
                   : "Objetivo de corto plazo"}
@@ -285,7 +285,7 @@ export function GoalDetailPage() {
               <button
                 type="button"
                 onClick={() => openOperationForm()}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-lime px-5 py-3.5 text-sm font-bold text-forest"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3.5 text-sm font-bold text-primary"
               >
                 <TrendingUp size={18} />
                 Compra / venta
@@ -308,10 +308,10 @@ export function GoalDetailPage() {
         />
       </div>
 
-      <div className="mt-8 rounded-[2rem] border border-forest/8 bg-cream p-5 sm:p-7">
+      <div className="mt-8 rounded-[2rem] border border-outline/8 bg-surface-soft p-5 sm:p-7">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl bg-lime text-forest">
+            <span className="grid size-10 place-items-center rounded-xl bg-accent text-primary">
               {activeTab === "operations" ? (
                 <TrendingUp size={19} />
               ) : (
@@ -319,21 +319,21 @@ export function GoalDetailPage() {
               )}
             </span>
             <div>
-              <h2 className="font-display text-3xl text-forest">Actividad</h2>
-              <p className="text-xs text-ink/45">
+              <h2 className="font-display text-3xl text-primary">Actividad</h2>
+              <p className="text-xs text-body/45">
                 {movements.length} movimientos · {operations.length} operaciones
               </p>
             </div>
           </div>
-          <div className="flex rounded-2xl bg-linen p-1">
+          <div className="flex rounded-2xl bg-page p-1">
             <button
               type="button"
               onClick={() => setActiveTab("operations")}
               className={
                 "rounded-xl px-4 py-2 text-xs font-bold transition " +
                 (activeTab === "operations"
-                  ? "bg-white text-forest shadow-sm"
-                  : "text-moss")
+                  ? "bg-surface text-primary shadow-sm"
+                  : "text-secondary")
               }
             >
               Inversiones
@@ -344,8 +344,8 @@ export function GoalDetailPage() {
               className={
                 "rounded-xl px-4 py-2 text-xs font-bold transition " +
                 (activeTab === "movements"
-                  ? "bg-white text-forest shadow-sm"
-                  : "text-moss")
+                  ? "bg-surface text-primary shadow-sm"
+                  : "text-secondary")
               }
             >
               Caja
