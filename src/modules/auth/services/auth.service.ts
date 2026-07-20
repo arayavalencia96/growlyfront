@@ -1,5 +1,6 @@
-import type { IHttpClient } from "@/common/interfaces/api.interface";
 import { apiService } from "@/common/services/api.service";
+
+import type { IHttpClient } from "@/common/interfaces/api.interface";
 import type {
   IAuthResponse,
   IAuthService,

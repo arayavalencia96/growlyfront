@@ -20,7 +20,7 @@ export function FormFieldLabel({
   label,
   help,
   compact = false,
-}: IFormFieldLabelProps) {
+}: Readonly<IFormFieldLabelProps>) {
   const tooltipId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipRef = useRef<HTMLSpanElement>(null);
@@ -124,7 +124,7 @@ export function FormFieldLabel({
                   role="tooltip"
                   style={position || { left: 0, top: 0 }}
                   className={
-                    "pointer-events-none fixed z-[70] w-64 rounded-xl bg-brand px-3 py-2 text-left text-[11px] leading-4 font-medium tracking-normal text-white normal-case shadow-xl transition-opacity " +
+                    "pointer-events-none fixed z-70 w-64 rounded-xl bg-brand px-3 py-2 text-left text-[11px] leading-4 font-medium tracking-normal text-white normal-case shadow-xl transition-opacity " +
                     (position ? "opacity-100" : "opacity-0")
                   }
                 >

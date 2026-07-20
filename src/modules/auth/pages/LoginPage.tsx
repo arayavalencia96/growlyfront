@@ -44,7 +44,7 @@ export function LoginPage() {
         password: data.password,
       });
       sessionService.save(getSessionTokens(response.result));
-      navigate("/inicio", { replace: true });
+      navigate("/home", { replace: true });
     } catch (error: unknown) {
       const requiresVerification =
         isAuthError(error, "Email is not validated") ||
@@ -58,7 +58,7 @@ export function LoginPage() {
             ? "registration"
             : "unblock",
         });
-        navigate("/verificar-codigo?" + params.toString(), {
+        navigate("/verify-code?" + params.toString(), {
           state: { message: getAuthErrorMessage(error) },
         });
         return;
@@ -103,7 +103,7 @@ export function LoginPage() {
           />
           <div className="mt-2 text-right">
             <Link
-              to="/recuperar-contrasena"
+              to="/recover-password"
               className="text-sm font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
             >
               Recuperá tu contraseña
@@ -119,7 +119,7 @@ export function LoginPage() {
       <p className="mt-7 text-center text-sm text-body/55">
         ¿Todavía no tenés una cuenta?{" "}
         <Link
-          to="/registro"
+          to="/register"
           className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
         >
           Crear cuenta

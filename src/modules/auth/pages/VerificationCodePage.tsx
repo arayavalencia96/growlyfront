@@ -71,7 +71,7 @@ export function VerificationCodePage() {
         sessionService.clear();
       }
 
-      navigate("/iniciar-sesion", {
+      navigate("/login", {
         replace: true,
         state: {
           message: isEmailChange
@@ -163,7 +163,7 @@ export function VerificationCodePage() {
 
       <div className="mt-6 flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
         <Link
-          to="/iniciar-sesion"
+          to="/login"
           className="inline-flex items-center gap-2 font-bold text-body/55 hover:text-primary"
         >
           <ArrowLeft aria-hidden="true" size={16} />

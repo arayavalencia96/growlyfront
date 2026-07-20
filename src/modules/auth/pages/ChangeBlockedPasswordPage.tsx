@@ -36,7 +36,7 @@ export function ChangeBlockedPasswordPage() {
         newPassword,
       });
       sessionService.clear();
-      navigate("/iniciar-sesion", {
+      navigate("/login", {
         replace: true,
         state: {
           message:
@@ -80,7 +80,7 @@ export function ChangeBlockedPasswordPage() {
       {!passwordChangeToken ? (
         <p className="mt-6 text-center text-sm">
           <Link
-            to="/iniciar-sesion"
+            to="/login"
             className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
           >
             Volver al inicio de sesión

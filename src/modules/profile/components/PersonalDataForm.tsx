@@ -16,7 +16,7 @@ export function PersonalDataForm({
   user,
   onUpdated,
   onEmailChangeRequested,
-}: IPersonalDataFormProps) {
+}: Readonly<IPersonalDataFormProps>) {
   const [isEditing, setIsEditing] = useState(false);
   const {
     register,

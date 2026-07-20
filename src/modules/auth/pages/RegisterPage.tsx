@@ -49,7 +49,7 @@ export function RegisterPage() {
         email,
         purpose: "registration",
       });
-      navigate("/verificar-codigo?" + params.toString(), {
+      navigate("/verify-code?" + params.toString(), {
         replace: true,
         state: {
           message:
@@ -119,8 +119,8 @@ export function RegisterPage() {
                 className="font-bold text-primary underline decoration-accent decoration-4 underline-offset-4"
               >
                 Términos y Condiciones y la Política de Privacidad
-              </button>
-              .
+              </button>.
+            
             </div>
           </div>
           {errors.termsAccepted ? (
@@ -138,7 +138,7 @@ export function RegisterPage() {
       <p className="mt-7 text-center text-sm text-body/55">
         ¿Ya tienes cuenta?{" "}
         <Link
-          to="/iniciar-sesion"
+          to="/login"
           className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
         >
           Ingresar

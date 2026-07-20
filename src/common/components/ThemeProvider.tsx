@@ -9,7 +9,7 @@ function readTheme(): ApplicationTheme {
   return localStorage.getItem(THEME_STORAGE_KEY) === "dark" ? "dark" : "light";
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: { readonly children: ReactNode }) {
   const [theme, setTheme] = useState<ApplicationTheme>(readTheme);
 
   useLayoutEffect(() => {

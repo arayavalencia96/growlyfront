@@ -7,7 +7,7 @@ export function RequireSession() {
   if (!sessionService.hasSession()) {
     return (
       <Navigate
-        to="/iniciar-sesion"
+        to="/login"
         replace
         state={{ from: location.pathname }}
       />

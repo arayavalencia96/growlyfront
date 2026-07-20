@@ -9,7 +9,7 @@ export function FormField({
   id,
   ref,
   ...inputProps
-}: IFormFieldProps) {
+}: Readonly<IFormFieldProps>) {
   const fieldId = id || inputProps.name;
   const descriptionId = error
     ? fieldId + "-error"

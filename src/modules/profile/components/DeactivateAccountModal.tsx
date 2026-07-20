@@ -17,7 +17,7 @@ export function DeactivateAccountModal({
   isOpen,
   onClose,
   onDeactivated,
-}: IDeactivateAccountModalProps) {
+}: Readonly<IDeactivateAccountModalProps>) {
   const {
     register,
     handleSubmit,

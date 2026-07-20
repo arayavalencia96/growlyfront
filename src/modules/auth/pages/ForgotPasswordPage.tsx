@@ -74,7 +74,7 @@ export function ForgotPasswordPage() {
       ) : null}
 
       <Link
-        to="/iniciar-sesion"
+        to="/login"
         className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-body/55 transition hover:text-primary"
       >
         <ArrowLeft aria-hidden="true" size={16} />

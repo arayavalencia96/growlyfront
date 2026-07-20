@@ -15,31 +15,27 @@ import { ProfilePage } from "@/modules/profile/pages/ProfilePage";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/iniciar-sesion" replace />,
+    element: <Navigate to="/login" replace />,
   },
   {
-    path: "/iniciar-sesion",
+    path: "/login",
     element: <LoginPage />,
   },
   {
-    path: "/registro",
+    path: "/register",
     element: <RegisterPage />,
   },
   {
-    path: "/verificar-codigo",
+    path: "/verify-code",
     element: <VerificationCodePage />,
   },
   {
-    path: "/recuperar-contrasena",
+    path: "/recover-password",
     element: <ForgotPasswordPage />,
   },
   {
-    path: "/restablecer-contrasena",
+    path: "/reset-password",
     element: <ResetPasswordPage />,
-  },
-  {
-    path: "/cambiar-contrasena",
-    element: <ChangeBlockedPasswordPage />,
   },
   {
     path: "/change-password",
@@ -52,19 +48,19 @@ export const router = createBrowserRouter([
         element: <ApplicationLayout />,
         children: [
           {
-            path: "/inicio",
+            path: "/home",
             element: <HomePage />,
           },
           {
-            path: "/objetivos",
+            path: "/objectives",
             element: <GoalsPage />,
           },
           {
-            path: "/objetivos/:goalId",
+            path: "/objectives/:goalId",
             element: <GoalDetailPage />,
           },
           {
-            path: "/mi-perfil",
+            path: "/profile",
             element: <ProfilePage />,
           },
         ],
@@ -73,6 +69,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to="/iniciar-sesion" replace />,
+    element: <Navigate to="/login" replace />,
   },
 ]);

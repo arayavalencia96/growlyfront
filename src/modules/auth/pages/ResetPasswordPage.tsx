@@ -23,7 +23,7 @@ export function ResetPasswordPage() {
         newPassword,
       });
       sessionService.clear();
-      navigate("/iniciar-sesion", {
+      navigate("/login", {
         replace: true,
         state: {
           message:
@@ -67,7 +67,7 @@ export function ResetPasswordPage() {
       {!resetToken ? (
         <p className="mt-6 text-center text-sm">
           <Link
-            to="/recuperar-contrasena"
+            to="/recover-password"
             className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
           >
             Solicitar otro enlace
