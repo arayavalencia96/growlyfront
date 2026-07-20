@@ -74,11 +74,13 @@ export interface IGoalFormValues {
   openingCashBalances: Array<
     Omit<IOpeningCashBalance, "exchangeRateArsPerUsd"> & {
       exchangeRateArsPerUsd: number;
+      customPlatform: string;
     }
   >;
   openingPositions: Array<
     Omit<IOpeningPosition, "exchangeRateArsPerUsd"> & {
       exchangeRateArsPerUsd: number;
+      customPlatform: string;
     }
   >;
   notes: string;

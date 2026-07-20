@@ -1,13 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleHelp, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { FormFieldLabel } from "@/common/components/FormFieldLabel";
+import { useMepExchangeRate } from "@/common/hooks/useMepExchangeRate";
 import type {
   IGoalFormProps,
   IGoalFormValues,
   IGoalPayload,
 } from "@/modules/goals/interfaces/goals.interface";
 import { goalSchema } from "@/modules/goals/validations/goals.validation";
-import { toDateInput } from "@/utils/format.utils";
+import {
+  CUSTOM_INVESTMENT_PLATFORM,
+  INVESTMENT_PLATFORM_LABELS,
+  INVESTMENT_PLATFORMS,
+} from "@/modules/investment-operations/interfaces/investment-operations.interface";
+import { formatDateTime, toDateInput } from "@/utils/format.utils";
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -22,40 +30,14 @@ function getNestedErrorMessage(error: unknown): string | undefined {
   return undefined;
 }
 
-interface IOpeningFieldLabelProps {
-  htmlFor: string;
-  label: string;
-  help?: string;
-}
-
-function OpeningFieldLabel({ htmlFor, label, help }: IOpeningFieldLabelProps) {
-  return (
-    <div className="mb-1.5 flex items-center gap-1.5">
-      <label
-        htmlFor={htmlFor}
-        className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary/65"
-      >
-        {label}
-      </label>
-      {help ? (
-        <span className="group relative inline-flex">
-          <button
-            type="button"
-            aria-label={`Ayuda sobre ${label}`}
-            className="text-primary/40 transition hover:text-primary focus:text-primary focus:outline-none"
-          >
-            <CircleHelp size={13} />
-          </button>
-          <span
-            role="tooltip"
-            className="pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-xl bg-brand px-3 py-2 text-left text-[11px] font-medium normal-case leading-4 tracking-normal text-white opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
-          >
-            {help}
-          </span>
-        </span>
-      ) : null}
-    </div>
+function getPlatformFields(platform: string) {
+  const normalizedPlatform = platform.trim().toUpperCase();
+  const isKnownPlatform = INVESTMENT_PLATFORMS.some(
+    (candidate) => candidate === normalizedPlatform,
   );
+  return isKnownPlatform
+    ? { platform: normalizedPlatform, customPlatform: "" }
+    : { platform: CUSTOM_INVESTMENT_PLATFORM, customPlatform: platform };
 }
 
 export function GoalForm({
@@ -68,6 +50,9 @@ export function GoalForm({
     register,
     handleSubmit,
     control,
+    getFieldState,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<IGoalFormValues>({
     resolver: zodResolver(goalSchema),
@@ -85,10 +70,12 @@ export function GoalForm({
           : "from_scratch",
       openingCashBalances: (goal?.openingCashBalances || []).map((item) => ({
         ...item,
+        ...getPlatformFields(item.platform),
         exchangeRateArsPerUsd: item.exchangeRateArsPerUsd || 0,
       })),
       openingPositions: (goal?.openingPositions || []).map((item) => ({
         ...item,
+        ...getPlatformFields(item.platform),
         exchangeRateArsPerUsd: item.exchangeRateArsPerUsd || 0,
       })),
       notes: goal?.notes || "",
@@ -107,7 +94,35 @@ export function GoalForm({
     replace: replacePositions,
   } = useFieldArray({ control, name: "openingPositions" });
   const trackingMode = useWatch({ control, name: "trackingMode" });
+  const openingCashBalances = useWatch({
+    control,
+    name: "openingCashBalances",
+  });
+  const openingPositions = useWatch({ control, name: "openingPositions" });
+  const {
+    quote,
+    isLoading: isRateLoading,
+    hasError: hasRateError,
+  } = useMepExchangeRate(!goal && trackingMode === "existing_portfolio");
   const trackingRegistration = register("trackingMode");
+
+  useEffect(() => {
+    if (!quote) return;
+
+    cashFields.forEach((_, index) => {
+      const path =
+        `openingCashBalances.${index}.exchangeRateArsPerUsd` as const;
+      if (!getFieldState(path).isDirty && !getValues(path)) {
+        setValue(path, quote.venta, { shouldValidate: true });
+      }
+    });
+    positionFields.forEach((_, index) => {
+      const path = `openingPositions.${index}.exchangeRateArsPerUsd` as const;
+      if (!getFieldState(path).isDirty && !getValues(path)) {
+        setValue(path, quote.venta, { shouldValidate: true });
+      }
+    });
+  }, [cashFields, getFieldState, getValues, positionFields, quote, setValue]);
 
   const submit = handleSubmit(async (values) => {
     const payload: IGoalPayload = {
@@ -122,23 +137,37 @@ export function GoalForm({
         ? {
             trackingMode: values.trackingMode,
             startDate: values.startDate,
-            openingCashBalances: values.openingCashBalances.map((item) => ({
-              ...item,
-              platform: item.platform.trim().toUpperCase(),
-              exchangeRateArsPerUsd:
-                item.exchangeRateArsPerUsd && item.exchangeRateArsPerUsd > 0
-                  ? item.exchangeRateArsPerUsd
-                  : undefined,
-            })),
-            openingPositions: values.openingPositions.map((item) => ({
-              ...item,
-              platform: item.platform.trim().toUpperCase(),
-              ticker: item.ticker.trim().toUpperCase(),
-              exchangeRateArsPerUsd:
-                item.exchangeRateArsPerUsd && item.exchangeRateArsPerUsd > 0
-                  ? item.exchangeRateArsPerUsd
-                  : undefined,
-            })),
+            openingCashBalances: values.openingCashBalances.map(
+              ({ customPlatform, ...item }) => ({
+                ...item,
+                platform: (item.platform === CUSTOM_INVESTMENT_PLATFORM
+                  ? customPlatform
+                  : item.platform
+                )
+                  .trim()
+                  .toUpperCase(),
+                exchangeRateArsPerUsd:
+                  item.exchangeRateArsPerUsd && item.exchangeRateArsPerUsd > 0
+                    ? item.exchangeRateArsPerUsd
+                    : undefined,
+              }),
+            ),
+            openingPositions: values.openingPositions.map(
+              ({ customPlatform, ...item }) => ({
+                ...item,
+                platform: (item.platform === CUSTOM_INVESTMENT_PLATFORM
+                  ? customPlatform
+                  : item.platform
+                )
+                  .trim()
+                  .toUpperCase(),
+                ticker: item.ticker.trim().toUpperCase(),
+                exchangeRateArsPerUsd:
+                  item.exchangeRateArsPerUsd && item.exchangeRateArsPerUsd > 0
+                    ? item.exchangeRateArsPerUsd
+                    : undefined,
+              }),
+            ),
           }
         : {}),
     };
@@ -262,7 +291,7 @@ export function GoalForm({
       {!goal ? (
         <section className="rounded-2xl border border-outline/10 bg-surface/65 p-4 sm:p-5">
           <label className="app-label" htmlFor="goal-tracking-mode">
-            ¿Cómo empiezas el seguimiento?
+            ¿Cómo querés empezar el seguimiento?
           </label>
           <select
             id="goal-tracking-mode"
@@ -276,16 +305,28 @@ export function GoalForm({
               }
             }}
           >
-            <option value="from_scratch">Comenzar desde cero</option>
+            <option value="from_scratch">Empezar desde cero</option>
             <option value="existing_portfolio">
-              Registrar una cartera existente
+              Empezar registrando una cartera existente
             </option>
           </select>
           <p className="mt-2 text-xs leading-5 text-body/45">
             {trackingMode === "from_scratch"
               ? "Primero registrarás aportes y luego las compras."
-              : "Carga el efectivo y las posiciones que ya tienes al iniciar."}
+              : "Cargá el efectivo y las posiciones que ya tenés iniciadas."}
           </p>
+          {trackingMode === "existing_portfolio" ? (
+            <p aria-live="polite" className="mt-1 text-xs text-body/45">
+              {isRateLoading
+                ? "Obteniendo cotización MEP de venta..."
+                : hasRateError
+                  ? "No pudimos obtener la cotización. Puedes ingresarla manualmente."
+                  : quote
+                    ? "Cotización sugerida actualizada el " +
+                      formatDateTime(quote.fechaActualizacion)
+                    : null}
+            </p>
+          ) : null}
           {errors.trackingMode ? (
             <p className="mt-1.5 text-xs text-ember">
               {errors.trackingMode.message}
@@ -309,9 +350,10 @@ export function GoalForm({
                     onClick={() =>
                       appendCash({
                         platform: "IOL",
+                        customPlatform: "",
                         currency: "ARS",
                         amount: 0,
-                        exchangeRateArsPerUsd: 0,
+                        exchangeRateArsPerUsd: quote?.venta || 0,
                       })
                     }
                     className="inline-flex items-center gap-1 rounded-xl bg-accent px-3 py-2 text-xs font-bold text-primary"
@@ -326,22 +368,46 @@ export function GoalForm({
                       className="grid gap-3 rounded-2xl border border-outline/8 bg-surface-soft p-3 sm:grid-cols-[1fr_100px_1fr_1fr_auto]"
                     >
                       <div>
-                        <OpeningFieldLabel
+                        <FormFieldLabel
                           htmlFor={`opening-cash-platform-${index}`}
                           label="Plataforma"
-                          help="Cuenta o entidad donde se encuentra disponible este dinero."
+                          compact
                         />
-                        <input
+                        <select
                           id={`opening-cash-platform-${index}`}
-                          className="app-field uppercase"
-                          placeholder="Ej. IOL"
+                          className="app-field"
                           {...register(`openingCashBalances.${index}.platform`)}
-                        />
+                        >
+                          {INVESTMENT_PLATFORMS.map((platform) => (
+                            <option key={platform} value={platform}>
+                              {INVESTMENT_PLATFORM_LABELS[platform]}
+                            </option>
+                          ))}
+                          <option value={CUSTOM_INVESTMENT_PLATFORM}>
+                            {
+                              INVESTMENT_PLATFORM_LABELS[
+                                CUSTOM_INVESTMENT_PLATFORM
+                              ]
+                            }
+                          </option>
+                        </select>
+                        {openingCashBalances[index]?.platform ===
+                        CUSTOM_INVESTMENT_PLATFORM ? (
+                          <input
+                            className="app-field mt-2 uppercase"
+                            aria-label="Nombre de la plataforma"
+                            placeholder="Nombre de la plataforma"
+                            {...register(
+                              `openingCashBalances.${index}.customPlatform`,
+                            )}
+                          />
+                        ) : null}
                       </div>
                       <div>
-                        <OpeningFieldLabel
+                        <FormFieldLabel
                           htmlFor={`opening-cash-currency-${index}`}
                           label="Moneda"
+                          compact
                         />
                         <select
                           id={`opening-cash-currency-${index}`}
@@ -353,10 +419,11 @@ export function GoalForm({
                         </select>
                       </div>
                       <div>
-                        <OpeningFieldLabel
+                        <FormFieldLabel
                           htmlFor={`opening-cash-amount-${index}`}
                           label="Saldo disponible"
                           help="Dinero sin invertir que tienes disponible actualmente en esta plataforma."
+                          compact
                         />
                         <input
                           id={`opening-cash-amount-${index}`}
@@ -371,10 +438,11 @@ export function GoalForm({
                         />
                       </div>
                       <div>
-                        <OpeningFieldLabel
+                        <FormFieldLabel
                           htmlFor={`opening-cash-rate-${index}`}
-                          label="Dolar MEP / CCL"
-                          help="Cotizacion de venta usada para convertir este saldo entre ARS y USD. Es opcional."
+                          label="Dólar MEP / CCL"
+                          help="Cotización de venta usada para convertir este saldo entre ARS y USD. Puedes modificar el valor sugerido."
+                          compact
                         />
                         <input
                           id={`opening-cash-rate-${index}`}
@@ -414,7 +482,8 @@ export function GoalForm({
                       Posiciones iniciales
                     </h3>
                     <p className="text-xs text-body/45">
-                      Activos que ya posees y su costo de adquisición.
+                      Activos en donde ya invertiste con su costo de
+                      adquisición.
                     </p>
                   </div>
                   <button
@@ -422,12 +491,13 @@ export function GoalForm({
                     onClick={() =>
                       appendPosition({
                         platform: "IOL",
+                        customPlatform: "",
                         ticker: "",
                         quantity: 0,
                         unitPrice: 0,
                         totalAmount: 0,
                         currency: "ARS",
-                        exchangeRateArsPerUsd: 0,
+                        exchangeRateArsPerUsd: quote?.venta || 0,
                       })
                     }
                     className="inline-flex items-center gap-1 rounded-xl bg-accent px-3 py-2 text-xs font-bold text-primary"
@@ -443,23 +513,46 @@ export function GoalForm({
                     >
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         <div>
-                          <OpeningFieldLabel
+                          <FormFieldLabel
                             htmlFor={`opening-position-platform-${index}`}
                             label="Plataforma"
-                            help="Cuenta o entidad donde mantienes este activo."
+                            compact
                           />
-                          <input
+                          <select
                             id={`opening-position-platform-${index}`}
-                            className="app-field uppercase"
-                            placeholder="Ej. IOL"
+                            className="app-field"
                             {...register(`openingPositions.${index}.platform`)}
-                          />
+                          >
+                            {INVESTMENT_PLATFORMS.map((platform) => (
+                              <option key={platform} value={platform}>
+                                {INVESTMENT_PLATFORM_LABELS[platform]}
+                              </option>
+                            ))}
+                            <option value={CUSTOM_INVESTMENT_PLATFORM}>
+                              {
+                                INVESTMENT_PLATFORM_LABELS[
+                                  CUSTOM_INVESTMENT_PLATFORM
+                                ]
+                              }
+                            </option>
+                          </select>
+                          {openingPositions[index]?.platform ===
+                          CUSTOM_INVESTMENT_PLATFORM ? (
+                            <input
+                              className="app-field mt-2 uppercase"
+                              aria-label="Nombre de la plataforma"
+                              placeholder="Nombre de la plataforma"
+                              {...register(
+                                `openingPositions.${index}.customPlatform`,
+                              )}
+                            />
+                          ) : null}
                         </div>
                         <div>
-                          <OpeningFieldLabel
+                          <FormFieldLabel
                             htmlFor={`opening-position-ticker-${index}`}
                             label="Ticker"
-                            help="Simbolo con el que se identifica el activo, por ejemplo AAPL, SPY o BTC."
+                            compact
                           />
                           <input
                             id={`opening-position-ticker-${index}`}
@@ -469,10 +562,11 @@ export function GoalForm({
                           />
                         </div>
                         <div>
-                          <OpeningFieldLabel
+                          <FormFieldLabel
                             htmlFor={`opening-position-quantity-${index}`}
                             label="Cantidad"
                             help="Cantidad total de unidades que posees actualmente."
+                            compact
                           />
                           <input
                             id={`opening-position-quantity-${index}`}
@@ -487,10 +581,11 @@ export function GoalForm({
                           />
                         </div>
                         <div>
-                          <OpeningFieldLabel
+                          <FormFieldLabel
                             htmlFor={`opening-position-price-${index}`}
                             label="PPC"
                             help="Precio promedio de compra por cada unidad del activo."
+                            compact
                           />
                           <input
                             id={`opening-position-price-${index}`}
@@ -508,10 +603,11 @@ export function GoalForm({
                           />
                         </div>
                         <div>
-                          <OpeningFieldLabel
+                          <FormFieldLabel
                             htmlFor={`opening-position-total-${index}`}
                             label="Total invertido"
                             help="Costo total real de la posicion, incluyendo las comisiones o cargos que haya aplicado la plataforma."
+                            compact
                           />
                           <input
                             id={`opening-position-total-${index}`}
@@ -527,9 +623,10 @@ export function GoalForm({
                           />
                         </div>
                         <div>
-                          <OpeningFieldLabel
+                          <FormFieldLabel
                             htmlFor={`opening-position-currency-${index}`}
                             label="Moneda"
+                            compact
                           />
                           <select
                             id={`opening-position-currency-${index}`}
@@ -541,10 +638,11 @@ export function GoalForm({
                           </select>
                         </div>
                         <div>
-                          <OpeningFieldLabel
+                          <FormFieldLabel
                             htmlFor={`opening-position-rate-${index}`}
-                            label="Dolar MEP / CCL"
-                            help="Cotizacion de venta correspondiente al costo cargado, usada para mostrar equivalencias en ARS y USD. Es opcional."
+                            label="Dólar MEP / CCL"
+                            help="Cotización de venta usada para convertir el costo entre ARS y USD. Puedes modificar el valor sugerido."
+                            compact
                           />
                           <input
                             id={`opening-position-rate-${index}`}

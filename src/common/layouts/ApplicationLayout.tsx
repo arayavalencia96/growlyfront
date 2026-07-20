@@ -77,6 +77,9 @@ function ApplicationShell() {
             <X size={20} />
           </button>
         </div>
+        <p className=" text-xs font-bold tracking-[0.16em] text-accent-text uppercase sm:block mt-3">
+          Finanzas con propósito
+        </p>
 
         <nav className="mt-12 min-h-0 flex-1 space-y-2 overflow-y-auto">
           {navigation.map(({ label, path, icon: Icon }) => (
@@ -98,14 +101,6 @@ function ApplicationShell() {
         </nav>
 
         <div className="shrink-0 pt-6">
-          <div className="rounded-3xl border border-white/10 bg-white/6 p-4">
-            <p className="text-xs font-bold tracking-[0.18em] text-accent-text uppercase">
-              Tu patrimonio
-            </p>
-            <p className="mt-2 text-sm leading-6 text-white/60">
-              Cada movimiento cuenta una parte de tu progreso.
-            </p>
-          </div>
           <button
             type="button"
             onClick={logout}
@@ -137,9 +132,6 @@ function ApplicationShell() {
             <Menu size={20} />
           </button>
           <div className="ml-auto flex items-center gap-3">
-            <p className="hidden text-xs font-bold tracking-[0.16em] text-secondary uppercase sm:block">
-              Finanzas con propósito
-            </p>
             <button
               type="button"
               onClick={toggleBalancesVisibility}

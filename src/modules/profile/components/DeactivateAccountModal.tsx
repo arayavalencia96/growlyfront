@@ -1,9 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle } from "lucide-react";
-import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Modal } from "@/common/components/Modal";
-import { AuthAlert } from "@/modules/auth/components/AuthAlert";
+import { toastService } from "@/common/services/toast.service";
 import { PasswordField } from "@/modules/auth/components/PasswordField";
 import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
 import {
@@ -19,7 +18,6 @@ export function DeactivateAccountModal({
   onClose,
   onDeactivated,
 }: IDeactivateAccountModalProps) {
-  const [requestError, setRequestError] = useState("");
   const {
     register,
     handleSubmit,
@@ -39,7 +37,6 @@ export function DeactivateAccountModal({
   if (!isOpen) return null;
 
   const submit = handleSubmit(async (values) => {
-    setRequestError("");
     try {
       await profileService.deactivate({
         reason: values.reason,
@@ -48,13 +45,16 @@ export function DeactivateAccountModal({
       });
       onDeactivated();
     } catch (error: unknown) {
-      setRequestError(getAuthErrorMessage(error));
+      toastService.error(
+        "No pudimos desactivar tu cuenta",
+        getAuthErrorMessage(error),
+      );
     }
   });
 
   return (
     <Modal
-      eyebrow="Zona sensible"
+      eyebrow=""
       title="Desactivar mi cuenta"
       onClose={onClose}
     >
@@ -65,8 +65,6 @@ export function DeactivateAccountModal({
           cuenta quedará desactivada para conservar la trazabilidad financiera.
         </p>
       </div>
-
-      {requestError ? <AuthAlert message={requestError} /> : null}
 
       <form onSubmit={submit} className="space-y-5">
         <div>

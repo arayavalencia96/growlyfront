@@ -8,8 +8,10 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ConfirmModal } from "@/common/components/ConfirmModal";
 import { Modal } from "@/common/components/Modal";
 import { SensitiveMoney } from "@/common/components/BalancePrivacy";
+import { toastService } from "@/common/services/toast.service";
 import { GoalMovementForm } from "@/modules/goal-movements/components/GoalMovementForm";
 import { GoalMovementsList } from "@/modules/goal-movements/components/GoalMovementsList";
 import type {
@@ -40,6 +42,9 @@ import { formatDate } from "@/utils/format.utils";
 
 type DetailTab = "movements" | "operations";
 type FormMode = DetailTab | null;
+type DeletionTarget =
+  | { type: "movement"; item: IGoalMovement }
+  | { type: "operation"; item: IInvestmentOperation };
 
 export function GoalDetailPage() {
   const { goalId = "" } = useParams();
@@ -57,6 +62,10 @@ export function GoalDetailPage() {
   const [detail, setDetail] = useState<GoalDetailSelection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletionTarget, setDeletionTarget] = useState<DeletionTarget | null>(
+    null,
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -144,8 +153,18 @@ export function GoalDetailPage() {
       }
       await refreshSummary();
       closeForm();
+      toastService.success(
+        editingMovement
+          ? "Movimiento actualizado correctamente"
+          : "Movimiento registrado correctamente",
+      );
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError));
+      toastService.error(
+        editingMovement
+          ? "No pudimos actualizar el movimiento"
+          : "No pudimos registrar el movimiento",
+        getErrorMessage(requestError),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -183,34 +202,60 @@ export function GoalDetailPage() {
       }
       await refreshSummary();
       closeForm();
+      toastService.success(
+        editingOperation
+          ? "Operación actualizada correctamente"
+          : "Operación registrada correctamente",
+      );
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError));
+      toastService.error(
+        editingOperation
+          ? "No pudimos actualizar la operación"
+          : "No pudimos registrar la operación",
+        getErrorMessage(requestError),
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const deleteMovement = async (movement: IGoalMovement) => {
-    if (!window.confirm("¿Eliminar este movimiento?")) return;
-    try {
-      await goalMovementsService.remove(movement.id);
-      setMovements((current) => current.filter(({ id }) => id !== movement.id));
-      await refreshSummary();
-    } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError));
-    }
-  };
+  const deleteMovement = (movement: IGoalMovement) =>
+    setDeletionTarget({ type: "movement", item: movement });
 
-  const deleteOperation = async (operation: IInvestmentOperation) => {
-    if (!window.confirm("¿Eliminar esta operación?")) return;
+  const deleteOperation = (operation: IInvestmentOperation) =>
+    setDeletionTarget({ type: "operation", item: operation });
+
+  const confirmDeletion = async () => {
+    if (!deletionTarget) return;
+    setIsDeleting(true);
     try {
-      await investmentOperationsService.remove(operation.id);
-      setOperations((current) =>
-        current.filter(({ id }) => id !== operation.id),
-      );
+      if (deletionTarget.type === "movement") {
+        await goalMovementsService.remove(deletionTarget.item.id);
+        setMovements((current) =>
+          current.filter(({ id }) => id !== deletionTarget.item.id),
+        );
+      } else {
+        await investmentOperationsService.remove(deletionTarget.item.id);
+        setOperations((current) =>
+          current.filter(({ id }) => id !== deletionTarget.item.id),
+        );
+      }
       await refreshSummary();
+      toastService.success(
+        deletionTarget.type === "movement"
+          ? "Movimiento eliminado correctamente"
+          : "Operación eliminada correctamente",
+      );
+      setDeletionTarget(null);
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError));
+      toastService.error(
+        deletionTarget.type === "movement"
+          ? "No pudimos eliminar el movimiento"
+          : "No pudimos eliminar la operación",
+        getErrorMessage(requestError),
+      );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -229,7 +274,7 @@ export function GoalDetailPage() {
           to="/objetivos"
           className="mt-6 inline-block font-bold text-primary"
         >
-          Volver a objetivos
+          Volver
         </Link>
       </div>
     );
@@ -242,7 +287,7 @@ export function GoalDetailPage() {
         className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary"
       >
         <ArrowLeft size={17} />
-        Volver a objetivos
+        Volver
       </Link>
 
       <div className="mt-6 overflow-hidden rounded-[2rem] bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
@@ -413,6 +458,7 @@ export function GoalDetailPage() {
 
       {formMode === "operations" ? (
         <Modal
+          size="lg"
           eyebrow={editingOperation ? "Editar inversión" : "Libro de inversión"}
           title={editingOperation ? "Modificar operación" : "Nueva operación"}
           onClose={closeForm}
@@ -426,6 +472,33 @@ export function GoalDetailPage() {
             onCancel={closeForm}
           />
         </Modal>
+      ) : null}
+
+      {deletionTarget ? (
+        <ConfirmModal
+          eyebrow={
+            deletionTarget.type === "movement"
+              ? "Eliminar movimiento"
+              : "Eliminar operación"
+          }
+          title={
+            deletionTarget.type === "movement"
+              ? "¿Eliminar este movimiento?"
+              : "¿Eliminar esta operación?"
+          }
+          description="Esta acción modificará los saldos y el resumen del objetivo. No se puede deshacer."
+          confirmLabel={
+            deletionTarget.type === "movement"
+              ? "Eliminar movimiento"
+              : "Eliminar operación"
+          }
+          variant="danger"
+          isLoading={isDeleting}
+          onConfirm={confirmDeletion}
+          onClose={() => {
+            if (!isDeleting) setDeletionTarget(null);
+          }}
+        />
       ) : null}
     </section>
   );

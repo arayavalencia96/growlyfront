@@ -1,4 +1,4 @@
-import { Info, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { Modal } from "@/common/components/Modal";
 import type { ITermsAndConditionsModalProps } from "@/modules/auth/interfaces/auth.interface";
 
@@ -19,15 +19,6 @@ export function TermsAndConditionsModal({
       title="Términos y privacidad"
       onClose={onClose}
     >
-      <div className="mb-6 flex gap-3 rounded-2xl border border-secondary/20 bg-brand-hover/8 p-4 text-sm leading-6 text-primary">
-        <Info className="mt-0.5 shrink-0" size={18} />
-        <p>
-          Este es un documento inicial para el proyecto Growly. Antes de una
-          publicación comercial debe ser revisado por un profesional e incluir
-          la identidad, domicilio y canal legal del responsable de los datos.
-        </p>
-      </div>
-
       <div className="space-y-6 text-sm leading-6 text-body/70">
         <section>
           <h3 className="mb-2 font-bold text-primary">

@@ -5,27 +5,56 @@ import {
   GOAL_TRACKING_MODES,
   GOAL_TYPES,
 } from "@/modules/goals/interfaces/goals.interface";
+import { CUSTOM_INVESTMENT_PLATFORM } from "@/modules/investment-operations/interfaces/investment-operations.interface";
 
 const optionalExchangeRate = z
   .number()
   .min(0, "La cotización no puede ser negativa");
 
-const openingCashSchema = z.object({
-  platform: z.string().trim().min(2, "Ingresa la plataforma").max(120),
-  currency: z.enum(GOAL_CURRENCIES),
-  amount: z.number().positive("El saldo debe ser mayor a cero"),
-  exchangeRateArsPerUsd: optionalExchangeRate,
-});
+const openingCashSchema = z
+  .object({
+    platform: z.string().trim().min(2, "Ingresa la plataforma").max(120),
+    customPlatform: z.string().trim().max(120),
+    currency: z.enum(GOAL_CURRENCIES),
+    amount: z.number().positive("El saldo debe ser mayor a cero"),
+    exchangeRateArsPerUsd: optionalExchangeRate,
+  })
+  .superRefine(({ platform, customPlatform }, context) => {
+    if (
+      platform === CUSTOM_INVESTMENT_PLATFORM &&
+      customPlatform.trim().length < 2
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Ingresa el nombre de la plataforma",
+        path: ["customPlatform"],
+      });
+    }
+  });
 
-const openingPositionSchema = z.object({
-  platform: z.string().trim().min(2, "Ingresa la plataforma").max(120),
-  ticker: z.string().trim().min(1, "Ingresa el ticker").max(30),
-  quantity: z.number().positive("La cantidad debe ser mayor a cero"),
-  unitPrice: z.number().positive("El PPC debe ser mayor a cero"),
-  totalAmount: z.number().positive("El total debe ser mayor a cero"),
-  currency: z.enum(GOAL_CURRENCIES),
-  exchangeRateArsPerUsd: optionalExchangeRate,
-});
+const openingPositionSchema = z
+  .object({
+    platform: z.string().trim().min(2, "Ingresa la plataforma").max(120),
+    customPlatform: z.string().trim().max(120),
+    ticker: z.string().trim().min(1, "Ingresa el ticker").max(30),
+    quantity: z.number().positive("La cantidad debe ser mayor a cero"),
+    unitPrice: z.number().positive("El PPC debe ser mayor a cero"),
+    totalAmount: z.number().positive("El total debe ser mayor a cero"),
+    currency: z.enum(GOAL_CURRENCIES),
+    exchangeRateArsPerUsd: optionalExchangeRate,
+  })
+  .superRefine(({ platform, customPlatform }, context) => {
+    if (
+      platform === CUSTOM_INVESTMENT_PLATFORM &&
+      customPlatform.trim().length < 2
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Ingresa el nombre de la plataforma",
+        path: ["customPlatform"],
+      });
+    }
+  });
 
 export const goalSchema = z
   .object({
@@ -70,7 +99,8 @@ export const goalSchema = z
     }
 
     const cashKeys = values.openingCashBalances.map(
-      (item) => `${item.platform.trim().toUpperCase()}:${item.currency}`,
+      (item) =>
+        `${(item.platform === CUSTOM_INVESTMENT_PLATFORM ? item.customPlatform : item.platform).trim().toUpperCase()}:${item.currency}`,
     );
     if (new Set(cashKeys).size !== cashKeys.length) {
       context.addIssue({
@@ -83,7 +113,7 @@ export const goalSchema = z
 
     const positionKeys = values.openingPositions.map(
       (item) =>
-        `${item.platform.trim().toUpperCase()}:${item.ticker.trim().toUpperCase()}`,
+        `${(item.platform === CUSTOM_INVESTMENT_PLATFORM ? item.customPlatform : item.platform).trim().toUpperCase()}:${item.ticker.trim().toUpperCase()}`,
     );
     if (new Set(positionKeys).size !== positionKeys.length) {
       context.addIssue({

@@ -1,8 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { AuthAlert } from "@/modules/auth/components/AuthAlert";
+import { toastService } from "@/common/services/toast.service";
 import { PasswordField } from "@/modules/auth/components/PasswordField";
 import { PasswordRequirements } from "@/modules/auth/components/PasswordRequirements";
 import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
@@ -16,7 +15,6 @@ import { profilePasswordSchema } from "@/modules/profile/validations/profile.val
 export function ChangePasswordForm({
   onPasswordChanged,
 }: IChangePasswordFormProps) {
-  const [requestError, setRequestError] = useState("");
   const {
     register,
     handleSubmit,
@@ -32,12 +30,14 @@ export function ChangePasswordForm({
   });
 
   const submit = handleSubmit(async ({ currentPassword, newPassword }) => {
-    setRequestError("");
     try {
       await profileService.changePassword({ currentPassword, newPassword });
       onPasswordChanged();
     } catch (error: unknown) {
-      setRequestError(getAuthErrorMessage(error));
+      toastService.error(
+        "No pudimos cambiar tu contraseña",
+        getAuthErrorMessage(error),
+      );
     }
   });
 
@@ -54,8 +54,6 @@ export function ChangePasswordForm({
           </p>
         </div>
       </div>
-
-      {requestError ? <AuthAlert message={requestError} /> : null}
 
       <form onSubmit={submit} className="space-y-5">
         <PasswordField
