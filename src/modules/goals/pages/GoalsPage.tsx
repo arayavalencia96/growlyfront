@@ -1,7 +1,9 @@
 import { Filter, Plus, Search, Sprout } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { ConfirmModal } from "@/common/components/ConfirmModal";
 import { Modal } from "@/common/components/Modal";
+import { toastService } from "@/common/services/toast.service";
 import { GoalCard } from "@/modules/goals/components/GoalCard";
 import { GoalForm } from "@/modules/goals/components/GoalForm";
 import {
@@ -35,6 +37,10 @@ export function GoalsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [goalPendingDeletion, setGoalPendingDeletion] = useState<IGoal | null>(
+    null,
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -80,7 +86,10 @@ export function GoalsPage() {
       const { result } = await summariesService.getPortfolio();
       setPortfolioSummary(result);
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError));
+      toastService.error(
+        "No pudimos actualizar el resumen",
+        getErrorMessage(requestError),
+      );
     }
   };
 
@@ -98,32 +107,47 @@ export function GoalsPage() {
         setGoals((current) =>
           current.map((goal) => (goal.id === result.id ? result : goal)),
         );
+        toastService.success("Objetivo actualizado correctamente");
       } else {
         const { result } = await goalsService.create(payload);
         setGoals((current) => [result, ...current]);
+        toastService.success("Objetivo creado correctamente");
       }
       setIsFormOpen(false);
       setEditingGoal(null);
       await refreshPortfolioSummary();
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError));
+      toastService.error(
+        editingGoal
+          ? "No pudimos actualizar el objetivo"
+          : "No pudimos crear el objetivo",
+        getErrorMessage(requestError),
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const deleteGoal = async (goal: IGoal) => {
-    const confirmed = window.confirm(
-      '¿Eliminar "' + goal.name + '"? Esta acción no se puede deshacer.',
-    );
-    if (!confirmed) return;
+  const deleteGoal = (goal: IGoal) => setGoalPendingDeletion(goal);
 
+  const confirmGoalDeletion = async () => {
+    if (!goalPendingDeletion) return;
+    setIsDeleting(true);
     try {
-      await goalsService.remove(goal.id);
-      setGoals((current) => current.filter(({ id }) => id !== goal.id));
+      await goalsService.remove(goalPendingDeletion.id);
+      setGoals((current) =>
+        current.filter(({ id }) => id !== goalPendingDeletion.id),
+      );
       await refreshPortfolioSummary();
+      toastService.success("Objetivo eliminado correctamente");
+      setGoalPendingDeletion(null);
     } catch (requestError: unknown) {
-      setError(getErrorMessage(requestError));
+      toastService.error(
+        "No pudimos eliminar el objetivo",
+        getErrorMessage(requestError),
+      );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -137,9 +161,9 @@ export function GoalsPage() {
           <h1 className="mt-3 font-display text-5xl leading-none text-primary sm:text-6xl">
             Objetivos
           </h1>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-body/58">
-            Define para qué invertís y lleva cada aporte, extracción e inversión
-            dentro de un mismo propósito.
+          <p className="mt-4 max-w-xl text-sm leading-7 text-body/60">
+            Definí tu objetivo y controlá cada aporte, extracción e inversión
+            para llevarlo a cabo.
           </p>
         </div>
         <button
@@ -251,6 +275,7 @@ export function GoalsPage() {
 
       {isFormOpen ? (
         <Modal
+          size="xl"
           eyebrow={editingGoal ? "Editar objetivo" : "Nuevo propósito"}
           title={editingGoal ? editingGoal.name : "¿Qué querés lograr?"}
           onClose={() => setIsFormOpen(false)}
@@ -262,6 +287,21 @@ export function GoalsPage() {
             onCancel={() => setIsFormOpen(false)}
           />
         </Modal>
+      ) : null}
+
+      {goalPendingDeletion ? (
+        <ConfirmModal
+          eyebrow="Eliminar objetivo"
+          title={`¿Eliminar ${goalPendingDeletion.name}?`}
+          description="Esta acción eliminará el objetivo y no se puede deshacer. Verifica que no necesites conservar su información antes de continuar."
+          confirmLabel="Eliminar objetivo"
+          variant="danger"
+          isLoading={isDeleting}
+          onConfirm={confirmGoalDeletion}
+          onClose={() => {
+            if (!isDeleting) setGoalPendingDeletion(null);
+          }}
+        />
       ) : null}
     </section>
   );

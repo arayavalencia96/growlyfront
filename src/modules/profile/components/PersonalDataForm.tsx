@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Pencil, Save, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { AuthAlert } from "@/modules/auth/components/AuthAlert";
+import { toastService } from "@/common/services/toast.service";
 import { PasswordField } from "@/modules/auth/components/PasswordField";
 import type {
   IPersonalDataFormProps,
@@ -17,8 +17,6 @@ export function PersonalDataForm({
   onUpdated,
   onEmailChangeRequested,
 }: IPersonalDataFormProps) {
-  const [message, setMessage] = useState("");
-  const [requestError, setRequestError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const {
     register,
@@ -41,8 +39,6 @@ export function PersonalDataForm({
   const emailChanged = normalizedEmail !== user.email;
 
   const startEditing = () => {
-    setMessage("");
-    setRequestError("");
     setIsEditing(true);
   };
 
@@ -53,15 +49,10 @@ export function PersonalDataForm({
       currentPassword: "",
     });
     clearErrors();
-    setMessage("");
-    setRequestError("");
     setIsEditing(false);
   };
 
   const submit = handleSubmit(async (values) => {
-    setMessage("");
-    setRequestError("");
-
     if (emailChanged && !values.currentPassword) {
       setError("currentPassword", {
         message: "Ingresa tu contraseña para cambiar el correo",
@@ -92,9 +83,12 @@ export function PersonalDataForm({
         currentPassword: "",
       });
       setIsEditing(false);
-      setMessage("Tus datos personales fueron actualizados.");
+      toastService.success("Tus datos personales fueron actualizados");
     } catch (error: unknown) {
-      setRequestError(getAuthErrorMessage(error));
+      toastService.error(
+        "No pudimos actualizar tus datos",
+        getAuthErrorMessage(error),
+      );
     }
   });
 
@@ -111,9 +105,6 @@ export function PersonalDataForm({
           <p className="text-xs text-body/45">Tu identidad dentro de Growly</p>
         </div>
       </div>
-
-      {message ? <AuthAlert message={message} variant="success" /> : null}
-      {requestError ? <AuthAlert message={requestError} /> : null}
 
       <form onSubmit={submit} className="space-y-5">
         <div>

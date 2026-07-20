@@ -146,9 +146,6 @@ export function ProfilePage() {
           <section className="rounded-[1.75rem] border border-ember/18 bg-surface p-6 sm:p-7">
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
               <div>
-                <p className="text-xs font-bold tracking-[0.12em] text-ember uppercase">
-                  Zona sensible
-                </p>
                 <h2 className="mt-2 font-display text-3xl text-primary">
                   Desactivar cuenta
                 </h2>

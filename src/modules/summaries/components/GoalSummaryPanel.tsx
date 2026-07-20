@@ -86,7 +86,7 @@ export function GoalSummaryPanel({
                 ? "cursor-pointer hover:-translate-y-0.5 hover:border-outline/20 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-secondary/35 "
                 : "") +
               (accent
-                ? "border-accent bg-accent/55"
+                ? "goal-book-value-card border-accent bg-accent/55"
                 : "border-outline/8 bg-surface")
             }
           >

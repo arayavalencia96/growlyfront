@@ -96,6 +96,15 @@
   .app-label {
     @apply mb-2 block text-xs font-bold tracking-[0.08em] text-primary uppercase;
   }
+
+  .modal-scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .modal-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer utilities {
@@ -107,6 +116,11 @@
   :root[data-theme="dark"] [class~="bg-accent/65"] .text-primary,
   :root[data-theme="dark"] [class~="hover:bg-accent"]:hover {
     color: #14362c;
+  }
+
+  :root[data-theme="dark"] .goal-book-value-card .text-primary,
+  :root[data-theme="dark"] .goal-book-value-card .text-secondary {
+    color: #ffffff;
   }
 }
 

@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { FormFieldLabel } from "@/common/components/FormFieldLabel";
 import { useMepExchangeRate } from "@/common/hooks/useMepExchangeRate";
 import type {
   IInvestmentOperationFormProps,
@@ -185,9 +186,11 @@ export function InvestmentOperationForm({
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label className="app-label" htmlFor="operation-quantity">
-            Cantidad
-          </label>
+          <FormFieldLabel
+            htmlFor="operation-quantity"
+            label="Cantidad"
+            help="Cantidad de unidades del activo que compraste o vendiste en esta operación."
+          />
           <input
             id="operation-quantity"
             type="number"
@@ -203,11 +206,19 @@ export function InvestmentOperationForm({
           ) : null}
         </div>
         <div>
-          <label className="app-label" htmlFor="operation-price">
-            {operationType === "buy"
-              ? "PPC · Precio promedio de compra"
-              : "PPV · Precio promedio de venta"}
-          </label>
+          <FormFieldLabel
+            htmlFor="operation-price"
+            label={
+              operationType === "buy"
+                ? "PPC · Precio promedio de compra"
+                : "PPV · Precio promedio de venta"
+            }
+            help={
+              operationType === "buy"
+                ? "Precio promedio pagado por cada unidad comprada."
+                : "Precio promedio obtenido por cada unidad vendida."
+            }
+          />
           <input
             id="operation-price"
             type="number"
@@ -226,11 +237,19 @@ export function InvestmentOperationForm({
 
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
-          <label className="app-label" htmlFor="operation-total-amount">
-            {operationType === "buy"
-              ? "Monto total invertido"
-              : "Monto total obtenido"}
-          </label>
+          <FormFieldLabel
+            htmlFor="operation-total-amount"
+            label={
+              operationType === "buy"
+                ? "Monto total invertido"
+                : "Monto total obtenido"
+            }
+            help={
+              operationType === "buy"
+                ? "Importe total debitado por la compra, incluyendo comisiones y cargos de la plataforma."
+                : "Importe neto acreditado por la venta, luego de comisiones y cargos de la plataforma."
+            }
+          />
           <input
             id="operation-total-amount"
             type="number"
@@ -259,9 +278,11 @@ export function InvestmentOperationForm({
           </select>
         </div>
         <div>
-          <label className="app-label" htmlFor="operation-rate">
-            Dólar MEP / CCL
-          </label>
+          <FormFieldLabel
+            htmlFor="operation-rate"
+            label="Dólar MEP / CCL"
+            help="Cotización de venta utilizada para convertir esta operación entre ARS y USD. Se sugiere automáticamente y puedes modificarla."
+          />
           <input
             id="operation-rate"
             type="number"
