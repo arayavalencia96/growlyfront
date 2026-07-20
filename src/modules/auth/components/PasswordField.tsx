@@ -10,7 +10,7 @@ export function PasswordField({
   id,
   ref,
   ...inputProps
-}: IPasswordFieldProps) {
+}: Readonly<IPasswordFieldProps>) {
   const [isVisible, setIsVisible] = useState(false);
   const fieldId = id || inputProps.name;
   const descriptionId = error

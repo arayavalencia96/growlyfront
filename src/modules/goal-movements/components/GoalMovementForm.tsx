@@ -28,7 +28,7 @@ export function GoalMovementForm({
   isSubmitting,
   onSubmit,
   onCancel,
-}: IGoalMovementFormProps) {
+}: Readonly<IGoalMovementFormProps>) {
   const savedPlatform = movement?.platform?.toUpperCase() || "";
   const isSavedPlatformKnown = isKnownPlatform(savedPlatform);
   const {

@@ -23,7 +23,7 @@ export function ConfirmModal({
   isLoading = false,
   onConfirm,
   onClose,
-}: IConfirmModalProps) {
+}: Readonly<IConfirmModalProps>) {
   const Icon = variant === "danger" ? AlertTriangle : CircleHelp;
 
   return (

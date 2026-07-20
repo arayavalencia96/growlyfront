@@ -11,7 +11,7 @@ function readVisibility(): boolean {
   return localStorage.getItem(BALANCE_VISIBILITY_KEY) !== "hidden";
 }
 
-export function BalancePrivacyProvider({ children }: { children: ReactNode }) {
+export function BalancePrivacyProvider({ children }: { readonly children: ReactNode }) {
   const [areBalancesVisible, setAreBalancesVisible] = useState(readVisibility);
 
   useEffect(() => {
@@ -46,9 +46,9 @@ export function SensitiveMoney({
   currency,
   prefix = "",
 }: {
-  amount: number;
-  currency: GoalCurrency;
-  prefix?: string;
+  readonly amount: number;
+  readonly currency: GoalCurrency;
+  readonly prefix?: string;
 }) {
   const { areBalancesVisible } = useBalancePrivacy();
   return (

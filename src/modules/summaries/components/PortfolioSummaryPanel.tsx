@@ -5,13 +5,13 @@ import type { IPortfolioSummary } from "@/modules/summaries/interfaces/summaries
 export function PortfolioSummaryPanel({
   summary,
 }: {
-  summary: IPortfolioSummary;
+  readonly summary: IPortfolioSummary;
 }) {
   return (
-    <section className="mt-8 overflow-hidden rounded-[2rem] bg-brand text-white shadow-[0_20px_55px_rgba(20,54,44,0.16)]">
+    <section className="mt-8 overflow-hidden rounded-4xl bg-brand text-white shadow-[0_20px_55px_rgba(20,54,44,0.16)]">
       <div className="grid lg:grid-cols-[minmax(260px,0.8fr)_1.5fr]">
         <div className="relative overflow-hidden border-white/10 p-6 sm:p-8 lg:border-r">
-          <div className="absolute -top-16 -right-14 size-52 rounded-full border-[38px] border-accent/8" />
+          <div className="absolute -top-16 -right-14 size-52 rounded-full border-38 border-accent/8" />
           <div className="relative">
             <span className="grid size-11 place-items-center rounded-2xl bg-accent text-primary">
               <Layers3 size={21} />
@@ -53,7 +53,7 @@ export function PortfolioSummaryPanel({
                   key={item.platform}
                   className="rounded-2xl border border-white/10 bg-white/7 p-4"
                 >
-                  <p className="text-xs font-bold uppercase tracking-[0.1em] text-accent-text">
+                  <p className="text-xs font-bold uppercase tracking-widest text-accent-text">
                     {item.platform}
                   </p>
                   <p className="mt-2 font-display text-2xl">

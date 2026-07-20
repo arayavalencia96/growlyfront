@@ -8,7 +8,7 @@ export function InvestmentOperationsList({
   onView,
   onEdit,
   onDelete,
-}: IInvestmentOperationsListProps) {
+}: Readonly<IInvestmentOperationsListProps>) {
   if (!operations.length) {
     return (
       <div className="rounded-[1.5rem] border border-dashed border-outline/15 py-16 text-center text-sm text-body/45">

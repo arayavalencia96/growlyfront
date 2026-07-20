@@ -58,10 +58,10 @@ export function Modal({
       }
 
       const firstElement = elements[0];
-      const lastElement = elements[elements.length - 1];
+      const lastElement = elements.at(-1);
       if (event.shiftKey && document.activeElement === firstElement) {
         event.preventDefault();
-        lastElement.focus();
+        lastElement?.focus();
       } else if (!event.shiftKey && document.activeElement === lastElement) {
         event.preventDefault();
         firstElement.focus();
@@ -90,7 +90,7 @@ export function Modal({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={
-          "modal-scrollbar-hidden max-h-[calc(100dvh-1rem)] w-full overflow-x-hidden overflow-y-auto rounded-t-[2rem] bg-surface-soft p-6 shadow-2xl sm:max-h-[calc(100dvh-3rem)] sm:rounded-[2rem] sm:p-8 " +
+          "modal-scrollbar-hidden max-h-[calc(100dvh-1rem)] w-full overflow-x-hidden overflow-y-auto rounded-t-4xl bg-surface-soft p-6 shadow-2xl sm:max-h-[calc(100dvh-3rem)] sm:rounded-t-4xl sm:p-8 " +
           modalWidthClasses[size]
         }
         onMouseDown={(event) => event.stopPropagation()}

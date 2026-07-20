@@ -20,7 +20,7 @@ export function GoalCard({ goal, onEdit, onDelete }: IGoalCardProps) {
   return (
     <article className="group relative isolate flex h-full cursor-pointer flex-col rounded-[1.75rem] border border-outline/9 bg-surface-soft p-6 shadow-[0_18px_55px_rgba(20,54,44,0.06)] transition hover:-translate-y-1 hover:shadow-[0_25px_65px_rgba(20,54,44,0.11)]">
       <Link
-        to={"/objetivos/" + goal.id}
+        to={"/objectives/" + goal.id}
         aria-label={`Abrir objetivo ${goal.name}`}
         className="absolute inset-0 z-0 rounded-[1.75rem] outline-none focus-visible:ring-3 focus-visible:ring-secondary/35"
       />

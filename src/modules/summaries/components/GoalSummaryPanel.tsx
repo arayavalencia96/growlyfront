@@ -10,7 +10,7 @@ import type {
 } from "@/modules/summaries/interfaces/summaries.interface";
 import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 
-function MoneyPair({ totals }: { totals: IMoneyTotals }) {
+function MoneyPair({ totals }: { readonly totals: IMoneyTotals }) {
   return (
     <>
       <p className="font-display text-3xl text-primary">
@@ -26,7 +26,7 @@ function MoneyPair({ totals }: { totals: IMoneyTotals }) {
 export function GoalSummaryPanel({
   summary,
   onCashBalanceClick,
-}: IGoalSummaryPanelProps) {
+}: Readonly<IGoalSummaryPanelProps>) {
   const progress = Math.max(0, summary.progressPercentage);
 
   return (
@@ -81,7 +81,7 @@ export function GoalSummaryPanel({
               }
             }}
             className={
-              "rounded-[1.5rem] border p-5 transition " +
+              "rounded-3xl border p-5 transition " +
               (onClick
                 ? "cursor-pointer hover:-translate-y-0.5 hover:border-outline/20 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-secondary/35 "
                 : "") +
@@ -91,7 +91,7 @@ export function GoalSummaryPanel({
             }
           >
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-xs font-bold tracking-[0.1em] text-secondary uppercase">
+              <p className="text-xs font-bold tracking-widest text-secondary uppercase">
                 {label}
               </p>
               <Icon size={17} className="text-secondary" />
@@ -101,10 +101,10 @@ export function GoalSummaryPanel({
         ))}
       </div>
 
-      <div className="rounded-[1.5rem] border border-outline/8 bg-surface p-5 sm:p-6">
+      <div className="rounded-3xl border border-outline/8 bg-surface p-5 sm:p-6">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold tracking-[0.1em] text-secondary uppercase">
+            <p className="text-xs font-bold tracking-widest text-secondary uppercase">
               Avance total
             </p>
             <p className="mt-2 text-sm text-body/50">
@@ -123,10 +123,10 @@ export function GoalSummaryPanel({
         </div>
       </div>
 
-      <div className="rounded-[1.5rem] border border-outline/8 bg-surface-soft p-5 sm:p-6">
+      <div className="rounded-3xl border border-outline/8 bg-surface-soft p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-bold tracking-[0.1em] text-secondary uppercase">
+            <p className="text-xs font-bold tracking-widest text-secondary uppercase">
               Posiciones abiertas
             </p>
             <h3 className="mt-2 font-display text-3xl text-primary">

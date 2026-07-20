@@ -1,8 +1,8 @@
-function SkeletonLine({ className }: { className: string }) {
+function SkeletonLine({ className }: { readonly className: string }) {
   return <div className={`rounded-full bg-brand/8 ${className}`} />;
 }
 
-function FieldSkeleton({ width = "w-24" }: { width?: string }) {
+function FieldSkeleton({ width = "w-24" }: { readonly width?: string }) {
   return (
     <div>
       <SkeletonLine className={`mb-2 h-3 ${width}`} />
@@ -26,11 +26,11 @@ function SectionHeadingSkeleton() {
 export function ProfileSkeleton() {
   return (
     <div
-      role="status"
+    role="status"
       aria-label="Cargando perfil"
       className="mx-auto max-w-6xl animate-pulse space-y-6 motion-reduce:animate-none"
     >
-      <div className="overflow-hidden rounded-[2rem] bg-brand/12 p-7 sm:p-9">
+      <div className="overflow-hidden rounded-4xl bg-brand/12 p-7 sm:p-9">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           <div className="size-20 shrink-0 rounded-[1.75rem] bg-brand/12" />
           <div className="min-w-0 flex-1">

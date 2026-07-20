@@ -22,8 +22,8 @@ import { ThemeProvider } from "@/common/components/ThemeProvider";
 import { useTheme } from "@/common/components/theme.context";
 
 const navigation = [
-  { label: "Objetivos", path: "/objetivos", icon: Target },
-  { label: "Mi perfil", path: "/mi-perfil", icon: UserRound },
+  { label: "Objetivos", path: "/objectives", icon: Target },
+  { label: "Mi perfil", path: "/profile", icon: UserRound },
 ] as const;
 
 function ApplicationShell() {
@@ -34,7 +34,7 @@ function ApplicationShell() {
 
   useEffect(() => {
     const handleSessionExpired = () => {
-      navigate("/iniciar-sesion", {
+      navigate("/login", {
         replace: true,
         state: {
           message: "Tu sesión venció. Ingresa nuevamente para continuar.",
@@ -50,7 +50,7 @@ function ApplicationShell() {
 
   const logout = () => {
     sessionService.clear();
-    navigate("/iniciar-sesion", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -62,7 +62,7 @@ function ApplicationShell() {
         }
       >
         <div className="flex items-center justify-between px-2">
-          <NavLink to="/objetivos" className="flex items-center gap-3">
+          <NavLink to="/objectives" className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-2xl bg-accent text-primary">
               <Sprout size={22} strokeWidth={2} />
             </span>

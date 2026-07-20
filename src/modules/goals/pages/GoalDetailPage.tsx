@@ -271,7 +271,7 @@ export function GoalDetailPage() {
         </h1>
         <p className="mt-3 text-sm text-body/50">{error}</p>
         <Link
-          to="/objetivos"
+          to="/objectives"
           className="mt-6 inline-block font-bold text-primary"
         >
           Volver
@@ -283,7 +283,7 @@ export function GoalDetailPage() {
   return (
     <section className="mx-auto max-w-7xl">
       <Link
-        to="/objetivos"
+        to="/objectives"
         className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary"
       >
         <ArrowLeft size={17} />
