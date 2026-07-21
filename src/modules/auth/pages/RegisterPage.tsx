@@ -1,8 +1,15 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Mail, UserRound } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+
+import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { registerSchema } from "@/modules/auth/validations/auth.validation";
+
+import { authService } from "@/modules/auth/services/auth.service";
+
 import { AuthAlert } from "@/modules/auth/components/AuthAlert";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { FormField } from "@/modules/auth/components/FormField";
@@ -10,10 +17,10 @@ import { PasswordField } from "@/modules/auth/components/PasswordField";
 import { PasswordRequirements } from "@/modules/auth/components/PasswordRequirements";
 import { SubmitButton } from "@/modules/auth/components/SubmitButton";
 import { TermsAndConditionsModal } from "@/modules/auth/components/TermsAndConditionsModal";
+
 import type { IRegisterForm } from "@/modules/auth/interfaces/auth.interface";
-import { authService } from "@/modules/auth/services/auth.service";
-import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
-import { registerSchema } from "@/modules/auth/validations/auth.validation";
+
+import { ArrowRight, Mail, UserRound } from "lucide-react";
 
 export function RegisterPage() {
   const navigate = useNavigate();

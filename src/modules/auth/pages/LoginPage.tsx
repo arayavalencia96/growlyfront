@@ -1,25 +1,31 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Mail } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { sessionService } from "@/common/services/session.service";
-import { AuthAlert } from "@/modules/auth/components/AuthAlert";
-import { AuthLayout } from "@/modules/auth/components/AuthLayout";
-import { FormField } from "@/modules/auth/components/FormField";
-import { PasswordField } from "@/modules/auth/components/PasswordField";
-import { SubmitButton } from "@/modules/auth/components/SubmitButton";
-import type {
-  IAuthNavigationState,
-  ILoginRequest,
-} from "@/modules/auth/interfaces/auth.interface";
 import { authService } from "@/modules/auth/services/auth.service";
+
 import {
   getAuthErrorMessage,
   getSessionTokens,
   isAuthError,
 } from "@/modules/auth/utils/auth-error.utils";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/modules/auth/validations/auth.validation";
+
+import { AuthAlert } from "@/modules/auth/components/AuthAlert";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { FormField } from "@/modules/auth/components/FormField";
+import { PasswordField } from "@/modules/auth/components/PasswordField";
+import { SubmitButton } from "@/modules/auth/components/SubmitButton";
+
+import type {
+  IAuthNavigationState,
+  ILoginRequest,
+} from "@/modules/auth/interfaces/auth.interface";
+
+import { ArrowRight, Mail } from "lucide-react";
 
 export function LoginPage() {
   const navigate = useNavigate();

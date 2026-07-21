@@ -265,7 +265,7 @@ export function GoalDetailPage() {
 
   if (!goal || !summary) {
     return (
-      <div className="mx-auto max-w-3xl rounded-[2rem] bg-surface p-10 text-center">
+      <div className="mx-auto max-w-3xl rounded-4xl bg-surface p-10 text-center">
         <h1 className="font-display text-4xl text-primary">
           No encontramos el objetivo
         </h1>
@@ -290,9 +290,9 @@ export function GoalDetailPage() {
         Volver
       </Link>
 
-      <div className="mt-6 overflow-hidden rounded-[2rem] bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
+      <div className="mt-6 overflow-hidden rounded-4xl bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
         <div className="relative p-7 sm:p-10">
-          <div className="absolute -top-20 -right-14 size-64 rounded-full border-[45px] border-accent/8" />
+          <div className="absolute -top-20 -right-14 size-64 rounded-full border-45 border-accent/8" />
           <div className="relative flex flex-col justify-between gap-8 md:flex-row md:items-end">
             <div>
               <p className="text-xs font-bold tracking-[0.2em] text-accent-text uppercase">
@@ -353,7 +353,7 @@ export function GoalDetailPage() {
         />
       </div>
 
-      <div className="mt-8 rounded-[2rem] border border-outline/8 bg-surface-soft p-5 sm:p-7">
+      <div className="mt-8 rounded-4xl border border-outline/8 bg-surface-soft p-5 sm:p-7">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-xl bg-accent text-primary">

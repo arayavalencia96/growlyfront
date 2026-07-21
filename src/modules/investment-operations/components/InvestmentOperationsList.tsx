@@ -11,7 +11,7 @@ export function InvestmentOperationsList({
 }: Readonly<IInvestmentOperationsListProps>) {
   if (!operations.length) {
     return (
-      <div className="rounded-[1.5rem] border border-dashed border-outline/15 py-16 text-center text-sm text-body/45">
+      <div className="rounded-3xl border border-dashed border-outline/15 py-16 text-center text-sm text-body/45">
         Todavía no registraste compras ni ventas.
       </div>
     );

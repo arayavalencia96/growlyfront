@@ -13,11 +13,15 @@ export function PasswordField({
 }: Readonly<IPasswordFieldProps>) {
   const [isVisible, setIsVisible] = useState(false);
   const fieldId = id || inputProps.name;
-  const descriptionId = error
-    ? fieldId + "-error"
-    : hint
-      ? fieldId + "-hint"
-      : undefined;
+  
+  let descriptionId: string | undefined;
+  if (error) {
+    descriptionId = fieldId + "-error";
+  } else if (hint) {
+    descriptionId = fieldId + "-hint";
+  } else {
+    descriptionId = undefined;
+  }
   const visibilityLabel = isVisible
     ? "Ocultar contraseña"
     : "Mostrar contraseña";
@@ -66,15 +70,16 @@ export function PasswordField({
           )}
         </button>
       </div>
-      {error ? (
+      {error && (
         <p id={descriptionId} className="mt-1.5 text-xs font-medium text-ember">
           {error}
         </p>
-      ) : hint ? (
+      )}
+      {hint && (
         <p id={descriptionId} className="mt-1.5 text-xs text-body/48">
           {hint}
         </p>
-      ) : null}
+      )}
     </div>
   );
 }
