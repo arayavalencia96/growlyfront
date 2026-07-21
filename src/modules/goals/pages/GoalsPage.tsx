@@ -1,6 +1,6 @@
 import { Filter, Plus, Search, Sprout } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import type { SyntheticEvent } from "react";
 import { ConfirmModal } from "@/common/components/ConfirmModal";
 import { Modal } from "@/common/components/Modal";
 import { toastService } from "@/common/services/toast.service";
@@ -64,7 +64,9 @@ export function GoalsPage() {
     };
   }, [filters]);
 
-  const applyFilters = (event: FormEvent) => {
+  const applyFilters = (
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
+  ) => {
     event.preventDefault();
     setIsLoading(true);
     setError("");
@@ -176,15 +178,12 @@ export function GoalsPage() {
         </button>
       </div>
 
-      {portfolioSummary ? (
-        <PortfolioSummaryPanel summary={portfolioSummary} />
-      ) : isLoading ? (
-        <PortfolioSummarySkeleton />
-      ) : null}
+      {portfolioSummary && <PortfolioSummaryPanel summary={portfolioSummary} />}
+      {isLoading && !portfolioSummary && <PortfolioSummarySkeleton />}
 
       <form
         onSubmit={applyFilters}
-        className="mt-10 grid gap-3 rounded-[1.5rem] border border-outline/8 bg-surface/65 p-3 shadow-sm sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_180px_160px_120px_auto]"
+        className="mt-10 grid gap-3 rounded-3xl border border-outline/8 bg-surface/65 p-3 shadow-sm sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_180px_160px_120px_auto]"
       >
         <label className="relative sm:col-span-2 xl:col-span-1">
           <Search
@@ -244,9 +243,9 @@ export function GoalsPage() {
         </div>
       ) : null}
 
-      {isLoading ? (
-        <GoalCardsSkeleton />
-      ) : goals.length ? (
+      {isLoading && <GoalCardsSkeleton />}
+
+      {!isLoading && goals.length > 0 && (
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {goals.map((goal) => (
             <GoalCard
@@ -257,8 +256,10 @@ export function GoalsPage() {
             />
           ))}
         </div>
-      ) : (
-        <div className="mt-8 grid min-h-80 place-items-center rounded-[2rem] border border-dashed border-outline/18 bg-surface/45 p-8 text-center">
+      )}
+
+      {!isLoading && goals.length === 0 && (
+        <div className="mt-8 grid min-h-80 place-items-center rounded-4xl border border-dashed border-outline/18 bg-surface/45 p-8 text-center">
           <div>
             <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-accent text-primary">
               <Sprout size={26} />

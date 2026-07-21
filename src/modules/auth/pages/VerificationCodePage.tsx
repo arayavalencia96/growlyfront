@@ -1,5 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -8,18 +6,27 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
+
+import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { verificationCodeSchema } from "@/modules/auth/validations/auth.validation";
+
+import { sessionService } from "@/common/services/session.service";
+import { authService } from "@/modules/auth/services/auth.service";
+
 import { AuthAlert } from "@/modules/auth/components/AuthAlert";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { FormField } from "@/modules/auth/components/FormField";
 import { SubmitButton } from "@/modules/auth/components/SubmitButton";
-import { sessionService } from "@/common/services/session.service";
+
 import type {
   IAuthNavigationState,
   IVerificationCodeRequest,
 } from "@/modules/auth/interfaces/auth.interface";
-import { authService } from "@/modules/auth/services/auth.service";
-import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
-import { verificationCodeSchema } from "@/modules/auth/validations/auth.validation";
+
+import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 
 export function VerificationCodePage() {
   const navigate = useNavigate();

@@ -1,16 +1,19 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { HomePage } from "@/app/pages/HomePage";
-import { ApplicationLayout } from "@/common/layouts/ApplicationLayout";
-import { RequireSession } from "@/common/components/RequireSession";
+
 import { ChangeBlockedPasswordPage } from "@/modules/auth/pages/ChangeBlockedPasswordPage";
 import { ForgotPasswordPage } from "@/modules/auth/pages/ForgotPasswordPage";
+import { GoalDetailPage } from "@/modules/goals/pages/GoalDetailPage";
+import { GoalsPage } from "@/modules/goals/pages/GoalsPage";
+import { HomePage } from "@/app/pages/HomePage";
 import { LoginPage } from "@/modules/auth/pages/LoginPage";
+import { ProfilePage } from "@/modules/profile/pages/ProfilePage";
 import { RegisterPage } from "@/modules/auth/pages/RegisterPage";
 import { ResetPasswordPage } from "@/modules/auth/pages/ResetPasswordPage";
 import { VerificationCodePage } from "@/modules/auth/pages/VerificationCodePage";
-import { GoalDetailPage } from "@/modules/goals/pages/GoalDetailPage";
-import { GoalsPage } from "@/modules/goals/pages/GoalsPage";
-import { ProfilePage } from "@/modules/profile/pages/ProfilePage";
+
+import { ApplicationLayout } from "@/common/layouts/ApplicationLayout";
+
+import { RequireSession } from "@/common/components/RequireSession";
 
 export const router = createBrowserRouter([
   {

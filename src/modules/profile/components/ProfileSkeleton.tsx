@@ -26,8 +26,10 @@ function SectionHeadingSkeleton() {
 export function ProfileSkeleton() {
   return (
     <div
-    role="status"
+      role="status"
       aria-label="Cargando perfil"
+      aria-live="polite"
+      aria-busy="true"
       className="mx-auto max-w-6xl animate-pulse space-y-6 motion-reduce:animate-none"
     >
       <div className="overflow-hidden rounded-4xl bg-brand/12 p-7 sm:p-9">

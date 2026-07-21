@@ -18,7 +18,7 @@ export function GoalMovementsList({
 }: Readonly<IGoalMovementsListProps>) {
   if (!movements.length) {
     return (
-      <div className="rounded-[1.5rem] border border-dashed border-outline/15 py-16 text-center text-sm text-body/45">
+      <div className="rounded-3xl border border-dashed border-outline/15 py-16 text-center text-sm text-body/45">
         Todavía no registraste aportes ni extracciones.
       </div>
     );
@@ -29,19 +29,11 @@ export function GoalMovementsList({
       {movements.map((movement) => {
         const isContribution = movement.type === "contribution";
         return (
-          <article
+          <button
             key={movement.id}
-            role="button"
-            tabIndex={0}
+            type="button"
             onClick={() => onView(movement)}
-            onKeyDown={(event) => {
-              if (event.target !== event.currentTarget) return;
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                onView(movement);
-              }
-            }}
-            className="grid cursor-pointer gap-4 rounded-2xl border border-outline/8 bg-surface p-4 transition hover:border-outline/20 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/30 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
+            className="grid cursor-pointer gap-4 rounded-2xl border border-outline/8 bg-surface p-4 transition hover:border-outline/20 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/30 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center text-left"
           >
             <span
               className={
@@ -103,7 +95,7 @@ export function GoalMovementsList({
                 <Trash2 size={16} />
               </button>
             </div>
-          </article>
+          </button>
         );
       })}
     </div>

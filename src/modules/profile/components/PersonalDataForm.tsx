@@ -118,7 +118,7 @@ export function PersonalDataForm({
             />
             <input
               id="profile-name"
-              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/[0.04] disabled:text-body/45"
+              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/4 disabled:text-body/45"
               autoComplete="name"
               disabled={!isEditing}
               {...register("name")}
@@ -141,7 +141,7 @@ export function PersonalDataForm({
             <input
               id="profile-email"
               type="email"
-              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/[0.04] disabled:text-body/45"
+              className="app-field pl-11 disabled:cursor-not-allowed disabled:border-ink/8 disabled:bg-ink/4 disabled:text-body/45"
               autoComplete="email"
               disabled={!isEditing}
               {...register("email")}

@@ -1,4 +1,3 @@
-import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import {
   Link,
@@ -6,13 +5,19 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
+
+import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
 import { sessionService } from "@/common/services/session.service";
+import { authService } from "@/modules/auth/services/auth.service";
+
 import { AuthAlert } from "@/modules/auth/components/AuthAlert";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { NewPasswordForm } from "@/modules/auth/components/NewPasswordForm";
+
 import type { IAuthNavigationState } from "@/modules/auth/interfaces/auth.interface";
-import { authService } from "@/modules/auth/services/auth.service";
-import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
+import { ShieldCheck } from "lucide-react";
 
 export function ChangeBlockedPasswordPage() {
   const navigate = useNavigate();

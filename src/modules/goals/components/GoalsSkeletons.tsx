@@ -1,13 +1,12 @@
-function SkeletonLine({ className }: { className: string }) {
+function SkeletonLine({ className }: { readonly className: string }) {
   return <div className={`rounded-full bg-brand/8 ${className}`} />;
 }
 
 export function PortfolioSummarySkeleton() {
   return (
-    <div
-      role="status"
+    <output
       aria-label="Cargando resumen patrimonial"
-      className="mt-8 animate-pulse overflow-hidden rounded-[2rem] border border-outline/6 bg-surface/45 motion-reduce:animate-none"
+      className="mt-8 animate-pulse overflow-hidden rounded-4xl border border-outline/6 bg-surface/45 motion-reduce:animate-none"
     >
       <div className="grid lg:grid-cols-[minmax(260px,0.8fr)_1.5fr]">
         <div className="border-outline/6 p-6 sm:p-8 lg:border-r">
@@ -34,14 +33,13 @@ export function PortfolioSummarySkeleton() {
         </div>
       </div>
       <span className="sr-only">Cargando...</span>
-    </div>
+    </output>
   );
 }
 
 export function GoalCardsSkeleton() {
   return (
-    <div
-      role="status"
+    <output
       aria-label="Cargando objetivos"
       className="mt-8 grid animate-pulse gap-5 motion-reduce:animate-none md:grid-cols-2 xl:grid-cols-3"
     >
@@ -66,20 +64,19 @@ export function GoalCardsSkeleton() {
         </div>
       ))}
       <span className="sr-only">Cargando...</span>
-    </div>
+    </output>
   );
 }
 
 export function GoalDetailSkeleton() {
   return (
-    <div
-      role="status"
+    <output
       aria-label="Cargando detalle del objetivo"
       className="mx-auto max-w-7xl animate-pulse space-y-6 motion-reduce:animate-none"
     >
       <SkeletonLine className="h-4 w-36" />
 
-      <div className="rounded-[2rem] bg-brand/12 p-7 sm:p-10">
+      <div className="rounded-4xl bg-brand/12 p-7 sm:p-10">
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
           <div className="flex-1">
             <SkeletonLine className="h-3 w-44" />
@@ -100,7 +97,7 @@ export function GoalDetailSkeleton() {
         {[1, 2, 3, 4].map((item) => (
           <div
             key={item}
-            className="h-36 rounded-[1.5rem] border border-outline/5 bg-surface/55 p-5"
+            className="h-36 rounded-3xl border border-outline/5 bg-surface/55 p-5"
           >
             <SkeletonLine className="h-3 w-28" />
             <SkeletonLine className="mt-6 h-8 w-36" />
@@ -109,7 +106,7 @@ export function GoalDetailSkeleton() {
         ))}
       </div>
 
-      <div className="rounded-[1.5rem] border border-outline/5 bg-surface/55 p-6">
+      <div className="rounded-3xl border border-outline/5 bg-surface/55 p-6">
         <div className="flex justify-between gap-5">
           <div>
             <SkeletonLine className="h-3 w-28" />
@@ -120,7 +117,7 @@ export function GoalDetailSkeleton() {
         <SkeletonLine className="mt-6 h-3 w-full" />
       </div>
 
-      <div className="rounded-[1.5rem] border border-outline/5 bg-surface/45 p-6">
+      <div className="rounded-3xl border border-outline/5 bg-surface/45 p-6">
         <div className="flex justify-between">
           <div>
             <SkeletonLine className="h-3 w-32" />
@@ -131,7 +128,7 @@ export function GoalDetailSkeleton() {
         <div className="mt-6 h-36 rounded-2xl border border-outline/5 bg-surface/40" />
       </div>
 
-      <div className="rounded-[2rem] border border-outline/5 bg-surface/45 p-6">
+      <div className="rounded-4xl border border-outline/5 bg-surface/45 p-6">
         <div className="flex items-center justify-between gap-5">
           <div className="flex items-center gap-3">
             <div className="size-10 rounded-xl bg-brand/10" />
@@ -145,6 +142,6 @@ export function GoalDetailSkeleton() {
         <div className="mt-6 h-40 rounded-2xl border border-outline/5 bg-surface/40" />
       </div>
       <span className="sr-only">Cargando...</span>
-    </div>
+    </output>
   );
 }

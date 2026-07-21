@@ -18,7 +18,7 @@ import { formatDateTime, toDateInput } from "@/utils/format.utils";
 const today = new Date().toISOString().slice(0, 10);
 
 function isKnownPlatform(value: string): value is InvestmentPlatform {
-  return INVESTMENT_PLATFORMS.some((platform) => platform === value);
+  return INVESTMENT_PLATFORMS.includes(value as InvestmentPlatform);
 }
 
 export function GoalMovementForm({
@@ -31,6 +31,12 @@ export function GoalMovementForm({
 }: Readonly<IGoalMovementFormProps>) {
   const savedPlatform = movement?.platform?.toUpperCase() || "";
   const isSavedPlatformKnown = isKnownPlatform(savedPlatform);
+  const fallbackPlatform = movement
+    ? CUSTOM_INVESTMENT_PLATFORM
+    : "IOL";
+  const defaultPlatformOption = isSavedPlatformKnown
+    ? savedPlatform
+    : fallbackPlatform;
   const {
     register,
     handleSubmit,
@@ -46,11 +52,7 @@ export function GoalMovementForm({
       currency: movement?.currency || defaultCurrency,
       movementDate: movement ? toDateInput(movement.movementDate) : today,
       exchangeRateArsPerUsd: movement?.exchangeRateArsPerUsd || 0,
-      platformOption: isSavedPlatformKnown
-        ? savedPlatform
-        : movement
-          ? CUSTOM_INVESTMENT_PLATFORM
-          : "IOL",
+      platformOption: defaultPlatformOption,
       customPlatform:
         movement && !isSavedPlatformKnown ? movement.platform || "" : "",
       notes: movement?.notes || "",

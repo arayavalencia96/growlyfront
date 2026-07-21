@@ -1,4 +1,4 @@
-import { CircleHelp } from "lucide-react";
+import { createPortal } from "react-dom";
 import {
   type CSSProperties,
   useId,
@@ -6,7 +6,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { createPortal } from "react-dom";
+
+import { CircleHelp } from "lucide-react";
 
 interface IFormFieldLabelProps {
   htmlFor: string;

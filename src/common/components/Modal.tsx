@@ -1,6 +1,7 @@
-import { X } from "lucide-react";
 import { type ReactNode, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
+
+import { X } from "lucide-react";
 
 interface IModalProps {
   title: string;

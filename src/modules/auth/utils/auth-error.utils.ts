@@ -1,4 +1,5 @@
 import { ApiError } from "@/common/errors/api.error";
+
 import type { IAuthResponse } from "@/modules/auth/interfaces/auth.interface";
 
 const ERROR_TRANSLATIONS: Readonly<Record<string, string>> = {

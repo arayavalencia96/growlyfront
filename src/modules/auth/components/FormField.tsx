@@ -11,11 +11,8 @@ export function FormField({
   ...inputProps
 }: Readonly<IFormFieldProps>) {
   const fieldId = id || inputProps.name;
-  const descriptionId = error
-    ? fieldId + "-error"
-    : hint
-      ? fieldId + "-hint"
-      : undefined;
+  const hintDescriptionId = hint ? fieldId + "-hint" : undefined;
+  const descriptionId = error ? fieldId + "-error" : hintDescriptionId;
 
   return (
     <div>
@@ -47,15 +44,16 @@ export function FormField({
           }
         />
       </div>
-      {error ? (
+      {error && (
         <p id={descriptionId} className="mt-1.5 text-xs font-medium text-ember">
           {error}
         </p>
-      ) : hint ? (
+      )}
+      {hint && !error && (
         <p id={descriptionId} className="mt-1.5 text-xs text-body/48">
           {hint}
         </p>
-      ) : null}
+      )}
     </div>
   );
 }
