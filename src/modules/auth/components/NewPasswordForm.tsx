@@ -15,7 +15,7 @@ export function NewPasswordForm({
   onSave,
   submitText,
   loadingText,
-}: INewPasswordFormProps) {
+}: Readonly<INewPasswordFormProps>) {
   const {
     register,
     handleSubmit,

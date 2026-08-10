@@ -14,7 +14,7 @@ import { profilePasswordSchema } from "@/modules/profile/validations/profile.val
 
 export function ChangePasswordForm({
   onPasswordChanged,
-}: IChangePasswordFormProps) {
+}: Readonly<IChangePasswordFormProps>) {
   const {
     register,
     handleSubmit,

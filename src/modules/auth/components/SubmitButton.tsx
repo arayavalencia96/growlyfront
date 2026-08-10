@@ -6,7 +6,7 @@ export function SubmitButton({
   isLoading,
   loadingText,
   disabled = false,
-}: ISubmitButtonProps) {
+}: Readonly<ISubmitButtonProps>) {
   return (
     <button
       type="submit"

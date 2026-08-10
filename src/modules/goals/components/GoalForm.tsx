@@ -1,21 +1,27 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
+
+import { formatDateTime, toDateInput } from "@/utils/format.utils";
+
+import { goalSchema } from "@/modules/goals/validations/goals.validation";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { FormFieldLabel } from "@/common/components/FormFieldLabel";
 import { useMepExchangeRate } from "@/common/hooks/useMepExchangeRate";
+
 import type {
   IGoalFormProps,
   IGoalFormValues,
   IGoalPayload,
 } from "@/modules/goals/interfaces/goals.interface";
-import { goalSchema } from "@/modules/goals/validations/goals.validation";
 import {
   CUSTOM_INVESTMENT_PLATFORM,
   INVESTMENT_PLATFORM_LABELS,
   INVESTMENT_PLATFORMS,
 } from "@/modules/investment-operations/interfaces/investment-operations.interface";
-import { formatDateTime, toDateInput } from "@/utils/format.utils";
+
+import { Plus, Trash2 } from "lucide-react";
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -32,11 +38,9 @@ function getNestedErrorMessage(error: unknown): string | undefined {
 
 function getPlatformFields(platform: string) {
   const normalizedPlatform = platform.trim().toUpperCase();
-  const isKnownPlatform = INVESTMENT_PLATFORMS.some(
-    (candidate) => candidate === normalizedPlatform,
-  );
+  const isKnownPlatform = INVESTMENT_PLATFORMS.includes(normalizedPlatform as typeof INVESTMENT_PLATFORMS[number]);
   return isKnownPlatform
-    ? { platform: normalizedPlatform, customPlatform: "" }
+    ? { platform: normalizedPlatform as typeof INVESTMENT_PLATFORMS[number], customPlatform: "" }
     : { platform: CUSTOM_INVESTMENT_PLATFORM, customPlatform: platform };
 }
 
@@ -45,7 +49,7 @@ export function GoalForm({
   isSubmitting,
   onSubmit,
   onCancel,
-}: IGoalFormProps) {
+}: Readonly<IGoalFormProps>) {
   const {
     register,
     handleSubmit,

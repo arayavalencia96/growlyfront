@@ -1,17 +1,21 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
+
+import { formatMoney } from "@/utils/format.utils";
+
 import {
   BalancePrivacyContext,
   useBalancePrivacy,
 } from "@/common/components/balance-privacy.context";
+
 import { BALANCE_VISIBILITY_KEY } from "@/common/services/session.service";
+
 import type { GoalCurrency } from "@/modules/goals/interfaces/goals.interface";
-import { formatMoney } from "@/utils/format.utils";
 
 function readVisibility(): boolean {
   return localStorage.getItem(BALANCE_VISIBILITY_KEY) !== "hidden";
 }
 
-export function BalancePrivacyProvider({ children }: { children: ReactNode }) {
+export function BalancePrivacyProvider({ children }: { readonly children: ReactNode }) {
   const [areBalancesVisible, setAreBalancesVisible] = useState(readVisibility);
 
   useEffect(() => {
@@ -24,18 +28,25 @@ export function BalancePrivacyProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", synchronizeVisibility);
   }, []);
 
-  const toggleBalancesVisibility = () => {
-    setAreBalancesVisible((current) => {
-      const next = !current;
-      localStorage.setItem(BALANCE_VISIBILITY_KEY, next ? "visible" : "hidden");
-      return next;
-    });
-  };
+  const contextValue = useMemo(
+    () => ({
+      areBalancesVisible,
+      toggleBalancesVisibility: () => {
+        setAreBalancesVisible((current) => {
+          const next = !current;
+          localStorage.setItem(
+            BALANCE_VISIBILITY_KEY,
+            next ? "visible" : "hidden",
+          );
+          return next;
+        });
+      },
+    }),
+    [areBalancesVisible],
+  );
 
   return (
-    <BalancePrivacyContext.Provider
-      value={{ areBalancesVisible, toggleBalancesVisibility }}
-    >
+    <BalancePrivacyContext.Provider value={contextValue}>
       {children}
     </BalancePrivacyContext.Provider>
   );
@@ -46,9 +57,9 @@ export function SensitiveMoney({
   currency,
   prefix = "",
 }: {
-  amount: number;
-  currency: GoalCurrency;
-  prefix?: string;
+  readonly amount: number;
+  readonly currency: GoalCurrency;
+  readonly prefix?: string;
 }) {
   const { areBalancesVisible } = useBalancePrivacy();
   return (

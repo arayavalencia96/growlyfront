@@ -1,16 +1,21 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+
+import { authService } from "@/modules/auth/services/auth.service";
+
 import { AuthAlert } from "@/modules/auth/components/AuthAlert";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { FormField } from "@/modules/auth/components/FormField";
 import { SubmitButton } from "@/modules/auth/components/SubmitButton";
-import type { IForgotPasswordRequest } from "@/modules/auth/interfaces/auth.interface";
-import { authService } from "@/modules/auth/services/auth.service";
-import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
 import { forgotPasswordSchema } from "@/modules/auth/validations/auth.validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
+import type { IForgotPasswordRequest } from "@/modules/auth/interfaces/auth.interface";
+
+import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 
 export function ForgotPasswordPage() {
   const [requestError, setRequestError] = useState("");
@@ -74,7 +79,7 @@ export function ForgotPasswordPage() {
       ) : null}
 
       <Link
-        to="/iniciar-sesion"
+        to="/login"
         className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-body/55 transition hover:text-primary"
       >
         <ArrowLeft aria-hidden="true" size={16} />

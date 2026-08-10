@@ -19,7 +19,7 @@ import { formatDateTime, toDateInput } from "@/utils/format.utils";
 const today = new Date().toISOString().slice(0, 10);
 
 function isKnownPlatform(value: string): value is InvestmentPlatform {
-  return INVESTMENT_PLATFORMS.some((platform) => platform === value);
+  return INVESTMENT_PLATFORMS.includes(value as InvestmentPlatform);
 }
 
 export function InvestmentOperationForm({
@@ -29,7 +29,7 @@ export function InvestmentOperationForm({
   isSubmitting,
   onSubmit,
   onCancel,
-}: IInvestmentOperationFormProps) {
+}: Readonly<IInvestmentOperationFormProps>) {
   const savedPlatform = operation?.platform.toUpperCase() || "";
   const isSavedPlatformKnown = isKnownPlatform(savedPlatform);
   const {

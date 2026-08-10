@@ -1,12 +1,16 @@
-import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+
+import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
 import { sessionService } from "@/common/services/session.service";
+import { authService } from "@/modules/auth/services/auth.service";
+
 import { AuthAlert } from "@/modules/auth/components/AuthAlert";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { NewPasswordForm } from "@/modules/auth/components/NewPasswordForm";
-import { authService } from "@/modules/auth/services/auth.service";
-import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
+import { ShieldCheck } from "lucide-react";
 
 export function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -23,7 +27,7 @@ export function ResetPasswordPage() {
         newPassword,
       });
       sessionService.clear();
-      navigate("/iniciar-sesion", {
+      navigate("/login", {
         replace: true,
         state: {
           message:
@@ -67,7 +71,7 @@ export function ResetPasswordPage() {
       {!resetToken ? (
         <p className="mt-6 text-center text-sm">
           <Link
-            to="/recuperar-contrasena"
+            to="/recover-password"
             className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
           >
             Solicitar otro enlace

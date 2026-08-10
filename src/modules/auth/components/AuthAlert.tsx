@@ -16,7 +16,7 @@ const variants = {
   },
 } as const;
 
-export function AuthAlert({ message, variant = "error" }: IAuthAlertProps) {
+export function AuthAlert({ message, variant = "error" }: Readonly<IAuthAlertProps>) {
   const config = variants[variant];
   const Icon = config.icon;
 

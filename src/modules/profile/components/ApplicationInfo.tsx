@@ -4,7 +4,7 @@ import { applicationConfig } from "@/common/config/application.config";
 export function ApplicationInfo() {
   return (
     <section className="relative mt-6 overflow-hidden rounded-[1.75rem] bg-brand text-white">
-      <div className="absolute -top-20 -right-14 size-56 rounded-full border-[42px] border-accent/8" />
+      <div className="absolute -top-20 -right-14 size-56 rounded-full border-42 border-accent/8" />
       <div className="relative grid gap-7 p-6 sm:p-7 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-10">
         <div className="flex items-start gap-4">
           <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-accent text-primary">

@@ -1,4 +1,3 @@
-import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import {
   Link,
@@ -6,13 +5,19 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
+
+import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
 import { sessionService } from "@/common/services/session.service";
+import { authService } from "@/modules/auth/services/auth.service";
+
 import { AuthAlert } from "@/modules/auth/components/AuthAlert";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { NewPasswordForm } from "@/modules/auth/components/NewPasswordForm";
+
 import type { IAuthNavigationState } from "@/modules/auth/interfaces/auth.interface";
-import { authService } from "@/modules/auth/services/auth.service";
-import { getAuthErrorMessage } from "@/modules/auth/utils/auth-error.utils";
+
+import { ShieldCheck } from "lucide-react";
 
 export function ChangeBlockedPasswordPage() {
   const navigate = useNavigate();
@@ -36,7 +41,7 @@ export function ChangeBlockedPasswordPage() {
         newPassword,
       });
       sessionService.clear();
-      navigate("/iniciar-sesion", {
+      navigate("/login", {
         replace: true,
         state: {
           message:
@@ -80,7 +85,7 @@ export function ChangeBlockedPasswordPage() {
       {!passwordChangeToken ? (
         <p className="mt-6 text-center text-sm">
           <Link
-            to="/iniciar-sesion"
+            to="/login"
             className="font-extrabold text-primary underline decoration-accent decoration-4 underline-offset-4"
           >
             Volver al inicio de sesión

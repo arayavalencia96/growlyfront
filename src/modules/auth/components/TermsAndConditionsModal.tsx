@@ -8,7 +8,7 @@ const EFFECTIVE_DATE = "17 de julio de 2026";
 export function TermsAndConditionsModal({
   isOpen,
   onClose,
-}: ITermsAndConditionsModalProps) {
+}: Readonly<ITermsAndConditionsModalProps>) {
   if (!isOpen) return null;
 
   return (

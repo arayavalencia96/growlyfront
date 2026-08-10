@@ -13,7 +13,7 @@ export function AuthLayout({
   title,
   description,
   step,
-}: IAuthLayoutProps) {
+}: Readonly<IAuthLayoutProps>) {
   return (
     <main className="min-h-screen bg-page lg:grid lg:grid-cols-[minmax(360px,0.86fr)_1.14fr]">
       <aside className="auth-grid relative overflow-hidden bg-brand px-6 py-7 text-white sm:px-10 lg:flex lg:min-h-screen lg:flex-col lg:justify-between lg:px-14 lg:py-12">
@@ -52,7 +52,7 @@ export function AuthLayout({
       </aside>
 
       <section className="flex min-h-[calc(100vh-88px)] items-center justify-center px-5 py-10 sm:px-8 lg:min-h-screen lg:px-14 lg:py-16">
-        <div className="auth-rise w-full max-w-[30rem]">
+        <div className="auth-rise w-full max-w-120">
           <div className="mb-8">
             <div className="mb-5 flex items-center justify-between gap-4">
               <p className="text-xs font-extrabold tracking-[0.2em] text-secondary uppercase">

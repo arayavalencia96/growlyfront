@@ -1,16 +1,21 @@
-import { BadgeCheck, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { sessionService } from "@/common/services/session.service";
-import type { IUser } from "@/modules/auth/interfaces/auth.interface";
+import { profileService } from "@/modules/profile/services/profile.service";
+
+import { formatDate } from "@/utils/format.utils";
+import { getErrorMessage } from "@/utils/error.utils";
+
 import { ApplicationInfo } from "@/modules/profile/components/ApplicationInfo";
 import { ChangePasswordForm } from "@/modules/profile/components/ChangePasswordForm";
 import { DeactivateAccountModal } from "@/modules/profile/components/DeactivateAccountModal";
 import { PersonalDataForm } from "@/modules/profile/components/PersonalDataForm";
 import { ProfileSkeleton } from "@/modules/profile/components/ProfileSkeleton";
-import { profileService } from "@/modules/profile/services/profile.service";
-import { getErrorMessage } from "@/utils/error.utils";
-import { formatDate } from "@/utils/format.utils";
+
+import { BadgeCheck, Trash2 } from "lucide-react";
+
+import type { IUser } from "@/modules/auth/interfaces/auth.interface";
 
 function getInitials(name: string): string {
   return name
@@ -51,7 +56,7 @@ export function ProfilePage() {
   const handleEmailChangeRequested = (email: string) => {
     sessionService.clear();
     navigate(
-      "/verificar-codigo?email=" +
+      "/verify-code?email=" +
         encodeURIComponent(email) +
         "&purpose=email_change",
       {
@@ -66,7 +71,7 @@ export function ProfilePage() {
 
   const handlePasswordChanged = () => {
     sessionService.clear();
-    navigate("/iniciar-sesion", {
+    navigate("/login", {
       replace: true,
       state: {
         message:
@@ -78,7 +83,7 @@ export function ProfilePage() {
 
   const handleDeactivated = () => {
     sessionService.clear();
-    navigate("/iniciar-sesion", {
+    navigate("/login", {
       replace: true,
       state: {
         message:
@@ -94,7 +99,7 @@ export function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-2xl rounded-[2rem] bg-surface p-10 text-center">
+      <div className="mx-auto max-w-2xl rounded-4xl bg-surface p-10 text-center">
         <h1 className="font-display text-4xl text-primary">
           No pudimos cargar tu perfil
         </h1>
@@ -105,9 +110,9 @@ export function ProfilePage() {
 
   return (
     <section className="mx-auto max-w-6xl">
-      <div className="overflow-hidden rounded-[2rem] bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
+      <div className="overflow-hidden rounded-4xl bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
         <div className="relative flex flex-col gap-6 p-7 sm:flex-row sm:items-center sm:p-9">
-          <div className="absolute -top-20 -right-12 size-64 rounded-full border-[45px] border-accent/8" />
+          <div className="absolute -top-20 -right-12 size-64 rounded-full border-45 border-accent/8" />
           <span className="relative grid size-20 shrink-0 place-items-center rounded-[1.75rem] bg-accent font-display text-3xl text-primary">
             {getInitials(user.name)}
           </span>

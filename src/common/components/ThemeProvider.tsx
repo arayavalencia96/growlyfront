@@ -1,15 +1,23 @@
-import { type ReactNode, useEffect, useLayoutEffect, useState } from "react";
+import {
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import {
   type ApplicationTheme,
   ThemeContext,
 } from "@/common/components/theme.context";
+
 import { THEME_STORAGE_KEY } from "@/common/services/session.service";
 
 function readTheme(): ApplicationTheme {
   return localStorage.getItem(THEME_STORAGE_KEY) === "dark" ? "dark" : "light";
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: { readonly children: ReactNode }) {
   const [theme, setTheme] = useState<ApplicationTheme>(readTheme);
 
   useLayoutEffect(() => {
@@ -26,12 +34,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const toggleTheme = () => {
-    setTheme((current) => (current === "light" ? "dark" : "light"));
-  };
+  const contextValue = useMemo(
+    () => ({
+      theme,
+      toggleTheme: () => {
+        setTheme((current) => (current === "light" ? "dark" : "light"));
+      },
+    }),
+    [theme],
+  );
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );
