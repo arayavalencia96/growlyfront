@@ -86,15 +86,11 @@ export function Modal({
     >
       <div
         ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
         aria-labelledby={titleId}
-        tabIndex={-1}
         className={
           "modal-scrollbar-hidden max-h-[calc(100dvh-1rem)] w-full overflow-x-hidden overflow-y-auto rounded-t-4xl bg-surface-soft p-6 shadow-2xl sm:max-h-[calc(100dvh-3rem)] sm:rounded-t-4xl sm:p-8 " +
           modalWidthClasses[size]
         }
-        onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="mb-7 flex items-start justify-between gap-6">
           <div>
