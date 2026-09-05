@@ -37,6 +37,7 @@ import { investmentOperationsService } from "@/modules/investment-operations/ser
 import { GoalSummaryPanel } from "@/modules/summaries/components/GoalSummaryPanel";
 import type { IGoalSummary } from "@/modules/summaries/interfaces/summaries.interface";
 import { summariesService } from "@/modules/summaries/services/summaries.service";
+import { useRealizedProfitStore } from "@/modules/summaries/stores/realized-profit.context";
 import { getErrorMessage } from "@/utils/error.utils";
 import { formatDate } from "@/utils/format.utils";
 
@@ -67,6 +68,9 @@ export function GoalDetailPage() {
   );
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [isRealizedProfitDetailsOpen, setIsRealizedProfitDetailsOpen] =
+    useState(false);
+  const { detailsByGoalId, setDetails } = useRealizedProfitStore();
 
   useEffect(() => {
     let isActive = true;
@@ -89,6 +93,7 @@ export function GoalDetailPage() {
           setMovements(movementsResponse.result);
           setOperations(operationsResponse.result);
           setSummary(summaryResponse.result);
+          setDetails(goalId, summaryResponse.result.realizedProfitDetails ?? []);
         },
       )
       .catch((requestError: unknown) => {
@@ -101,11 +106,12 @@ export function GoalDetailPage() {
     return () => {
       isActive = false;
     };
-  }, [goalId]);
+  }, [goalId, setDetails]);
 
   const refreshSummary = async () => {
     const { result } = await summariesService.getByGoal(goalId);
     setSummary(result);
+    setDetails(goalId, result.realizedProfitDetails ?? []);
   };
 
   const openMovementForm = (movement: IGoalMovement | null = null) => {
@@ -280,6 +286,9 @@ export function GoalDetailPage() {
     );
   }
 
+  const realizedProfitDetails =
+    detailsByGoalId[goalId] ?? summary.realizedProfitDetails ?? [];
+
   return (
     <section className="mx-auto max-w-7xl">
       <Link
@@ -350,6 +359,7 @@ export function GoalDetailPage() {
         <GoalSummaryPanel
           summary={summary}
           onCashBalanceClick={() => setDetail({ type: "cash", summary })}
+          onRealizedProfitClick={() => setIsRealizedProfitDetailsOpen(true)}
         />
       </div>
 
@@ -439,6 +449,93 @@ export function GoalDetailPage() {
         </Modal>
       ) : null}
 
+      {isRealizedProfitDetailsOpen ? (
+        <Modal
+          eyebrow="Resultado de ventas"
+          title="Ganancias y pérdidas realizadas"
+          onClose={() => setIsRealizedProfitDetailsOpen(false)}
+        >
+          <p className="text-sm leading-6 text-secondary">
+            El total de la tarjeta surge de estas ventas. Cada resultado compara
+            el neto obtenido con el costo promedio de las unidades vendidas.
+          </p>
+          {realizedProfitDetails.length ? (
+            <div className="mt-5 space-y-3">
+              {realizedProfitDetails.map((item) => {
+                  const resultAmount =
+                    item.profitOrLoss.usd || item.profitOrLoss.ars;
+                  const hasProfit = resultAmount >= 0;
+                  return (
+                    <article
+                      key={item.operationId}
+                      className="rounded-2xl border border-outline/8 bg-surface p-4"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="font-display text-2xl text-primary">
+                            {item.ticker}
+                          </p>
+                          <p className="mt-1 text-xs font-bold tracking-[0.1em] text-secondary uppercase">
+                            {item.platform} · {formatDate(item.operationDate)}
+                          </p>
+                        </div>
+                        <p className="text-sm font-bold text-primary">
+                          {item.quantity} unidades
+                        </p>
+                      </div>
+                      <div className="mt-4 grid gap-3 border-t border-outline/8 pt-4 sm:grid-cols-3">
+                        <div>
+                          <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
+                            Costo asignado
+                          </p>
+                          <p className="mt-1 text-sm font-bold text-primary">
+                            <SensitiveMoney amount={item.costBasis.usd} currency="USD" />
+                          </p>
+                          <p className="text-xs text-secondary">
+                            <SensitiveMoney amount={item.costBasis.ars} currency="ARS" />
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
+                            Neto obtenido
+                          </p>
+                          <p className="mt-1 text-sm font-bold text-primary">
+                            <SensitiveMoney amount={item.proceeds.usd} currency="USD" />
+                          </p>
+                          <p className="text-xs text-secondary">
+                            <SensitiveMoney amount={item.proceeds.ars} currency="ARS" />
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
+                            {hasProfit ? "Ganancia" : "Pérdida"}
+                          </p>
+                          <p
+                            className={
+                              "mt-1 text-sm font-bold " +
+                              (hasProfit ? "text-emerald-700" : "text-ember")
+                            }
+                          >
+                            <SensitiveMoney amount={item.profitOrLoss.usd} currency="USD" />
+                          </p>
+                          <p className={hasProfit ? "text-xs text-emerald-700" : "text-xs text-ember"}>
+                            <SensitiveMoney amount={item.profitOrLoss.ars} currency="ARS" />
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                },
+              )}
+            </div>
+          ) : (
+            <div className="mt-5 rounded-2xl border border-dashed border-outline/15 py-10 text-center text-sm text-body/45">
+              Todavía no registraste ventas.
+            </div>
+          )}
+        </Modal>
+      ) : null}
+
       {formMode === "movements" ? (
         <Modal
           eyebrow={editingMovement ? "Editar registro" : "Caja del objetivo"}
@@ -466,6 +563,8 @@ export function GoalDetailPage() {
           <InvestmentOperationForm
             goalId={goal.id}
             defaultCurrency={goal.currency}
+            openingPositions={goal.openingPositions}
+            operations={operations}
             operation={editingOperation || undefined}
             isSubmitting={isSubmitting}
             onSubmit={saveOperation}

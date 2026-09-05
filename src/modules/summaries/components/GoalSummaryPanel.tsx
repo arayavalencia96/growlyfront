@@ -26,6 +26,7 @@ function MoneyPair({ totals }: { readonly totals: IMoneyTotals }) {
 export function GoalSummaryPanel({
   summary,
   onCashBalanceClick,
+  onRealizedProfitClick,
 }: Readonly<IGoalSummaryPanelProps>) {
   const progress = Math.max(0, summary.progressPercentage);
 
@@ -67,6 +68,7 @@ export function GoalSummaryPanel({
             totals: summary.realizedProfit,
             icon: TrendingUp,
             accent: false,
+            onClick: onRealizedProfitClick,
           },
         ].map(({ label, totals, icon: Icon, accent, onClick }) => (
           <article
