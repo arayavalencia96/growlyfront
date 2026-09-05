@@ -20,6 +20,7 @@ import { BalancePrivacyProvider } from "@/common/components/BalancePrivacy";
 import { useBalancePrivacy } from "@/common/components/balance-privacy.context";
 import { ThemeProvider } from "@/common/components/ThemeProvider";
 import { useTheme } from "@/common/components/theme.context";
+import { RealizedProfitStoreProvider } from "@/modules/summaries/stores/realized-profit.store";
 
 const navigation = [
   { label: "Objetivos", path: "/objectives", icon: Target },
@@ -170,7 +171,9 @@ export function ApplicationLayout() {
   return (
     <ThemeProvider>
       <BalancePrivacyProvider>
-        <ApplicationShell />
+        <RealizedProfitStoreProvider>
+          <ApplicationShell />
+        </RealizedProfitStoreProvider>
       </BalancePrivacyProvider>
     </ThemeProvider>
   );

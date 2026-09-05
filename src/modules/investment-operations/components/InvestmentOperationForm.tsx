@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { CircleHelp } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { Modal } from "@/common/components/Modal";
 import { FormFieldLabel } from "@/common/components/FormFieldLabel";
 import { useMepExchangeRate } from "@/common/hooks/useMepExchangeRate";
 import type {
@@ -14,7 +16,8 @@ import {
   INVESTMENT_PLATFORMS,
 } from "@/modules/investment-operations/interfaces/investment-operations.interface";
 import { investmentOperationSchema } from "@/modules/investment-operations/validations/investment-operations.validation";
-import { formatDateTime, toDateInput } from "@/utils/format.utils";
+import { calculateSellPreview } from "@/modules/investment-operations/utils/sell-preview.utils";
+import { formatDateTime, formatMoney, toDateInput } from "@/utils/format.utils";
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -22,14 +25,39 @@ function isKnownPlatform(value: string): value is InvestmentPlatform {
   return INVESTMENT_PLATFORMS.includes(value as InvestmentPlatform);
 }
 
+interface IPreviewInfoButtonProps {
+  label: string;
+  help: string;
+}
+
+function PreviewInfoButton({
+  label,
+  help,
+}: Readonly<IPreviewInfoButtonProps>) {
+  return (
+    <button
+      type="button"
+      aria-label={`Ayuda sobre ${label}`}
+      title={help}
+      className="align-text-bottom text-secondary/65 transition hover:text-primary focus:text-primary focus:outline-none"
+    >
+      <CircleHelp size={13} />
+    </button>
+  );
+}
+
 export function InvestmentOperationForm({
   goalId,
   defaultCurrency,
+  openingPositions,
+  operations,
   operation,
   isSubmitting,
   onSubmit,
   onCancel,
 }: Readonly<IInvestmentOperationFormProps>) {
+  const [isPreviewExplanationOpen, setIsPreviewExplanationOpen] =
+    useState(false);
   const savedPlatform = operation?.platform.toUpperCase() || "";
   const isSavedPlatformKnown = isKnownPlatform(savedPlatform);
   const {
@@ -67,6 +95,44 @@ export function InvestmentOperationForm({
   } = useMepExchangeRate(!operation);
   const operationType = useWatch({ control, name: "type" });
   const platformOption = useWatch({ control, name: "platformOption" });
+  const customPlatform = useWatch({ control, name: "customPlatform" });
+  const ticker = useWatch({ control, name: "ticker" });
+  const operationDate = useWatch({ control, name: "operationDate" });
+  const quantity = useWatch({ control, name: "quantity" });
+  const totalAmount = useWatch({ control, name: "totalAmount" });
+  const currency = useWatch({ control, name: "currency" });
+  const selectedPlatform =
+    platformOption === CUSTOM_INVESTMENT_PLATFORM
+      ? customPlatform
+      : platformOption;
+  const sellPreview = useMemo(
+    () =>
+      operationType === "sell"
+        ? calculateSellPreview({
+            operations,
+            openingPositions,
+            operationId: operation?.id,
+            platform: selectedPlatform,
+            ticker,
+            operationDate,
+            quantity,
+            totalAmount,
+            currency,
+          })
+        : null,
+    [
+      currency,
+      openingPositions,
+      operation?.id,
+      operationDate,
+      operationType,
+      operations,
+      quantity,
+      selectedPlatform,
+      ticker,
+      totalAmount,
+    ],
+  );
 
   useEffect(() => {
     if (!quote || getFieldState("exchangeRateArsPerUsd").isDirty) return;
@@ -306,6 +372,114 @@ export function InvestmentOperationForm({
           ) : null}
         </div>
       </div>
+
+      {operationType === "sell" ? (
+        sellPreview ? (
+          <section
+            aria-live="polite"
+            className={
+              "rounded-2xl border p-4 " +
+              (sellPreview.profitOrLoss >= 0
+                ? "border-emerald-500/20 bg-emerald-500/8"
+                : "border-ember/20 bg-ember/8")
+            }
+          >
+            <div className="flex items-center gap-1.5">
+              <p className="text-xs font-bold tracking-[0.16em] text-secondary uppercase">
+                Resultado estimado de la venta
+              </p>
+              <button
+                type="button"
+                aria-label="Ver cómo calculamos el resultado estimado"
+                onClick={() => setIsPreviewExplanationOpen(true)}
+                className="text-secondary/65 transition hover:text-primary focus:text-primary focus:outline-none"
+              >
+                <CircleHelp size={15} />
+              </button>
+            </div>
+            <p
+              className={
+                "mt-2 text-2xl font-bold " +
+                (sellPreview.profitOrLoss >= 0
+                  ? "text-emerald-700"
+                  : "text-ember")
+              }
+            >
+              {sellPreview.profitOrLoss >= 0 ? "Ganancia" : "Pérdida"}: {" "}
+              {formatMoney(Math.abs(sellPreview.profitOrLoss), currency)}
+              {" · "}
+              {Math.abs(sellPreview.percentage).toFixed(2)}%
+            </p>
+            <dl className="mt-3 grid gap-2 text-sm text-secondary sm:grid-cols-3">
+              <div>
+                <dt className="flex items-center gap-1 text-body/50">
+                  Costo promedio
+                  <PreviewInfoButton
+                    label="Costo promedio"
+                    help="Precio promedio ponderado que pagaste por cada unidad que todavía tienes de este activo, en esta plataforma y objetivo."
+                  />
+                </dt>
+                <dd className="font-bold">{formatMoney(sellPreview.averageCost, currency)}</dd>
+              </div>
+              <div>
+                <dt className="flex items-center gap-1 text-body/50">
+                  Costo de esta venta
+                  <PreviewInfoButton
+                    label="Costo de esta venta"
+                    help="Lo que te costó originalmente la cantidad de unidades que quieres vender, calculado con el costo promedio actual."
+                  />
+                </dt>
+                <dd className="font-bold">{formatMoney(sellPreview.costBasis, currency)}</dd>
+              </div>
+              <div>
+                <dt className="flex items-center gap-1 text-body/50">
+                  Neto a recibir
+                  <PreviewInfoButton
+                    label="Neto a recibir"
+                    help="Lo que recibirías si vendieras ahora: el monto total obtenido que ingresaste, después de comisiones y cargos."
+                  />
+                </dt>
+                <dd className="font-bold">{formatMoney(sellPreview.proceeds, currency)}</dd>
+              </div>
+            </dl>
+          </section>
+        ) : (
+          <p aria-live="polite" className="text-sm text-body/55">
+            Completa plataforma, ticker, fecha, cantidad y monto total. La estimación se mostrará si hay posición suficiente y sus costos pueden expresarse en esta moneda.
+          </p>
+        )
+      ) : null}
+
+      {isPreviewExplanationOpen ? (
+        <Modal
+          eyebrow="Resultado estimado"
+          title="Cómo calculamos tu ganancia o pérdida"
+          onClose={() => setIsPreviewExplanationOpen(false)}
+        >
+          <div className="space-y-4 text-sm leading-6 text-secondary">
+            <p>
+              Consideramos solamente las unidades del mismo activo y plataforma
+              dentro de este objetivo. Por ejemplo, AAPL en IOL no se mezcla con
+              AAPL en otro broker.
+            </p>
+            <p>
+              Sumamos los montos totales invertidos de las compras, incluidas
+              sus comisiones, y los dividimos por las unidades que todavía
+              conservas. Así obtenemos el costo promedio ponderado por unidad.
+            </p>
+            <p>
+              Las ventas anteriores reducen las unidades y su costo asociado.
+              Para esta venta, multiplicamos el costo promedio por la cantidad
+              que quieres vender: ese es el costo de esta venta.
+            </p>
+            <p>
+              Finalmente, comparamos ese costo con el neto a recibir que
+              ingresaste. Si recibes más, hay ganancia; si recibes menos, hay
+              pérdida. Si los importes son iguales, el resultado es cero.
+            </p>
+          </div>
+        </Modal>
+      ) : null}
 
       <div>
         <label className="app-label" htmlFor="operation-notes">

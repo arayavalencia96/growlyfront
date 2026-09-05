@@ -1,5 +1,8 @@
 import type { IApiResponse } from "@/common/interfaces/api.interface";
-import type { GoalCurrency } from "@/modules/goals/interfaces/goals.interface";
+import type {
+  GoalCurrency,
+  IOpeningPosition,
+} from "@/modules/goals/interfaces/goals.interface";
 
 export const INVESTMENT_OPERATION_TYPES = ["buy", "sell"] as const;
 export type InvestmentOperationType =
@@ -106,6 +109,8 @@ export interface IInvestmentOperationsService {
 export interface IInvestmentOperationFormProps {
   goalId: string;
   defaultCurrency: GoalCurrency;
+  openingPositions: IOpeningPosition[];
+  operations: IInvestmentOperation[];
   operation?: IInvestmentOperation;
   isSubmitting: boolean;
   onSubmit(payload: IInvestmentOperationPayload): Promise<void>;
