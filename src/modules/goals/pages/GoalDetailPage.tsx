@@ -545,6 +545,7 @@ export function GoalDetailPage() {
           <GoalMovementForm
             goalId={goal.id}
             defaultCurrency={goal.currency}
+            cashBalances={summary.cashBalances}
             movement={editingMovement || undefined}
             isSubmitting={isSubmitting}
             onSubmit={saveMovement}

@@ -13,7 +13,7 @@ import {
   INVESTMENT_PLATFORMS,
 } from "@/modules/investment-operations/interfaces/investment-operations.interface";
 import type { InvestmentPlatform } from "@/modules/investment-operations/interfaces/investment-operations.interface";
-import { formatDateTime, toDateInput } from "@/utils/format.utils";
+import { formatDateTime, formatMoney, toDateInput } from "@/utils/format.utils";
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -24,6 +24,7 @@ function isKnownPlatform(value: string): value is InvestmentPlatform {
 export function GoalMovementForm({
   goalId,
   defaultCurrency,
+  cashBalances,
   movement,
   isSubmitting,
   onSubmit,
@@ -64,6 +65,27 @@ export function GoalMovementForm({
     hasError: hasRateError,
   } = useMepExchangeRate(!movement);
   const platformOption = useWatch({ control, name: "platformOption" });
+  const customPlatform = useWatch({ control, name: "customPlatform" });
+  const movementType = useWatch({ control, name: "type" });
+  const currency = useWatch({ control, name: "currency" });
+  const selectedPlatform =
+    platformOption === CUSTOM_INVESTMENT_PLATFORM
+      ? customPlatform.trim().toUpperCase()
+      : platformOption;
+  const currentCashBalance = cashBalances.find(
+    (balance) =>
+      balance.platform.trim().toUpperCase() === selectedPlatform &&
+      balance.currency === currency,
+  )?.amount;
+  const isEditingMatchingWithdrawal =
+    movement?.type === "withdrawal" &&
+    movement.currency === currency &&
+    (movement.platform || "GENERAL").trim().toUpperCase() === selectedPlatform;
+  const availableToWithdraw =
+    currentCashBalance === undefined
+      ? undefined
+      : currentCashBalance +
+        (isEditingMatchingWithdrawal ? movement.amount : 0);
 
   useEffect(() => {
     if (!quote || getFieldState("exchangeRateArsPerUsd").isDirty) return;
@@ -124,12 +146,20 @@ export function GoalMovementForm({
             id="movement-amount"
             type="number"
             min="0"
+            max={movementType === "withdrawal" ? availableToWithdraw : undefined}
             step="0.00000001"
             className="app-field"
             {...register("amount", { valueAsNumber: true })}
           />
           {errors.amount ? (
             <p className="mt-1.5 text-xs text-ember">{errors.amount.message}</p>
+          ) : null}
+          {movementType === "withdrawal" ? (
+            <p aria-live="polite" className="mt-1.5 text-xs text-body/55">
+              {availableToWithdraw === undefined
+                ? `No hay efectivo disponible en ${selectedPlatform || "esta plataforma"} para esta moneda.`
+                : `Máximo extraíble en ${selectedPlatform}: ${formatMoney(availableToWithdraw, currency, 2)}.`}
+            </p>
           ) : null}
         </div>
         <div>

@@ -1,6 +1,7 @@
 import type { IApiResponse } from "@/common/interfaces/api.interface";
 import type { GoalCurrency } from "@/modules/goals/interfaces/goals.interface";
 import type { InvestmentPlatformSelection } from "@/modules/investment-operations/interfaces/investment-operations.interface";
+import type { ICashBalanceSummary } from "@/modules/summaries/interfaces/summaries.interface";
 
 export const GOAL_MOVEMENT_TYPES = ["contribution", "withdrawal"] as const;
 export type GoalMovementType = (typeof GOAL_MOVEMENT_TYPES)[number];
@@ -55,6 +56,7 @@ export interface IGoalMovementsService {
 export interface IGoalMovementFormProps {
   goalId: string;
   defaultCurrency: GoalCurrency;
+  cashBalances: ICashBalanceSummary[];
   movement?: IGoalMovement;
   isSubmitting: boolean;
   onSubmit(payload: IGoalMovementPayload): Promise<void>;

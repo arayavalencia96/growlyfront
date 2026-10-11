@@ -1,10 +1,15 @@
 import type { GoalCurrency } from "@/modules/goals/interfaces/goals.interface";
 
-export function formatMoney(value: number, currency: GoalCurrency): string {
+export function formatMoney(
+  value: number,
+  currency: GoalCurrency,
+  fractionDigits = currency === "ARS" ? 0 : 2,
+): string {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency,
-    maximumFractionDigits: currency === "ARS" ? 0 : 2,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
   }).format(value);
 }
 

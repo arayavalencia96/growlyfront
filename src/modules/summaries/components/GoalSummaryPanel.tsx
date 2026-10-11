@@ -10,14 +10,24 @@ import type {
 } from "@/modules/summaries/interfaces/summaries.interface";
 import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 
-function MoneyPair({ totals }: { readonly totals: IMoneyTotals }) {
+function MoneyPair({
+  totals,
+  showArsCents = false,
+}: {
+  readonly totals: IMoneyTotals;
+  readonly showArsCents?: boolean;
+}) {
   return (
     <>
       <p className="font-display text-3xl text-primary">
         <SensitiveMoney amount={totals.usd} currency="USD" />
       </p>
       <p className="mt-1 text-xs font-semibold text-secondary">
-        <SensitiveMoney amount={totals.ars} currency="ARS" />
+        <SensitiveMoney
+          amount={totals.ars}
+          currency="ARS"
+          fractionDigits={showArsCents ? 2 : undefined}
+        />
       </p>
     </>
   );
@@ -56,6 +66,7 @@ export function GoalSummaryPanel({
             icon: Landmark,
             accent: false,
             onClick: onCashBalanceClick,
+            showArsCents: true,
           },
           {
             label: "Posiciones abiertas",
@@ -70,7 +81,7 @@ export function GoalSummaryPanel({
             accent: false,
             onClick: onRealizedProfitClick,
           },
-        ].map(({ label, totals, icon: Icon, accent, onClick }) => (
+        ].map(({ label, totals, icon: Icon, accent, onClick, showArsCents }) => (
           <article
             key={label}
             role={onClick ? "button" : undefined}
@@ -98,7 +109,7 @@ export function GoalSummaryPanel({
               </p>
               <Icon size={17} className="text-secondary" />
             </div>
-            <MoneyPair totals={totals} />
+            <MoneyPair totals={totals} showArsCents={showArsCents} />
           </article>
         ))}
       </div>
