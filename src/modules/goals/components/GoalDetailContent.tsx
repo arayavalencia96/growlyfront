@@ -105,6 +105,18 @@ export function GoalDetailContent({ detail }: { detail: GoalDetailSelection }) {
         <DetailItem label="Plataforma" value={movement.platform || "GENERAL"} />
         <DetailItem label="Fecha" value={formatDate(movement.movementDate)} />
         <DetailItem label="Moneda" value={movement.currency} />
+        {movement.type === "contribution" && (
+          <DetailItem
+            label="Origen"
+            value={
+              movement.fundingSource === "external"
+                ? "Dinero externo / ya ahorrado"
+                : movement.fundingSource === "cashy"
+                  ? "Presupuesto de Cashy"
+                  : "Histórico · sin vínculo con Cashy"
+            }
+          />
+        )}
         <DetailItem
           label="Dólar MEP / CCL"
           value={

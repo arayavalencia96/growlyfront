@@ -20,6 +20,7 @@ import type {
 } from "@/modules/goals/interfaces/goals.interface";
 import { goalsService } from "@/modules/goals/services/goals.service";
 import { PortfolioSummaryPanel } from "@/modules/summaries/components/PortfolioSummaryPanel";
+import { CashyAllocationPanel } from "@/modules/integration/CashyAllocationPanel";
 import type { IPortfolioSummary } from "@/modules/summaries/interfaces/summaries.interface";
 import { summariesService } from "@/modules/summaries/services/summaries.service";
 import { getErrorMessage } from "@/utils/error.utils";
@@ -180,6 +181,7 @@ export function GoalsPage() {
 
       {portfolioSummary && <PortfolioSummaryPanel summary={portfolioSummary} />}
       {isLoading && !portfolioSummary && <PortfolioSummarySkeleton />}
+      <CashyAllocationPanel />
 
       <form
         onSubmit={applyFilters}

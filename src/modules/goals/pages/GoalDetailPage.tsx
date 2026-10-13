@@ -13,6 +13,9 @@ import { Modal } from "@/common/components/Modal";
 import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 import { toastService } from "@/common/services/toast.service";
 import { GoalMovementForm } from "@/modules/goal-movements/components/GoalMovementForm";
+import { CashyContributionsPanel } from "@/modules/integration/CashyContributionsPanel";
+import { integrationService } from "@/modules/integration/integration.service";
+import type { ContributionConfirmPayload } from "@/modules/integration/contribution.types";
 import { GoalMovementsList } from "@/modules/goal-movements/components/GoalMovementsList";
 import type {
   IGoalMovement,
@@ -41,8 +44,8 @@ import { useRealizedProfitStore } from "@/modules/summaries/stores/realized-prof
 import { getErrorMessage } from "@/utils/error.utils";
 import { formatDate } from "@/utils/format.utils";
 
-type DetailTab = "movements" | "operations";
-type FormMode = DetailTab | null;
+type DetailTab = "movements" | "operations" | "cashy";
+type FormMode = Exclude<DetailTab, "cashy"> | null;
 type DeletionTarget =
   | { type: "movement"; item: IGoalMovement }
   | { type: "operation"; item: IInvestmentOperation };
@@ -63,6 +66,8 @@ export function GoalDetailPage() {
   const [detail, setDetail] = useState<GoalDetailSelection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cashyRevision, setCashyRevision] = useState(0);
+  const [trackedCashyId, setTrackedCashyId] = useState("");
   const [deletionTarget, setDeletionTarget] = useState<DeletionTarget | null>(
     null,
   );
@@ -93,7 +98,10 @@ export function GoalDetailPage() {
           setMovements(movementsResponse.result);
           setOperations(operationsResponse.result);
           setSummary(summaryResponse.result);
-          setDetails(goalId, summaryResponse.result.realizedProfitDetails ?? []);
+          setDetails(
+            goalId,
+            summaryResponse.result.realizedProfitDetails ?? [],
+          );
         },
       )
       .catch((requestError: unknown) => {
@@ -119,6 +127,36 @@ export function GoalDetailPage() {
     setFormMode("movements");
   };
 
+  const refreshCashyMovements = async () => {
+    const { result } = await goalMovementsService.getByGoal(goalId);
+    setMovements(result);
+    await refreshSummary();
+  };
+  const confirmCashy = async (payload: ContributionConfirmPayload) => {
+    const { result } = await integrationService.confirmContribution(payload);
+    closeForm();
+    setActiveTab("cashy");
+    setTrackedCashyId(result.status === "pending" ? result.id : "");
+    setCashyRevision((current) => current + 1);
+    if (result.status === "confirmed") {
+      toastService.success("Aporte de Cashy confirmado", result.message);
+      await refreshCashyMovements().catch((failure) =>
+        toastService.error(
+          "El aporte se confirmó, pero no se pudo actualizar la vista",
+          getErrorMessage(failure),
+        ),
+      );
+    } else if (result.status === "pending") {
+      toastService.info(
+        "Aporte recibido",
+        "Estamos procesando el movimiento. Te avisaremos cuando termine.",
+      );
+    } else {
+      toastService.error("El aporte requiere atención", result.message);
+    }
+    return result;
+  };
+
   const openOperationForm = (operation: IInvestmentOperation | null = null) => {
     setEditingOperation(operation);
     setFormMode("operations");
@@ -137,6 +175,9 @@ export function GoalDetailPage() {
       if (editingMovement) {
         const updatePayload = {
           type: payload.type,
+          ...(payload.fundingSource
+            ? { fundingSource: payload.fundingSource }
+            : {}),
           amount: payload.amount,
           currency: payload.currency,
           movementDate: payload.movementDate,
@@ -405,6 +446,19 @@ export function GoalDetailPage() {
             >
               Caja
             </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("cashy")}
+              aria-pressed={activeTab === "cashy"}
+              className={
+                "rounded-xl px-4 py-2 text-xs font-bold transition " +
+                (activeTab === "cashy"
+                  ? "bg-surface text-primary shadow-sm"
+                  : "text-secondary")
+              }
+            >
+              Cashy
+            </button>
           </div>
         </div>
 
@@ -415,14 +469,22 @@ export function GoalDetailPage() {
             onEdit={openOperationForm}
             onDelete={deleteOperation}
           />
-        ) : (
+        ) : activeTab === "movements" ? (
           <GoalMovementsList
             movements={movements}
             onView={(movement) => setDetail({ type: "movement", movement })}
             onEdit={openMovementForm}
             onDelete={deleteMovement}
           />
-        )}
+        ) : null}
+        <div hidden={activeTab !== "cashy"}>
+          <CashyContributionsPanel
+            key={goalId + ":" + cashyRevision}
+            goalId={goalId}
+            trackedId={trackedCashyId}
+            onChanged={refreshCashyMovements}
+          />
+        </div>
       </div>
 
       {detail ? (
@@ -462,71 +524,94 @@ export function GoalDetailPage() {
           {realizedProfitDetails.length ? (
             <div className="mt-5 space-y-3">
               {realizedProfitDetails.map((item) => {
-                  const resultAmount =
-                    item.profitOrLoss.usd || item.profitOrLoss.ars;
-                  const hasProfit = resultAmount >= 0;
-                  return (
-                    <article
-                      key={item.operationId}
-                      className="rounded-2xl border border-outline/8 bg-surface p-4"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="font-display text-2xl text-primary">
-                            {item.ticker}
-                          </p>
-                          <p className="mt-1 text-xs font-bold tracking-[0.1em] text-secondary uppercase">
-                            {item.platform} · {formatDate(item.operationDate)}
-                          </p>
-                        </div>
-                        <p className="text-sm font-bold text-primary">
-                          {item.quantity} unidades
+                const resultAmount =
+                  item.profitOrLoss.usd || item.profitOrLoss.ars;
+                const hasProfit = resultAmount >= 0;
+                return (
+                  <article
+                    key={item.operationId}
+                    className="rounded-2xl border border-outline/8 bg-surface p-4"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="font-display text-2xl text-primary">
+                          {item.ticker}
+                        </p>
+                        <p className="mt-1 text-xs font-bold tracking-[0.1em] text-secondary uppercase">
+                          {item.platform} · {formatDate(item.operationDate)}
                         </p>
                       </div>
-                      <div className="mt-4 grid gap-3 border-t border-outline/8 pt-4 sm:grid-cols-3">
-                        <div>
-                          <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
-                            Costo asignado
-                          </p>
-                          <p className="mt-1 text-sm font-bold text-primary">
-                            <SensitiveMoney amount={item.costBasis.usd} currency="USD" />
-                          </p>
-                          <p className="text-xs text-secondary">
-                            <SensitiveMoney amount={item.costBasis.ars} currency="ARS" />
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
-                            Neto obtenido
-                          </p>
-                          <p className="mt-1 text-sm font-bold text-primary">
-                            <SensitiveMoney amount={item.proceeds.usd} currency="USD" />
-                          </p>
-                          <p className="text-xs text-secondary">
-                            <SensitiveMoney amount={item.proceeds.ars} currency="ARS" />
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
-                            {hasProfit ? "Ganancia" : "Pérdida"}
-                          </p>
-                          <p
-                            className={
-                              "mt-1 text-sm font-bold " +
-                              (hasProfit ? "text-emerald-700" : "text-ember")
-                            }
-                          >
-                            <SensitiveMoney amount={item.profitOrLoss.usd} currency="USD" />
-                          </p>
-                          <p className={hasProfit ? "text-xs text-emerald-700" : "text-xs text-ember"}>
-                            <SensitiveMoney amount={item.profitOrLoss.ars} currency="ARS" />
-                          </p>
-                        </div>
+                      <p className="text-sm font-bold text-primary">
+                        {item.quantity} unidades
+                      </p>
+                    </div>
+                    <div className="mt-4 grid gap-3 border-t border-outline/8 pt-4 sm:grid-cols-3">
+                      <div>
+                        <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
+                          Costo asignado
+                        </p>
+                        <p className="mt-1 text-sm font-bold text-primary">
+                          <SensitiveMoney
+                            amount={item.costBasis.usd}
+                            currency="USD"
+                          />
+                        </p>
+                        <p className="text-xs text-secondary">
+                          <SensitiveMoney
+                            amount={item.costBasis.ars}
+                            currency="ARS"
+                          />
+                        </p>
                       </div>
-                    </article>
-                  );
-                },
-              )}
+                      <div>
+                        <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
+                          Neto obtenido
+                        </p>
+                        <p className="mt-1 text-sm font-bold text-primary">
+                          <SensitiveMoney
+                            amount={item.proceeds.usd}
+                            currency="USD"
+                          />
+                        </p>
+                        <p className="text-xs text-secondary">
+                          <SensitiveMoney
+                            amount={item.proceeds.ars}
+                            currency="ARS"
+                          />
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold tracking-[0.1em] text-body/45 uppercase">
+                          {hasProfit ? "Ganancia" : "Pérdida"}
+                        </p>
+                        <p
+                          className={
+                            "mt-1 text-sm font-bold " +
+                            (hasProfit ? "text-emerald-700" : "text-ember")
+                          }
+                        >
+                          <SensitiveMoney
+                            amount={item.profitOrLoss.usd}
+                            currency="USD"
+                          />
+                        </p>
+                        <p
+                          className={
+                            hasProfit
+                              ? "text-xs text-emerald-700"
+                              : "text-xs text-ember"
+                          }
+                        >
+                          <SensitiveMoney
+                            amount={item.profitOrLoss.ars}
+                            currency="ARS"
+                          />
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <div className="mt-5 rounded-2xl border border-dashed border-outline/15 py-10 text-center text-sm text-body/45">
@@ -549,6 +634,7 @@ export function GoalDetailPage() {
             movement={editingMovement || undefined}
             isSubmitting={isSubmitting}
             onSubmit={saveMovement}
+            onConfirmCashy={confirmCashy}
             onCancel={closeForm}
           />
         </Modal>

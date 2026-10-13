@@ -68,6 +68,30 @@ export function GoalCardsSkeleton() {
   );
 }
 
+export function CashyAllocationSkeleton() {
+  return (
+    <output
+      aria-label="Cargando presupuesto mensual de Cashy"
+      className="mt-6 block animate-pulse rounded-3xl border border-outline/6 bg-surface/45 p-5 motion-reduce:animate-none"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <SkeletonLine className="h-7 w-64 max-w-[80%]" />
+        <div className="size-10 rounded-xl bg-brand/8" />
+      </div>
+      <SkeletonLine className="mt-4 h-3 w-40" />
+      <div className="mt-5 grid gap-4 sm:grid-cols-3">
+        {[1, 2, 3].map((item) => (
+          <div key={item}>
+            <SkeletonLine className="h-3 w-28" />
+            <SkeletonLine className="mt-3 h-6 w-36" />
+          </div>
+        ))}
+      </div>
+      <span className="sr-only">Cargando...</span>
+    </output>
+  );
+}
+
 export function GoalDetailSkeleton() {
   return (
     <output

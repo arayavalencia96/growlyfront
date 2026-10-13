@@ -54,6 +54,15 @@ export function GoalMovementsList({
                 {isContribution ? "Aporte" : "Extracción"}
                 {movement.platform ? " · " + movement.platform : ""}
               </p>
+              {isContribution && (
+                <p className="mt-1 text-xs text-body/55">
+                  {movement.fundingSource === "external"
+                    ? "Dinero externo / ya ahorrado"
+                    : movement.fundingSource === "cashy"
+                      ? "Presupuesto de Cashy"
+                      : "Histórico · sin vínculo con Cashy"}
+                </p>
+              )}
               <p className="mt-1 text-xs text-body/45">
                 {formatDate(movement.movementDate)}
                 {movement.notes ? " · " + movement.notes : ""}
