@@ -79,6 +79,7 @@ export function GoalForm({
       })),
       openingPositions: (goal?.openingPositions || []).map((item) => ({
         ...item,
+        unitPrice: item.unitPrice ?? undefined,
         ...getPlatformFields(item.platform),
         exchangeRateArsPerUsd: item.exchangeRateArsPerUsd || 0,
       })),
@@ -498,7 +499,7 @@ export function GoalForm({
                         customPlatform: "",
                         ticker: "",
                         quantity: 0,
-                        unitPrice: 0,
+                        unitPrice: undefined,
                         totalAmount: 0,
                         currency: "ARS",
                         exchangeRateArsPerUsd: quote?.venta || 0,
@@ -588,7 +589,7 @@ export function GoalForm({
                           <FormFieldLabel
                             htmlFor={`opening-position-price-${index}`}
                             label="PPC"
-                            help="Precio promedio de compra por cada unidad del activo."
+                            help="Opcional. Si lo completas, se usa como costo promedio; si no, se calcula con el total invertido y la cantidad."
                             compact
                           />
                           <input
@@ -597,11 +598,12 @@ export function GoalForm({
                             min="0"
                             step="0.00000001"
                             className="app-field"
-                            placeholder="0"
+                            placeholder="Se calcula automáticamente"
                             {...register(
                               `openingPositions.${index}.unitPrice`,
                               {
-                                valueAsNumber: true,
+                                setValueAs: (value: string) =>
+                                  value === "" ? undefined : Number(value),
                               },
                             )}
                           />
