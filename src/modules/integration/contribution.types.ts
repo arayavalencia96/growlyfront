@@ -1,4 +1,5 @@
 import type { GoalCurrency } from "@/modules/goals/interfaces/goals.interface";
+import type { GoalReference } from "@/common/interfaces/goal-reference.interface";
 
 export interface CashyContributionPreview {
   id: string;
@@ -34,6 +35,7 @@ export interface ContributionConfirmPayload {
   valuationExchangeRateArsPerUsd?: number;
 }
 export interface ContributionJobView {
+  goal?: GoalReference;
   platform: string;
   movementDate: string;
   notes: string;

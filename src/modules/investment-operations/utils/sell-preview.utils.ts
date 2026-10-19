@@ -1,4 +1,9 @@
-import type { GoalCurrency, IOpeningPosition } from "@/modules/goals/interfaces/goals.interface";
+import { currentRecordDay } from "@/utils/format.utils";
+import type { IGoalSummary } from "@/modules/summaries/interfaces/summaries.interface";
+import type {
+  GoalCurrency,
+  IOpeningPosition,
+} from "@/modules/goals/interfaces/goals.interface";
 import type { IInvestmentOperation } from "@/modules/investment-operations/interfaces/investment-operations.interface";
 
 interface ICostEntry {
@@ -19,6 +24,7 @@ export interface ISellPreview {
 }
 
 interface ICalculateSellPreviewParams {
+  currentSummary?: IGoalSummary;
   operations: IInvestmentOperation[];
   openingPositions: IOpeningPosition[];
   operationId?: string;
@@ -47,6 +53,7 @@ function convertAmount(
 }
 
 export function calculateSellPreview({
+  currentSummary,
   operations,
   openingPositions,
   operationId,
@@ -70,6 +77,33 @@ export function calculateSellPreview({
 
   const normalizedPlatform = normalize(platform);
   const normalizedTicker = normalize(ticker);
+  if (currentSummary && currentSummary.transfersCount > 0) {
+    if (operationId || operationDate !== currentRecordDay()) return null;
+    const position = currentSummary.openPositions.find(
+      (item) =>
+        normalize(item.platform) === normalizedPlatform &&
+        normalize(item.ticker) === normalizedTicker,
+    );
+    if (
+      !position ||
+      quantity > position.quantity ||
+      position.hasUnconvertedAmounts
+    )
+      return null;
+    const invested = position.invested[currency === "ARS" ? "ars" : "usd"];
+    const averageCost = invested / position.quantity;
+    const costBasis = averageCost * quantity;
+    const profitOrLoss = totalAmount - costBasis;
+    return {
+      availableQuantity: position.quantity,
+      averageCost,
+      costBasis,
+      proceeds: totalAmount,
+      profitOrLoss,
+      percentage: costBasis ? (profitOrLoss / costBasis) * 100 : 0,
+      currency,
+    };
+  }
   let availableQuantity = 0;
   let investedAmount = 0;
 

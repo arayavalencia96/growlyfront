@@ -2,11 +2,30 @@ function SkeletonLine({ className }: { readonly className: string }) {
   return <div className={`rounded-full bg-brand/8 ${className}`} />;
 }
 
+export function GoalsPageSkeleton() {
+  return (
+    <div role="status" aria-label="Cargando objetivos, cartera y presupuesto">
+      <div className="flex animate-pulse items-end justify-between gap-6 motion-reduce:animate-none">
+        <div className="flex-1">
+          <SkeletonLine className="h-3 w-32" />
+          <SkeletonLine className="mt-4 h-14 w-64 max-w-full" />
+          <SkeletonLine className="mt-4 h-4 w-full max-w-xl" />
+        </div>
+        <div className="hidden h-12 w-40 rounded-2xl bg-brand/8 sm:block" />
+      </div>
+      <PortfolioSummarySkeleton />
+      <CashyAllocationSkeleton />
+      <div className="mt-10 h-20 animate-pulse rounded-3xl bg-brand/8 motion-reduce:animate-none" />
+      <GoalCardsSkeleton />
+    </div>
+  );
+}
+
 export function PortfolioSummarySkeleton() {
   return (
     <output
       aria-label="Cargando resumen patrimonial"
-      className="mt-8 animate-pulse overflow-hidden rounded-4xl border border-outline/6 bg-surface/45 motion-reduce:animate-none"
+      className="mt-8 block animate-pulse overflow-hidden rounded-4xl border border-outline/6 bg-surface/45 motion-reduce:animate-none"
     >
       <div className="grid lg:grid-cols-[minmax(260px,0.8fr)_1.5fr]">
         <div className="border-outline/6 p-6 sm:p-8 lg:border-r">

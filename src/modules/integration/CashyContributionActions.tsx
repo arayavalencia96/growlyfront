@@ -204,16 +204,20 @@ export function CashyContributionActions({
           icon={History}
           onClick={() => setShowHistory(true)}
         />
-        {job.status === "confirmed" && !pending && !mode && (
-          <ContributionIconButton
-            label="Corregir importe"
-            icon={Pencil}
-            disabled={busy}
-            onClick={() => begin("edit")}
-          />
-        )}
+        {job.status === "confirmed" &&
+          !job.goal?.deleted &&
+          !pending &&
+          !mode && (
+            <ContributionIconButton
+              label="Corregir importe"
+              icon={Pencil}
+              disabled={busy}
+              onClick={() => begin("edit")}
+            />
+          )}
         {(job.status === "confirmed" ||
           job.status === "reconciliation-required") &&
+          !job.goal?.deleted &&
           !pending &&
           !mode && (
             <ContributionIconButton

@@ -1,3 +1,4 @@
+import { currentRecordDay } from "@/utils/format.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -18,18 +19,6 @@ import { useCashyContributionBudget } from "@/modules/integration/useCashyContri
 import { integrationService } from "@/modules/integration/integration.service";
 import { getErrorMessage } from "@/utils/error.utils";
 import { SensitiveMoney } from "@/common/components/BalancePrivacy";
-
-function todayInArgentina(): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Buenos_Aires",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
-  return ["year", "month", "day"]
-    .map((key) => parts.find((part) => part.type === key)?.value)
-    .join("-");
-}
 
 function isKnownPlatform(value: string): value is InvestmentPlatform {
   return INVESTMENT_PLATFORMS.includes(value as InvestmentPlatform);
@@ -75,7 +64,7 @@ export function GoalMovementForm({
       currency: movement?.currency || defaultCurrency,
       movementDate: movement
         ? toDateInput(movement.movementDate)
-        : todayInArgentina(),
+        : currentRecordDay(),
       exchangeRateArsPerUsd: movement?.exchangeRateArsPerUsd || 0,
       platformOption: defaultPlatformOption,
       customPlatform:
@@ -191,6 +180,10 @@ export function GoalMovementForm({
     await onSubmit({
       goalId,
       ...values,
+      movementDate:
+        movement && values.movementDate === toDateInput(movement.movementDate)
+          ? movement.movementDate
+          : values.movementDate,
       ...(values.type === "contribution" && source === "external"
         ? { fundingSource: source }
         : {}),

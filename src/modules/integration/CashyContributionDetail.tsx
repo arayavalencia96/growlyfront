@@ -9,6 +9,17 @@ export function CashyContributionDetail({
   return (
     <div className="space-y-4">
       <dl className="grid gap-3 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <dt className="text-xs text-secondary">Objetivo</dt>
+          <dd>
+            {job.goal?.name ?? "Objetivo no disponible"}
+            {job.goal?.deleted
+              ? " (objetivo eliminado)"
+              : !job.goal
+                ? " (no existe)"
+                : ""}
+          </dd>
+        </div>
         <div className="rounded-2xl border border-outline/8 bg-surface p-4">
           <dt className="text-xs text-secondary">Monto del aporte</dt>
           <dd className="mt-1 font-bold text-primary">

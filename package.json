@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start:integration": "vite --mode integration --host localhost --port 5173 --strictPort",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "prepare": "husky",

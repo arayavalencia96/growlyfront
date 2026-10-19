@@ -43,15 +43,21 @@ import { summariesService } from "@/modules/summaries/services/summaries.service
 import { useRealizedProfitStore } from "@/modules/summaries/stores/realized-profit.context";
 import { getErrorMessage } from "@/utils/error.utils";
 import { formatDate } from "@/utils/format.utils";
+import { TransferControl } from "@/modules/transfers/TransferControl";
+import { TransfersActivity } from "@/modules/transfers/TransfersActivity";
 
-type DetailTab = "movements" | "operations" | "cashy";
-type FormMode = Exclude<DetailTab, "cashy"> | null;
+type DetailTab = "movements" | "operations" | "cashy" | "transfers";
+type FormMode = "movements" | "operations" | null;
 type DeletionTarget =
   | { type: "movement"; item: IGoalMovement }
   | { type: "operation"; item: IInvestmentOperation };
 
 export function GoalDetailPage() {
   const { goalId = "" } = useParams();
+  return <GoalDetailScreen key={goalId} goalId={goalId} />;
+}
+
+function GoalDetailScreen({ goalId }: { readonly goalId: string }) {
   const [goal, setGoal] = useState<IGoal | null>(null);
   const [summary, setSummary] = useState<IGoalSummary | null>(null);
   const [movements, setMovements] = useState<IGoalMovement[]>([]);
@@ -67,6 +73,7 @@ export function GoalDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cashyRevision, setCashyRevision] = useState(0);
+  const [transferRevision, setTransferRevision] = useState(0);
   const [trackedCashyId, setTrackedCashyId] = useState("");
   const [deletionTarget, setDeletionTarget] = useState<DeletionTarget | null>(
     null,
@@ -130,6 +137,10 @@ export function GoalDetailPage() {
   const refreshCashyMovements = async () => {
     const { result } = await goalMovementsService.getByGoal(goalId);
     setMovements(result);
+    await refreshSummary();
+  };
+  const refreshTransfers = async () => {
+    setTransferRevision((current) => current + 1);
     await refreshSummary();
   };
   const confirmCashy = async (payload: ContributionConfirmPayload) => {
@@ -343,7 +354,7 @@ export function GoalDetailPage() {
       <div className="mt-6 overflow-hidden rounded-4xl bg-brand text-white shadow-[0_24px_70px_rgba(20,54,44,0.18)]">
         <div className="relative p-7 sm:p-10">
           <div className="absolute -top-20 -right-14 size-64 rounded-full border-45 border-accent/8" />
-          <div className="relative flex flex-col justify-between gap-8 md:flex-row md:items-end">
+          <div className="relative flex flex-col justify-between gap-8 xl:flex-row xl:items-end">
             <div>
               <p className="text-xs font-bold tracking-[0.2em] text-accent-text uppercase">
                 {goal.type === "long_term"
@@ -368,11 +379,16 @@ export function GoalDetailPage() {
                 </span>
               </div>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="grid w-full items-start gap-3 sm:grid-cols-3 xl:max-w-xl">
+              <TransferControl
+                key={goal.id}
+                goal={goal}
+                onChanged={refreshTransfers}
+              />
               <button
                 type="button"
                 onClick={() => openMovementForm()}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-5 py-3.5 text-sm font-bold text-white"
+                className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/15"
               >
                 <Plus size={18} />
                 Aporte / extracción
@@ -380,7 +396,7 @@ export function GoalDetailPage() {
               <button
                 type="button"
                 onClick={() => openOperationForm()}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3.5 text-sm font-bold text-primary"
+                className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-bold text-primary transition hover:brightness-95"
               >
                 <TrendingUp size={18} />
                 Compra / venta
@@ -459,6 +475,19 @@ export function GoalDetailPage() {
             >
               Cashy
             </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("transfers")}
+              aria-pressed={activeTab === "transfers"}
+              className={
+                "rounded-xl px-4 py-2 text-xs font-bold transition " +
+                (activeTab === "transfers"
+                  ? "bg-surface text-primary shadow-sm"
+                  : "text-secondary")
+              }
+            >
+              Transferencias
+            </button>
           </div>
         </div>
 
@@ -475,6 +504,14 @@ export function GoalDetailPage() {
             onView={(movement) => setDetail({ type: "movement", movement })}
             onEdit={openMovementForm}
             onDelete={deleteMovement}
+          />
+        ) : null}
+        {activeTab === "transfers" ? (
+          <TransfersActivity
+            key={goalId}
+            goalId={goalId}
+            revision={transferRevision}
+            onChanged={refreshTransfers}
           />
         ) : null}
         <div hidden={activeTab !== "cashy"}>
@@ -648,6 +685,7 @@ export function GoalDetailPage() {
           onClose={closeForm}
         >
           <InvestmentOperationForm
+            currentSummary={summary}
             goalId={goal.id}
             defaultCurrency={goal.currency}
             openingPositions={goal.openingPositions}

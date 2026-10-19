@@ -33,7 +33,7 @@ npm --version
 El frontend necesita Growly API. Para desarrollo local, inicia `growlyback` y verifica:
 
 ```text
-http://localhost:3000/api/v1/health
+http://localhost:3001/api/v1/health
 ```
 
 Consulta el README del backend para configurar MongoDB Atlas, JWT y Brevo.
@@ -44,23 +44,10 @@ Consulta el README del backend para configurar MongoDB Atlas, JWT y Brevo.
 npm ci
 ```
 
-### 3. Clonar el archivo de entorno
+### 3. Configuración local
 
-Configuración local:
-
-```env
-VITE_API_URL=http://localhost:3000/api/v1
-VITE_APP_VERSION=0.1.0
-VITE_DOLAR_API_URL=https://dolarapi.com/v1/dolares/bolsa
-```
-
-| Variable | Uso |
-| --- | --- |
-| `VITE_API_URL` | URL de Growly API, incluyendo `/api/v1`. |
-| `VITE_DOLAR_API_URL` | API usada para sugerir la cotización MEP/CCL. |
-| `VITE_APP_VERSION` | Variable reservada; la versión visible actual está en la configuración de la aplicación. |
-
-Las variables `VITE_*` quedan incorporadas en el bundle. Nunca guardes secretos o API keys privadas en ellas.
+No hace falta crear un archivo `.env`. La configuración local está definida en
+`src/common/config/environment.ts` y apunta a Growly Back en el puerto `3001`.
 
 ## Ejecutar localmente
 
@@ -78,7 +65,7 @@ Orden recomendado para el entorno completo:
 
 1. Autoriza tu IP en MongoDB Atlas.
 2. Inicia `growlyback` con `npm run start:dev`.
-3. Comprueba `http://localhost:3000/api/v1/health`.
+3. Comprueba `http://localhost:3001/api/v1/health`.
 4. Inicia `growlyfront` con `npm run dev`.
 5. Abre `http://localhost:5173`.
 
@@ -153,6 +140,10 @@ validations/
 
 El alias `@/` apunta a `src/`.
 
+La navegación lateral, el presupuesto de Cashy, los aportes vinculados y el
+registro de transferencias internas están documentados en
+[`docs/INTEGRATION_AND_TRANSFERS.md`](docs/INTEGRATION_AND_TRANSFERS.md).
+
 ## Comunicación con la API
 
 `HttpService` centraliza:
@@ -179,12 +170,9 @@ Si DolarApi no responde, el formulario debe permitir ingresar la cotización man
 
 ## Producción
 
-Crea `.env.production`:
-
-```env
-VITE_API_URL=https://TU-BACKEND/api/v1
-VITE_DOLAR_API_URL=https://dolarapi.com/v1/dolares/bolsa
-```
+`npm run build` selecciona automáticamente la URL productiva definida en
+`src/common/config/environment.ts`. El frontend no utiliza archivos `.env` ni
+contiene secretos.
 
 Compila y prueba:
 
@@ -233,9 +221,9 @@ La regla también aplica en GitHub Desktop.
 
 ### La API no responde
 
-- Verifica que `VITE_API_URL` incluya `/api/v1`.
+- Verifica que la URL productiva de `environment.ts` incluya `/api/v1`.
 - Comprueba el health check del backend.
-- Reinicia Vite después de modificar `.env`.
+- Reinicia Vite después de modificar la configuración del entorno.
 
 ### Una ruta devuelve 404 al recargar
 

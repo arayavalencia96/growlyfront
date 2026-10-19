@@ -1,3 +1,4 @@
+import { currentRecordDay } from "@/utils/format.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleHelp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -19,8 +20,6 @@ import { investmentOperationSchema } from "@/modules/investment-operations/valid
 import { calculateSellPreview } from "@/modules/investment-operations/utils/sell-preview.utils";
 import { formatDateTime, formatMoney, toDateInput } from "@/utils/format.utils";
 
-const today = new Date().toISOString().slice(0, 10);
-
 function isKnownPlatform(value: string): value is InvestmentPlatform {
   return INVESTMENT_PLATFORMS.includes(value as InvestmentPlatform);
 }
@@ -30,10 +29,7 @@ interface IPreviewInfoButtonProps {
   help: string;
 }
 
-function PreviewInfoButton({
-  label,
-  help,
-}: Readonly<IPreviewInfoButtonProps>) {
+function PreviewInfoButton({ label, help }: Readonly<IPreviewInfoButtonProps>) {
   return (
     <button
       type="button"
@@ -51,6 +47,7 @@ export function InvestmentOperationForm({
   defaultCurrency,
   openingPositions,
   operations,
+  currentSummary,
   operation,
   isSubmitting,
   onSubmit,
@@ -79,7 +76,9 @@ export function InvestmentOperationForm({
         operation && !isSavedPlatformKnown ? operation.platform : "",
       ticker: operation?.ticker || "",
       type: operation?.type || "buy",
-      operationDate: operation ? toDateInput(operation.operationDate) : today,
+      operationDate: operation
+        ? toDateInput(operation.operationDate)
+        : currentRecordDay(),
       quantity: operation?.quantity || 0,
       unitPrice: operation?.unitPrice || 0,
       totalAmount: operation?.totalAmount || 0,
@@ -109,6 +108,7 @@ export function InvestmentOperationForm({
     () =>
       operationType === "sell"
         ? calculateSellPreview({
+            currentSummary,
             operations,
             openingPositions,
             operationId: operation?.id,
@@ -122,6 +122,7 @@ export function InvestmentOperationForm({
         : null,
     [
       currency,
+      currentSummary,
       openingPositions,
       operation?.id,
       operationDate,
@@ -150,6 +151,11 @@ export function InvestmentOperationForm({
             ? customPlatform.trim()
             : selectedPlatform,
         ticker: values.ticker.trim().toUpperCase(),
+        operationDate:
+          operation &&
+          values.operationDate === toDateInput(operation.operationDate)
+            ? operation.operationDate
+            : values.operationDate,
         exchangeRateArsPerUsd: values.exchangeRateArsPerUsd || null,
         notes: values.notes || null,
       });
@@ -405,7 +411,7 @@ export function InvestmentOperationForm({
                   : "text-ember")
               }
             >
-              {sellPreview.profitOrLoss >= 0 ? "Ganancia" : "Pérdida"}: {" "}
+              {sellPreview.profitOrLoss >= 0 ? "Ganancia" : "Pérdida"}:{" "}
               {formatMoney(Math.abs(sellPreview.profitOrLoss), currency)}
               {" · "}
               {Math.abs(sellPreview.percentage).toFixed(2)}%
@@ -419,7 +425,9 @@ export function InvestmentOperationForm({
                     help="Precio promedio ponderado que pagaste por cada unidad que todavía tienes de este activo, en esta plataforma y objetivo."
                   />
                 </dt>
-                <dd className="font-bold">{formatMoney(sellPreview.averageCost, currency)}</dd>
+                <dd className="font-bold">
+                  {formatMoney(sellPreview.averageCost, currency)}
+                </dd>
               </div>
               <div>
                 <dt className="flex items-center gap-1 text-body/50">
@@ -429,7 +437,9 @@ export function InvestmentOperationForm({
                     help="Lo que te costó originalmente la cantidad de unidades que quieres vender, calculado con el costo promedio actual."
                   />
                 </dt>
-                <dd className="font-bold">{formatMoney(sellPreview.costBasis, currency)}</dd>
+                <dd className="font-bold">
+                  {formatMoney(sellPreview.costBasis, currency)}
+                </dd>
               </div>
               <div>
                 <dt className="flex items-center gap-1 text-body/50">
@@ -439,13 +449,17 @@ export function InvestmentOperationForm({
                     help="Lo que recibirías si vendieras ahora: el monto total obtenido que ingresaste, después de comisiones y cargos."
                   />
                 </dt>
-                <dd className="font-bold">{formatMoney(sellPreview.proceeds, currency)}</dd>
+                <dd className="font-bold">
+                  {formatMoney(sellPreview.proceeds, currency)}
+                </dd>
               </div>
             </dl>
           </section>
         ) : (
           <p aria-live="polite" className="text-sm text-body/55">
-            Completa plataforma, ticker, fecha, cantidad y monto total. La estimación se mostrará si hay posición suficiente y sus costos pueden expresarse en esta moneda.
+            Completa plataforma, ticker, fecha, cantidad y monto total. La
+            estimación se mostrará si hay posición suficiente y sus costos
+            pueden expresarse en esta moneda.
           </p>
         )
       ) : null}

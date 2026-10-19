@@ -6,7 +6,12 @@ import { getErrorMessage } from "@/utils/error.utils";
 import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 import { CashyAllocationSkeleton } from "@/modules/goals/components/GoalsSkeletons";
 
-export function CashyAllocationPanel() {
+export function CashyAllocationPanel({
+  onInitialSettled,
+}: {
+  readonly onInitialSettled?: () => void;
+}) {
+  const settled = useRef(false);
   const [state, setState] = useState<LinkedAllocationState>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,9 +43,15 @@ export function CashyAllocationPanel() {
       if (alive.current) setError(getErrorMessage(failure));
     } finally {
       inFlight.current = false;
-      if (alive.current) setLoading(false);
+      if (alive.current) {
+        setLoading(false);
+        if (!settled.current) {
+          settled.current = true;
+          onInitialSettled?.();
+        }
+      }
     }
-  }, []);
+  }, [onInitialSettled]);
 
   useEffect(() => {
     alive.current = true;

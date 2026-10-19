@@ -1,4 +1,5 @@
 import type { IApiResponse } from "@/common/interfaces/api.interface";
+import type { IGoalSummary } from "@/modules/summaries/interfaces/summaries.interface";
 import type {
   GoalCurrency,
   IOpeningPosition,
@@ -107,6 +108,7 @@ export interface IInvestmentOperationsService {
 }
 
 export interface IInvestmentOperationFormProps {
+  currentSummary: IGoalSummary;
   goalId: string;
   defaultCurrency: GoalCurrency;
   openingPositions: IOpeningPosition[];
