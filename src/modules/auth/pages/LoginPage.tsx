@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { postLoginDestination } from "@/modules/integration/pending-link";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -50,7 +51,7 @@ export function LoginPage() {
         password: data.password,
       });
       sessionService.save(getSessionTokens(response.result));
-      navigate("/home", { replace: true });
+      navigate(postLoginDestination(), { replace: true });
     } catch (error: unknown) {
       const requiresVerification =
         isAuthError(error, "Email is not validated") ||

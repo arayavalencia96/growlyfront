@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useId, useRef } from "react";
+import { type ReactNode, useEffect, useEffectEvent, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 
 import { X } from "lucide-react";
@@ -26,6 +26,7 @@ export function Modal({
 }: IModalProps) {
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const closeFromKeyboard = useEffectEvent(onClose);
 
   useEffect(() => {
     const previouslyFocusedElement =
@@ -53,7 +54,7 @@ export function Modal({
 
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        closeFromKeyboard();
         return;
       }
 
@@ -82,7 +83,7 @@ export function Modal({
       document.body.style.overflow = previousOverflow;
       previouslyFocusedElement?.focus();
     };
-  }, [onClose]);
+  }, []);
 
   return createPortal(
     <div

@@ -10,14 +10,24 @@ import type {
 } from "@/modules/summaries/interfaces/summaries.interface";
 import { SensitiveMoney } from "@/common/components/BalancePrivacy";
 
-function MoneyPair({ totals }: { readonly totals: IMoneyTotals }) {
+function MoneyPair({
+  totals,
+  showArsCents = false,
+}: {
+  readonly totals: IMoneyTotals;
+  readonly showArsCents?: boolean;
+}) {
   return (
     <>
       <p className="font-display text-3xl text-primary">
         <SensitiveMoney amount={totals.usd} currency="USD" />
       </p>
       <p className="mt-1 text-xs font-semibold text-secondary">
-        <SensitiveMoney amount={totals.ars} currency="ARS" />
+        <SensitiveMoney
+          amount={totals.ars}
+          currency="ARS"
+          fractionDigits={showArsCents ? 2 : undefined}
+        />
       </p>
     </>
   );
@@ -56,6 +66,7 @@ export function GoalSummaryPanel({
             icon: Landmark,
             accent: false,
             onClick: onCashBalanceClick,
+            showArsCents: true,
           },
           {
             label: "Posiciones abiertas",
@@ -70,39 +81,64 @@ export function GoalSummaryPanel({
             accent: false,
             onClick: onRealizedProfitClick,
           },
-        ].map(({ label, totals, icon: Icon, accent, onClick }) => (
-          <article
-            key={label}
-            role={onClick ? "button" : undefined}
-            tabIndex={onClick ? 0 : undefined}
-            onClick={onClick}
-            onKeyDown={(event) => {
-              if (onClick && (event.key === "Enter" || event.key === " ")) {
-                event.preventDefault();
-                onClick();
+        ].map(
+          ({ label, totals, icon: Icon, accent, onClick, showArsCents }) => (
+            <article
+              key={label}
+              role={onClick ? "button" : undefined}
+              tabIndex={onClick ? 0 : undefined}
+              onClick={onClick}
+              onKeyDown={(event) => {
+                if (onClick && (event.key === "Enter" || event.key === " ")) {
+                  event.preventDefault();
+                  onClick();
+                }
+              }}
+              className={
+                "rounded-3xl border p-5 transition " +
+                (onClick
+                  ? "cursor-pointer hover:-translate-y-0.5 hover:border-outline/20 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-secondary/35 "
+                  : "") +
+                (accent
+                  ? "goal-book-value-card border-accent bg-accent/55"
+                  : "border-outline/8 bg-surface")
               }
-            }}
-            className={
-              "rounded-3xl border p-5 transition " +
-              (onClick
-                ? "cursor-pointer hover:-translate-y-0.5 hover:border-outline/20 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-secondary/35 "
-                : "") +
-              (accent
-                ? "goal-book-value-card border-accent bg-accent/55"
-                : "border-outline/8 bg-surface")
-            }
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-xs font-bold tracking-widest text-secondary uppercase">
-                {label}
-              </p>
-              <Icon size={17} className="text-secondary" />
-            </div>
-            <MoneyPair totals={totals} />
-          </article>
-        ))}
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-xs font-bold tracking-widest text-secondary uppercase">
+                  {label}
+                </p>
+                <Icon size={17} className="text-secondary" />
+              </div>
+              <MoneyPair totals={totals} showArsCents={showArsCents} />
+            </article>
+          ),
+        )}
       </div>
 
+      {summary.transfersCount > 0 ? (
+        <div className="rounded-3xl border border-outline/8 bg-surface p-5 sm:p-6">
+          <p className="text-xs font-bold tracking-widest text-secondary uppercase">
+            Transferencias internas
+          </p>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            {[
+              { label: "Recibido a costo", totals: summary.transferIn },
+              { label: "Enviado a costo", totals: summary.transferOut },
+              { label: "Comisiones a costo", totals: summary.transferFees },
+            ].map((item) => (
+              <div key={item.label}>
+                <p className="mb-2 text-xs text-body/50">{item.label}</p>
+                <MoneyPair totals={item.totals} showArsCents />
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-body/50">
+            Ya están incluidas en la cartera y el avance. No son ingresos ni
+            ganancias; solo las comisiones reducen el total entre tus objetivos.
+          </p>
+        </div>
+      ) : null}
       <div className="rounded-3xl border border-outline/8 bg-surface p-5 sm:p-6">
         <div className="flex items-end justify-between gap-4">
           <div>

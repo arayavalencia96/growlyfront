@@ -8,6 +8,7 @@ import { formatDate } from "@/utils/format.utils";
 import { getErrorMessage } from "@/utils/error.utils";
 
 import { ApplicationInfo } from "@/modules/profile/components/ApplicationInfo";
+import { CashyConnectionPanel } from "@/modules/integration/CashyConnectionPanel";
 import { ChangePasswordForm } from "@/modules/profile/components/ChangePasswordForm";
 import { DeactivateAccountModal } from "@/modules/profile/components/DeactivateAccountModal";
 import { PersonalDataForm } from "@/modules/profile/components/PersonalDataForm";
@@ -147,6 +148,7 @@ export function ProfilePage() {
             onEmailChangeRequested={handleEmailChangeRequested}
           />
           <ChangePasswordForm onPasswordChanged={handlePasswordChanged} />
+          <CashyConnectionPanel accountEmail={user.email} />
 
           <section className="rounded-[1.75rem] border border-ember/18 bg-surface p-6 sm:p-7">
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">

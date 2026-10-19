@@ -56,13 +56,19 @@ export function SensitiveMoney({
   amount,
   currency,
   prefix = "",
+  fractionDigits,
 }: {
   readonly amount: number;
   readonly currency: GoalCurrency;
   readonly prefix?: string;
+  readonly fractionDigits?: number;
 }) {
   const { areBalancesVisible } = useBalancePrivacy();
   return (
-    <>{areBalancesVisible ? prefix + formatMoney(amount, currency) : "****"}</>
+    <>
+      {areBalancesVisible
+        ? prefix + formatMoney(amount, currency, fractionDigits)
+        : "****"}
+    </>
   );
 }

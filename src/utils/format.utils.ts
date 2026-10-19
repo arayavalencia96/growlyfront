@@ -1,10 +1,24 @@
 import type { GoalCurrency } from "@/modules/goals/interfaces/goals.interface";
 
-export function formatMoney(value: number, currency: GoalCurrency): string {
+export function currentRecordDay(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Buenos_Aires",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+export function formatMoney(
+  value: number,
+  currency: GoalCurrency,
+  fractionDigits = currency === "ARS" ? 0 : 2,
+): string {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency,
-    maximumFractionDigits: currency === "ARS" ? 0 : 2,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
   }).format(value);
 }
 

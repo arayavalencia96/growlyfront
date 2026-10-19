@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import { LinkConsentPage } from "@/modules/integration/LinkConsentPage";
 
 import { ChangeBlockedPasswordPage } from "@/modules/auth/pages/ChangeBlockedPasswordPage";
 import { ForgotPasswordPage } from "@/modules/auth/pages/ForgotPasswordPage";
@@ -16,6 +17,10 @@ import { ApplicationLayout } from "@/common/layouts/ApplicationLayout";
 import { RequireSession } from "@/common/components/RequireSession";
 
 export const router = createBrowserRouter([
+  {
+    path: "/integrations/connect",
+    element: <LinkConsentPage />,
+  },
   {
     path: "/",
     element: <Navigate to="/login" replace />,

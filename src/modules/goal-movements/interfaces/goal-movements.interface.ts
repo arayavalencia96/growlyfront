@@ -1,15 +1,28 @@
 import type { IApiResponse } from "@/common/interfaces/api.interface";
+import type {
+  ContributionConfirmPayload,
+  ContributionJobView,
+} from "@/modules/integration/contribution.types";
 import type { GoalCurrency } from "@/modules/goals/interfaces/goals.interface";
 import type { InvestmentPlatformSelection } from "@/modules/investment-operations/interfaces/investment-operations.interface";
+import type { ICashBalanceSummary } from "@/modules/summaries/interfaces/summaries.interface";
 
 export const GOAL_MOVEMENT_TYPES = ["contribution", "withdrawal"] as const;
 export type GoalMovementType = (typeof GOAL_MOVEMENT_TYPES)[number];
+export const CONTRIBUTION_FUNDING_SOURCES = [
+  "external",
+  "cashy",
+  "legacy",
+] as const;
+export type ContributionFundingSource =
+  (typeof CONTRIBUTION_FUNDING_SOURCES)[number];
 
 export interface IGoalMovement {
   id: string;
   goalId: string;
   userId: string;
   type: GoalMovementType;
+  fundingSource?: ContributionFundingSource;
   amount: number;
   currency: GoalCurrency;
   movementDate: string;
@@ -23,6 +36,7 @@ export interface IGoalMovement {
 export interface IGoalMovementPayload {
   goalId: string;
   type: GoalMovementType;
+  fundingSource?: Exclude<ContributionFundingSource, "legacy">;
   amount: number;
   currency: GoalCurrency;
   movementDate: string;
@@ -33,6 +47,7 @@ export interface IGoalMovementPayload {
 
 export interface IGoalMovementFormValues {
   type: GoalMovementType;
+  fundingSource: ContributionFundingSource;
   amount: number;
   currency: GoalCurrency;
   movementDate: string;
@@ -55,8 +70,12 @@ export interface IGoalMovementsService {
 export interface IGoalMovementFormProps {
   goalId: string;
   defaultCurrency: GoalCurrency;
+  cashBalances: ICashBalanceSummary[];
   movement?: IGoalMovement;
   isSubmitting: boolean;
   onSubmit(payload: IGoalMovementPayload): Promise<void>;
+  onConfirmCashy(
+    payload: ContributionConfirmPayload,
+  ): Promise<ContributionJobView>;
   onCancel(): void;
 }
