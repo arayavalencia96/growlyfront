@@ -61,6 +61,15 @@
     font: inherit;
   }
 
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
   input[type="password"]::-ms-reveal,
   input[type="password"]::-ms-clear {
     display: none;
