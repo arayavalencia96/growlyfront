@@ -38,7 +38,10 @@ const openingPositionSchema = z
     customPlatform: z.string().trim().max(120),
     ticker: z.string().trim().min(1, "Ingresa el ticker").max(30),
     quantity: z.number().positive("La cantidad debe ser mayor a cero"),
-    unitPrice: z.number().positive("El PPC debe ser mayor a cero"),
+    unitPrice: z
+      .number()
+      .positive("El PPC debe ser mayor a cero")
+      .nullish(),
     totalAmount: z.number().positive("El total debe ser mayor a cero"),
     currency: z.enum(GOAL_CURRENCIES),
     exchangeRateArsPerUsd: optionalExchangeRate,
